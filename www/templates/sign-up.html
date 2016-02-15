@@ -8,7 +8,10 @@
       </label>
 
       <label class="item item-input">
-        <input ng-model="email" type="email" placeholder="Email">
+        <input ng-model="email" type="email" placeholder="Email" ng-pattern="/^[A-Za-z0-9._%+-]+@my.uwi.edu$/">
+        <div ng-messages="email.$error">
+            <div ng-message="pattern">The email entered is invalid!</div>
+        </div>
       </label>
 
       <label class="item item-input">
