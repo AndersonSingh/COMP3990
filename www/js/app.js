@@ -31,7 +31,8 @@ angular.module('starter', ['ionic', 'firebase'])
 
   .state('sign-in', {
     url: '/sign-in',
-    templateUrl: 'templates/sign-in.html'
+    templateUrl: 'templates/sign-in.html',
+    controller: 'SignInCtrl'
   })
 
   .state('sign-up', {
@@ -40,7 +41,7 @@ angular.module('starter', ['ionic', 'firebase'])
     controller: 'SignUpCtrl'
   });
 
-  $urlRouterProvider.otherwise('/sign-up');
+  $urlRouterProvider.otherwise('/sign-in');
 }])
 
 .controller('SignUpCtrl', ['$scope', function($scope){
@@ -69,6 +70,7 @@ angular.module('starter', ['ionic', 'firebase'])
         var usersRef = ref.child('/users/' + userData.uid);
 
         usersRef.set({'email' : email, 'name' : name}, function(error){
+
           if(error){
             console.log('INFO: ERROR SYNCING DATA TO FIREBASE. DEBUG: ', error);
           }
@@ -80,6 +82,31 @@ angular.module('starter', ['ionic', 'firebase'])
 
     });
 
+  };
+
+}])
+
+.controller('SignInCtrl', ['$scope', function($scope){
+
+  var ref = new Firebase('https://comp3990.firebaseio.com');
+
+  $scope.email = null;
+  $scope.password = null;
+
+  $scope.signIn = function(email, password){
+
+    ref.authWithPassword({
+      email : email,
+      password: password
+    },
+    function(error, userData){
+      if(error){
+        console.log('INFO: ERROR LOGGING USER IN. DEBUG: ', error);
+      }
+      else{
+        console.log('INFO: SUCCESSFULLY LOGGED IN USER. DEBUG: ', userData);
+      }
+    });
   };
 
 }]);
