@@ -3,7 +3,7 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-angular.module('starter', ['ionic'])
+angular.module('starter', ['ionic', 'firebase'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -23,4 +23,63 @@ angular.module('starter', ['ionic'])
       StatusBar.styleDefault();
     }
   });
-});
+})
+
+.config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider){
+
+  $stateProvider
+
+  .state('sign-in', {
+    url: '/sign-in',
+    templateUrl: 'templates/sign-in.html'
+  })
+
+  .state('sign-up', {
+    url: '/sign-up',
+    templateUrl: 'templates/sign-up.html',
+    controller: 'SignUpCtrl'
+  });
+
+  $urlRouterProvider.otherwise('/sign-up');
+}])
+
+.controller('SignUpCtrl', ['$scope', function($scope){
+
+  var ref = new Firebase('https://comp3990.firebaseio.com');
+
+  $scope.name = null;
+  $scope.email = null;
+  $scope.password = null;
+
+  $scope.signUp = function(name, email, password){
+
+    ref.createUser({
+      email: email,
+      password: password
+    },
+    function(error, userData){
+
+      if(error){
+        console.log('INFO: ERROR CREATING USER ACCOUNT. DEBUG: ', error);
+      }
+      else{
+        console.log('INFO: SUCCESSFULLY CREATED USER ACCOUNT. DEBUG: ', userData);
+
+        /* The user is now successfully register. The user details is now pushed to firebase. */
+        var usersRef = ref.child('/users/' + userData.uid);
+
+        usersRef.set({'email' : email, 'name' : name}, function(error){
+          if(error){
+            console.log('INFO: ERROR SYNCING DATA TO FIREBASE. DEBUG: ', error);
+          }
+          else{
+            console.log('INFO: SUCCESSFULLY SYNCED DATA TO FIREBASE.');
+          }
+        });
+      }
+
+    });
+
+  };
+
+}]);
