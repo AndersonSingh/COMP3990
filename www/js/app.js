@@ -70,7 +70,7 @@ angular.module('starter', ['ionic', 'firebase'])
       else{
         console.log('INFO: SUCCESSFULLY CREATED USER ACCOUNT. DEBUG: ', userData);
 
-        /* The user is now successfully register. The user details is now pushed to firebase. */
+        /* The user is now successfully registered. The user details is now pushed to firebase. */
         var usersRef = ref.child('/users/' + userData.uid);
 
         usersRef.set({'email' : email, 'name' : name}, function(error){
