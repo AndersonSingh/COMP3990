@@ -46,14 +46,18 @@ angular.module('starter', ['ionic', 'firebase'])
 
 .controller('SignUpCtrl', ['$scope', function($scope){
 
+  /* this is a reference to the firebase url. */
   var ref = new Firebase('https://comp3990.firebaseio.com');
 
+  /* declaration of variables */
   $scope.name = null;
   $scope.email = null;
   $scope.password = null;
 
+  /* this function will attempt to sign a user up for an account. */
   $scope.signUp = function(name, email, password){
 
+    /* use firebase function createUser to attempt to create user account.*/
     ref.createUser({
       email: email,
       password: password
@@ -88,13 +92,17 @@ angular.module('starter', ['ionic', 'firebase'])
 
 .controller('SignInCtrl', ['$scope', function($scope){
 
+  /* this is a reference to the firebase url. */
   var ref = new Firebase('https://comp3990.firebaseio.com');
 
+  /* declaration of variables */
   $scope.email = null;
   $scope.password = null;
 
+  /* this function will attempt to sign in a user. */
   $scope.signIn = function(email, password){
 
+    /* use authWithPassword from firebase to authenticate a user. */
     ref.authWithPassword({
       email : email,
       password: password
