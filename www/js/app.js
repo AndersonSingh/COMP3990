@@ -39,6 +39,11 @@ angular.module('starter', ['ionic', 'firebase'])
     url: '/sign-up',
     templateUrl: 'templates/sign-up.html',
     controller: 'SignUpCtrl'
+  })
+
+  .state('seller-add-item', {
+    url: '/seller-add-item',
+    templateUrl: 'templates/seller-add-item.html'
   });
 
   $urlRouterProvider.otherwise('/sign-in');
