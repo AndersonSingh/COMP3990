@@ -99,6 +99,23 @@ angular.module('starter', ['ionic', 'firebase'])
   $scope.email = null;
   $scope.password = null;
 
+  /* this function checks if the user is already signed in.  */
+  $scope.checkUserSession = function(){
+
+    var authData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
+
+    if(authData !== null) {
+
+      var expiryDate = new Date(authData.expires * 1000);
+
+      if(expiryDate > new Date()){
+        /* IMPORTANT: session is still valid, redirect to valid state.*/
+        console.log("INFO: USER SESSION IS VALID.");
+      }
+
+    }
+  };
+
   /* this function will attempt to sign in a user. */
   $scope.signIn = function(email, password){
 
@@ -113,6 +130,7 @@ angular.module('starter', ['ionic', 'firebase'])
       }
       else{
         console.log('INFO: SUCCESSFULLY LOGGED IN USER. DEBUG: ', userData);
+        /* IMPORTANT : redirect to valid state. */
       }
     });
   };
