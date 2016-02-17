@@ -28,6 +28,13 @@ angular.module('starter', ['ionic', 'firebase'])
 .config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider){
 
   $stateProvider
+  
+  .state('app', {
+    url: '/app',
+    abstract: true,
+    templateUrl: 'templates/menu-template.html',
+    controller: 'MenuCtrl'
+   })
 
   .state('sign-in', {
     url: '/sign-in',
@@ -41,12 +48,29 @@ angular.module('starter', ['ionic', 'firebase'])
     controller: 'SignUpCtrl'
   })
 
-  .state('seller-add-item', {
+  .state('app.seller-add-item', {
     url: '/seller-add-item',
-    templateUrl: 'templates/seller-add-item.html'
+    views: {
+        'menuContent': {
+        templateUrl: 'templates/seller-add-item.html',
+        controller:'SellerCtrl'
+        }
+    }
+  })
+  
+  .state('app.home', {
+    url: '/home',
+    views: {
+        'menuContent': {
+        templateUrl: 'templates/home.html',
+        controller: 'HomeCtrl'
+        }
+    }
   });
+  
+  
 
-  $urlRouterProvider.otherwise('/sign-in');
+  $urlRouterProvider.otherwise('app/sign-in');
 }])
 
 .controller('SignUpCtrl', ['$scope', function($scope){
@@ -140,4 +164,16 @@ angular.module('starter', ['ionic', 'firebase'])
     });
   };
 
+}])
+
+.controller('MenuCtrl',['$scope',function($scope){
+    
+}])
+
+.controller('SellerCtrl',['$scope',function($scope){
+    
+}])
+
+.controller('HomeCtrl',['$scope',function($scope){
+    
 }]);
