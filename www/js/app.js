@@ -68,12 +68,10 @@ angular.module('starter', ['ionic', 'firebase'])
     }
   });
   
-  
-
-  $urlRouterProvider.otherwise('app/sign-in');
+  $urlRouterProvider.otherwise('sign-in');
 }])
 
-.controller('SignUpCtrl', ['$scope', function($scope){
+.controller('SignUpCtrl', ['$scope','$window', function($scope,$window){
 
   /* this is a reference to the firebase url. */
   var ref = new Firebase('https://comp3990.firebaseio.com');
@@ -109,6 +107,7 @@ angular.module('starter', ['ionic', 'firebase'])
           }
           else{
             console.log('INFO: SUCCESSFULLY SYNCED DATA TO FIREBASE.');
+            $window.location.href = '/#/app/home';
           }
         });
       }
@@ -119,7 +118,7 @@ angular.module('starter', ['ionic', 'firebase'])
 
 }])
 
-.controller('SignInCtrl', ['$scope', function($scope){
+.controller('SignInCtrl', ['$scope','$window', function($scope, $window){
 
   /* this is a reference to the firebase url. */
   var ref = new Firebase('https://comp3990.firebaseio.com');
@@ -160,6 +159,7 @@ angular.module('starter', ['ionic', 'firebase'])
       else{
         console.log('INFO: SUCCESSFULLY LOGGED IN USER. DEBUG: ', userData);
         /* IMPORTANT : redirect to valid state. */
+        $window.location.href = '/#/app/home';
       }
     });
   };
