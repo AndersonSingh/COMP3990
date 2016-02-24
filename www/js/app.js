@@ -71,7 +71,7 @@ angular.module('starter', ['ionic', 'firebase'])
   $urlRouterProvider.otherwise('sign-in');
 }])
 
-.controller('SignUpCtrl', ['$scope','$window', function($scope,$window){
+.controller('SignUpCtrl', ['$scope','$state', function($scope,$state){
 
   /* this is a reference to the firebase url. */
   var ref = new Firebase('https://comp3990.firebaseio.com');
@@ -107,7 +107,7 @@ angular.module('starter', ['ionic', 'firebase'])
           }
           else{
             console.log('INFO: SUCCESSFULLY SYNCED DATA TO FIREBASE.');
-            $window.location.href = '/#/app/home';
+           $state.go('app.home');
           }
         });
       }
@@ -118,7 +118,7 @@ angular.module('starter', ['ionic', 'firebase'])
 
 }])
 
-.controller('SignInCtrl', ['$scope','$window', function($scope, $window){
+.controller('SignInCtrl', ['$scope',  '$state', function($scope, $state){
 
   /* this is a reference to the firebase url. */
   var ref = new Firebase('https://comp3990.firebaseio.com');
@@ -159,7 +159,7 @@ angular.module('starter', ['ionic', 'firebase'])
       else{
         console.log('INFO: SUCCESSFULLY LOGGED IN USER. DEBUG: ', userData);
         /* IMPORTANT : redirect to valid state. */
-        $window.location.href = '/#/app/home';
+        $state.go('app.home');
       }
     });
   };
@@ -174,6 +174,20 @@ angular.module('starter', ['ionic', 'firebase'])
     
 }])
 
-.controller('HomeCtrl',['$scope',function($scope){
+.controller('HomeCtrl',['$scope', '$firebaseObject', function($scope, $firebaseObject){
+    var ref = new Firebase("https://comp3990.firebaseio.com");
+    
+    $scope.products = $firebaseObject(ref.child('/products'));
+    $scope.products.$loaded(function(data){
+       $scope.items=[];
+       for(var user in data){
+           if(user.charAt(0) != '$' && user != 'forEach'){
+               for(var item in $scope.products[user]){
+                   console.log($scope.products[user][item].name);
+                   $scope.items.push($scope.products[user][item]);
+               }
+           }
+       }
+    });
     
 }]);
