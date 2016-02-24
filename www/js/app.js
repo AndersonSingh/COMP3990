@@ -166,7 +166,14 @@ angular.module('starter', ['ionic', 'firebase'])
 
 }])
 
-.controller('MenuCtrl',['$scope',function($scope){
+.controller('MenuCtrl',['$scope', '$state',function($scope, $state){
+    $scope.changeStateHome=function(){
+        $state.go('app.home');
+    };
+    
+    $scope.changeStateSell=function(){
+        $state.go('app.seller-add-item');
+    }
     
 }])
 
@@ -183,7 +190,7 @@ angular.module('starter', ['ionic', 'firebase'])
        for(var user in data){
            if(user.charAt(0) != '$' && user != 'forEach'){
                for(var item in $scope.products[user]){
-                   console.log($scope.products[user][item].name);
+                   //console.log($scope.products[user][item].name);
                    $scope.items.push($scope.products[user][item]);
                }
            }
