@@ -259,8 +259,13 @@ angular.module('starter', ['ionic', 'firebase'])
 }])
 
 .controller('ViewItemCtrl', ['$scope', '$firebaseObject', function($scope, $firebaseObject){
+    
+       var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
+       console.log(localData['uid']);
+       //UID LOCATED AND STORED
+       
        var ref = new Firebase("https://comp3990.firebaseio.com");
-       //Obtain userid from localstorage.
+       //FOR TEST PURPOSES!
        var userId="5e224fc5-b956-43c3-84b5-f6eecfc9cffb ";
     
        $scope.products = $firebaseObject(ref.child('/products'));
