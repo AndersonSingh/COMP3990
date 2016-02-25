@@ -57,6 +57,16 @@ angular.module('starter', ['ionic', 'firebase'])
         }
     }
   })
+  
+   .state('app.view-my-items', {
+    url: '/view-my-items',
+    views: {
+        'menuContent': {
+        templateUrl: 'templates/view-my-items.html',
+        controller:'ViewItemCtrl'
+        }
+    }
+  })
 
   .state('app.home', {
     url: '/home',
@@ -174,6 +184,10 @@ angular.module('starter', ['ionic', 'firebase'])
     $scope.changeStateSell=function(){
         $state.go('app.seller-add-item');
     }
+    
+     $scope.changeStateViewMyItems=function(){
+        $state.go('app.view-my-items');
+    }
 
 }])
 
@@ -232,6 +246,7 @@ angular.module('starter', ['ionic', 'firebase'])
     $scope.products.$loaded(function(data){
        $scope.items=[];
        for(var user in data){
+           console.log(user);
            if(user.charAt(0) != '$' && user != 'forEach'){
                for(var item in $scope.products[user]){
                    //console.log($scope.products[user][item].name);
@@ -241,4 +256,24 @@ angular.module('starter', ['ionic', 'firebase'])
        }
     });
 
+}])
+
+.controller('ViewItemCtrl', ['$scope', '$firebaseObject', function($scope, $firebaseObject){
+       var ref = new Firebase("https://comp3990.firebaseio.com");
+       //Obtain userid from localstorage.
+       var userId="5e224fc5-b956-43c3-84b5-f6eecfc9cffb ";
+    
+       $scope.products = $firebaseObject(ref.child('/products'));
+       $scope.products.$loaded(function(data){
+       $scope.items=[];
+       for(var user in data){
+           if(user.charAt(0) != '$' && user != 'forEach'){
+                if(userId.localeCompare(String(user))==0){
+                    for(var item in $scope.products[user]){
+                        $scope.items.push($scope.products[user][item]);
+                    }
+                }
+           }
+       }
+    });
 }]);
