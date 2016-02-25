@@ -28,7 +28,7 @@ angular.module('starter', ['ionic', 'firebase'])
 .config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider){
 
   $stateProvider
-  
+
   .state('app', {
     url: '/app',
     abstract: true,
@@ -57,7 +57,7 @@ angular.module('starter', ['ionic', 'firebase'])
         }
     }
   })
-  
+
   .state('app.home', {
     url: '/home',
     views: {
@@ -67,7 +67,7 @@ angular.module('starter', ['ionic', 'firebase'])
         }
     }
   });
-  
+
   $urlRouterProvider.otherwise('sign-in');
 }])
 
@@ -170,20 +170,64 @@ angular.module('starter', ['ionic', 'firebase'])
     $scope.changeStateHome=function(){
         $state.go('app.home');
     };
-    
+
     $scope.changeStateSell=function(){
         $state.go('app.seller-add-item');
     }
-    
+
 }])
 
 .controller('SellerCtrl',['$scope',function($scope){
-    
+  // create a reference to firebase database products section
+  var firebaseRef = new Firebase("https://comp3990.firebaseio.com/products")
+
+  // stores attributes of an item entered via view
+  $scope.item = {};
+
+  // defult in case no picture is added
+  $scope.item.picture = "default.jpg";
+
+  // get user uid via a service
+
+  // this function will store a new item for the logged in user in the database
+  $scope.addNewItem = function(){
+      // currently hardcoded uid of seller
+      var uid = "77fc025d-e9b1-47f1-bb96-d5364f81fb1c";
+
+      // move down directly to the products area for this particular user
+      var userProductsRef = firebaseRef.child(uid);
+      console.log($scope.item);
+
+      // push new item to firebase
+      userProductsRef.push($scope.item);
+  };
+
+  // this function will allow the user to take a photo with the device's camera
+  $scope.snapPicture = function(){
+
+      // specifiying camera options
+      var options = {
+        // specify to use rear facing camera on device
+        cameraDirection : 0,
+
+      };
+
+      navigator.camera.getPicture(options).then(function(imageURI) {
+        // imageURI is the URL of the image
+        console.log("Photo taken successfully");
+        $scope.item.picture = imageURI;
+
+    }, function(error) {
+        // error occured
+        console.log("Error occured when trying to take photo");
+    });
+  };
+
 }])
 
 .controller('HomeCtrl',['$scope', '$firebaseObject', function($scope, $firebaseObject){
     var ref = new Firebase("https://comp3990.firebaseio.com");
-    
+
     $scope.products = $firebaseObject(ref.child('/products'));
     $scope.products.$loaded(function(data){
        $scope.items=[];
@@ -196,5 +240,5 @@ angular.module('starter', ['ionic', 'firebase'])
            }
        }
     });
-    
+
 }]);

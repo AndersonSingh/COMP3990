@@ -1,6 +1,42 @@
 <ion-view view-title="Sell Item">
   <ion-content>
-    <button class="button button-block button-positive">
+
+    <div class="list">
+  		<label class="item item-input">
+  			<input ng-model="item.name" type="text" placeholder="Item Name">
+  		</label>
+
+  		<label class="item item-input">
+  			<textarea ng-model="item.description" placeholder="Description"></textarea>
+  		</label>
+
+  		<label class="item item-input">
+  			<input ng-model="item.price" type="text" placeholder="Price">
+  		</label>
+
+  		<label class="item item-input item-select">
+  			<div class="input-label">
+  				Payment Method
+  			</div>
+  			<select ng-model="item.payment">
+  				<option value="Amazon">Amazon</option>
+  				<option value="PayPal" selected>PayPal</option>
+  				<option value="BitCoins">BitCoins</option>
+  				<option value="Non-Electronic">Non-Electronic</option>
+  			</select>
+  		</label>
+
+      <a class="item item-thumbnail-left" href="#">
+        <img ng-source="{{item.picture}}" alt="no picture">
+      </a>
+
+  	</div>
+
+    <button class="button button-block button-positive" ng-click="snapPicture();">
+        Upload Picture
+    </button>
+
+    <button class="button button-block button-positive" ng-click="addNewItem();">
         List Item For Sale
     </button>
   </ion-content>
