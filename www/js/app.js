@@ -36,6 +36,39 @@ angular.module('starter', ['ionic', 'firebase'])
     controller: 'MenuCtrl'
    })
 
+   .state('tabs',{
+     url:'/tabs',
+     abstract: true,
+     templateUrl: 'templates/tabs-template.html'
+   })
+
+   .state('tabs.tab-activity', {
+     url: '/activity',
+     views: {
+         'activity-tab': {
+         templateUrl: 'templates/tab-activity.html',
+         }
+     }
+   })
+
+   .state('tabs.tab-shop', {
+     url: '/shop',
+     views: {
+         'shop-tab': {
+         templateUrl: 'templates/tab-shop.html',
+         }
+     }
+   })
+
+   .state('tabs.tab-sell', {
+     url: '/sell',
+     views: {
+         'sell-tab': {
+         templateUrl: 'templates/tab-sell.html',
+         }
+     }
+   })
+
   .state('sign-in', {
     url: '/sign-in',
     templateUrl: 'templates/sign-in.html',
@@ -57,7 +90,7 @@ angular.module('starter', ['ionic', 'firebase'])
         }
     }
   })
-  
+
    .state('app.view-my-items', {
     url: '/view-my-items',
     views: {
@@ -184,7 +217,7 @@ angular.module('starter', ['ionic', 'firebase'])
     $scope.changeStateSell=function(){
         $state.go('app.seller-add-item');
     }
-    
+
      $scope.changeStateViewMyItems=function(){
         $state.go('app.view-my-items');
     }
@@ -259,15 +292,15 @@ angular.module('starter', ['ionic', 'firebase'])
 }])
 
 .controller('ViewItemCtrl', ['$scope', '$firebaseObject', function($scope, $firebaseObject){
-    
+
        var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
        console.log(localData['uid']);
        //UID LOCATED AND STORED
-       
+
        var ref = new Firebase("https://comp3990.firebaseio.com");
        //FOR TEST PURPOSES!
        var userId="5e224fc5-b956-43c3-84b5-f6eecfc9cffb ";
-    
+
        $scope.products = $firebaseObject(ref.child('/products'));
        $scope.products.$loaded(function(data){
        $scope.items=[];
@@ -281,4 +314,12 @@ angular.module('starter', ['ionic', 'firebase'])
            }
        }
     });
+}])
+
+.controller('SideMenuCtrl', ['$scope', '$ionicSideMenuDelegate', function($scope, $ionicSideMenuDelegate){
+
+  $scope.showMenu = function () {
+    $ionicSideMenuDelegate.toggleLeft();
+  };
+
 }]);
