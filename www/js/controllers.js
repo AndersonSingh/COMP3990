@@ -148,22 +148,9 @@ angular.module('starter.controllers',[])
 
 }])
 
-.controller('HomeCtrl',['$scope', '$firebaseObject', function($scope, $firebaseObject){
+.controller('HomeCtrl',['$scope', '$firebaseArray', function($scope, $firebaseArray){
     var ref = new Firebase("https://comp3990.firebaseio.com");
-
-    $scope.products = $firebaseObject(ref.child('/products'));
-    $scope.products.$loaded(function(data){
-       $scope.items=[];
-       for(var user in data){
-           console.log(user);
-           if(user.charAt(0) != '$' && user != 'forEach'){
-               for(var item in $scope.products[user]){
-                   //console.log($scope.products[user][item].name);
-                   $scope.items.push($scope.products[user][item]);
-               }
-           }
-       }
-    });
+    $scope.allProducts = $firebaseArray(ref.child('/products'));
 
 }])
 

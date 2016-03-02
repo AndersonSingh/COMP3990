@@ -8,12 +8,14 @@
             </label>
             </div>
         </div>
-        <div class="list" ng-repeat="item in items | filter:query">
-                <a class="item item-thumbnail-left" href="#">
-                    <img src="">
-                    <h2>{{item.name}}</h2>
-                    <p>${{item.price}}</p>
-                </a>
+        <div class="list" ng-repeat="userProduct in allProducts | filter:query">
+                    <div class="list" ng-repeat="product in userProduct">
+                        <a class="item item-thumbnail-left" href="#">
+                        <img src="">
+                            <h2> {{product.name}}</h2>
+                            <h2> {{product.price}} </h2> 
+                        </a>
+                    </div>
         </div> 
   </ion-content>
 </ion-view>
