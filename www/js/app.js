@@ -29,13 +29,6 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
 
   $stateProvider
 
-  .state('app', {
-    url: '/app',
-    abstract: true,
-    templateUrl: 'templates/menu-template.html',
-    controller: 'MenuCtrl'
-   })
-
    .state('tabs',{
      url:'/tabs',
      abstract: true,
@@ -91,14 +84,11 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
     }
   })
 
-   .state('app.view-my-items', {
+   .state('view-my-items', {
     url: '/view-my-items',
-    views: {
-        'menuContent': {
-        templateUrl: 'templates/view-my-items.html',
-        controller:'ViewItemCtrl'
-        }
-    }
+    templateUrl: 'templates/view-my-items.html',
+    controller:'ViewItemCtrl'
+
   })
 
   .state('app.home', {
@@ -112,6 +102,5 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
   });
 
   $urlRouterProvider.otherwise('sign-in');
-  
-});
 
+});

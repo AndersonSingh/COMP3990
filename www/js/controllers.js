@@ -88,7 +88,7 @@ angular.module('starter.controllers',[])
       else{
         console.log('INFO: SUCCESSFULLY LOGGED IN USER. DEBUG: ', userData);
         /* IMPORTANT : redirect to valid state. */
-        $state.go('app.home');
+        $state.go('tabs.tab-activity');
       }
     });
   };
@@ -96,7 +96,7 @@ angular.module('starter.controllers',[])
 }])
 
 .controller('MenuCtrl',['$scope', '$state',function($scope, $state){
-    
+
 
 }])
 
@@ -186,5 +186,3 @@ angular.module('starter.controllers',[])
   };
 
 }]);
-
-
