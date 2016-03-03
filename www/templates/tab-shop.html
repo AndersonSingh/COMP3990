@@ -1,5 +1,21 @@
 <ion-view view-title="Shop">
   <ion-content>
-    empty content
+    <div id="search-bar">
+            <div class="item item-input-inset">
+            <label class="item-input-wrapper" id="search-input">
+                <i class="icon ion-search placeholder-icon"></i>
+                <input type="text" placeholder="Search" ng-model="query">
+            </label>
+            </div>
+        </div>
+        <div class="list" ng-repeat="userProduct in allProducts | filter:query">
+                    <div class="list" ng-repeat="product in userProduct">
+                        <a class="item item-thumbnail-left" href="#">
+                        <img src="">
+                            <h2> {{product.name}}</h2>
+                            <h2> {{product.price}} </h2> 
+                        </a>
+                    </div>
+        </div> 
   <ion-content>
 </ion-view>

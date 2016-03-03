@@ -154,6 +154,12 @@ angular.module('starter.controllers',[])
 
 }])
 
+.controller('ShopCtrl',['$scope', '$firebaseArray', function($scope, $firebaseArray){
+    var ref = new Firebase("https://comp3990.firebaseio.com");
+    $scope.allProducts = $firebaseArray(ref.child('/products'));
+
+}])
+
 .controller('ViewItemCtrl', ['$scope', '$firebaseObject', function($scope, $firebaseObject){
 
        var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
