@@ -106,13 +106,9 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
   // stores attributes of an item entered via view
   $scope.item = {};
-  console.log("Test 1");
+
   // defult in case no picture is added
   $scope.item.picture = "N/A";
-
-  $scope.test = function(){
-    console.log("Test");
-  };
 
   // get user uid that is currently logged in
   var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
@@ -139,10 +135,15 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       console.log("device ready");
       // specifiying camera options
       var options = {
-        cameraDirection : Camera.Direction.BACK,
-        destinationType : Camera.DestinationType.DATA_URL,              // specify format of value returned is Base64 encoded string
-        sourceType : Camera.PictureSourceType.CAMERA,                   // specify take picture from camera
-        encodingType : Camera.EncodingType.JPEG,
+        //cameraDirection : Camera.Direction.BACK,
+        //destinationType : Camera.DestinationType.DATA_URL,              // specify format of value returned is Base64 encoded string
+        //sourceType : Camera.PictureSourceType.CAMERA,                   // specify take picture from camera
+        //encodingType : Camera.EncodingType.JPEG,
+        cameraDirection : 0,                                              // specify use rear camera
+        sourceType : 1,                                                   // specify take picture from camera
+        encodingType : 0,                                                 // specify
+        destinationType : 0,                                              // specify format of value returned is Base64 encoded string
+        cameraDirection : 0,
         quality : 60,
         targetWidth : 250,
         targetHeight : 250,
@@ -185,7 +186,11 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
        var ref = new Firebase("https://comp3990.firebaseio.com");
        //FOR TEST PURPOSES!
+<<<<<<< HEAD
        var userId="5e224fc5-b956-43c3-84b5-f6eecfc9cffb";
+=======
+       var userId = localData['uid'];
+>>>>>>> 50d3775621ce5cab763fda1618cc53a664ea413c
 
        $scope.products = $firebaseObject(ref.child('/products'));
        $scope.products.$loaded(function(data){
