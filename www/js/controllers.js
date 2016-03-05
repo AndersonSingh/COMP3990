@@ -100,15 +100,19 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
 }])
 
-.controller('SellerCtrl',['$scope',function($scope, $cordovaCamera){
+.controller('SellerCtrl',['$scope', '$cordovaCamera', function($scope, $cordovaCamera){
   // create a reference to firebase database products section
   var firebaseRef = new Firebase("https://comp3990.firebaseio.com/products")
 
   // stores attributes of an item entered via view
   $scope.item = {};
-
+  console.log("Test 1");
   // defult in case no picture is added
   $scope.item.picture = "N/A";
+
+  $scope.test = function(){
+    console.log("Test");
+  };
 
   // get user uid that is currently logged in
   var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
