@@ -26,6 +26,10 @@
   			</select>
   		</label>
 
+      <ion-checkbox ng-model="item.payment.paypal">PayPal</ion-checkbox>
+      <ion-checkbox ng-model="item.payment.cash">Cash</ion-checkbox>
+      <ion-checkbox ng-model="item.payment.bitcoin">BitCoin</ion-checkbox>
+
       <a class="item item-thumbnail-left" href="#">
         <img ng-source="{{item.picture}}" alt="no picture">
       </a>

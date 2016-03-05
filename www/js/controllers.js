@@ -1,4 +1,4 @@
-angular.module('starter.controllers',[])
+angular.module('starter.controllers',['ionic','ngCordova'])
 
 .controller('SignUpCtrl', ['$scope','$state', function($scope, $state){
 
@@ -100,7 +100,7 @@ angular.module('starter.controllers',[])
 
 }])
 
-.controller('SellerCtrl',['$scope',function($scope){
+.controller('SellerCtrl',['$scope',function($scope, $cordovaCamera){
   // create a reference to firebase database products section
   var firebaseRef = new Firebase("https://comp3990.firebaseio.com/products")
 
@@ -108,14 +108,14 @@ angular.module('starter.controllers',[])
   $scope.item = {};
 
   // defult in case no picture is added
-  $scope.item.picture = "default.jpg";
+  $scope.item.picture = "N/A";
 
-  // get user uid via a service
+  // get user uid that is currently logged in
+  var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
+  var uid = localData['uid'];
 
   // this function will store a new item for the logged in user in the database
   $scope.addNewItem = function(){
-      // currently hardcoded uid of seller
-      var uid = "77fc025d-e9b1-47f1-bb96-d5364f81fb1c";
 
       // move down directly to the products area for this particular user
       var userProductsRef = firebaseRef.child(uid);
@@ -128,22 +128,35 @@ angular.module('starter.controllers',[])
   // this function will allow the user to take a photo with the device's camera
   $scope.snapPicture = function(){
 
+    console.log("snap function running");
+
+    ionic.Platform.ready(function(){
+      // will execute when device is ready, or immediately if the device is already ready.
+      console.log("device ready");
       // specifiying camera options
       var options = {
-        // specify to use rear facing camera on device
-        cameraDirection : 0,
-
+        cameraDirection : Camera.Direction.BACK,
+        destinationType : Camera.DestinationType.DATA_URL,              // specify format of value returned is Base64 encoded string
+        sourceType : Camera.PictureSourceType.CAMERA,                   // specify take picture from camera
+        encodingType : Camera.EncodingType.JPEG,
+        quality : 60,
+        targetWidth : 250,
+        targetHeight : 250,
+        saveToPhotoAlbum : false
       };
 
-      navigator.camera.getPicture(options).then(function(imageURI) {
-        // imageURI is the URL of the image
+      $cordovaCamera.getPicture(options).then(function(imageData) {
+        // imageData is the Base64 encoded string of the image
         console.log("Photo taken successfully");
-        $scope.item.picture = imageURI;
+        $scope.item.picture = imageData;
 
     }, function(error) {
         // error occured
-        console.log("Error occured when trying to take photo");
+        console.log("Error: " + error);
     });
+
+    });
+
   };
 
 }])

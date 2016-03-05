@@ -1,5 +1,6 @@
 <ion-view view-title="Sell">
   <ion-content>
+    <!--
     <div class="list">
   		<label class="item item-input">
   			<input ng-model="item.name" type="text" placeholder="Item Name">
@@ -13,23 +14,38 @@
   			<input ng-model="item.price" type="text" placeholder="Price">
   		</label>
 
-  		<label class="item item-input item-select">
+      <label class="item item-input item-select">
   			<div class="input-label">
-  				Payment Method
+  				Category
   			</div>
-  			<select ng-model="item.payment">
-  				<option value="Amazon">Amazon</option>
-  				<option value="PayPal" selected>PayPal</option>
-  				<option value="BitCoins">BitCoins</option>
-  				<option value="Non-Electronic">Non-Electronic</option>
+  			<select ng-model="item.category">
+  				<option value="Textbook">Textbooks</option>
+  				<option value="Electronics">Electronics</option>
+  				<option value="Clothes">Clothes</option>
+  				<option value="Household">Household Items</option>
+          <option value="Other">Other</option>
   			</select>
   		</label>
 
+      <label class="item item-input">
+        <input type="text" placeholder="Enter your Category here" ng-model="item.category" ng-show="item.category === 'Other'" ng-hide="item.category === 'Other'">
+      </label>
+
+      <div class="input-label">
+        Payment Methods Accepted
+      </div>
+
+      <ion-checkbox ng-model="item.payments.paypal" ng-true-value="'true'" ng-false-value="'false'">PayPal</ion-checkbox>
+      <ion-checkbox ng-model="item.payments.cash" ng-true-value="'true'" ng-false-value="'false'">Cash</ion-checkbox>
+      <ion-checkbox ng-model="item.payments.bitcoin" ng-true-value="'true'" ng-false-value="'false'">BitCoin</ion-checkbox>
+
       <a class="item item-thumbnail-left" href="#">
-        <img ng-source="{{item.picture}}" alt="no picture">
+        <img ng-source="data:image/jpeg;base64,{{item.picture}}" alt="no picture">
       </a>
 
   	</div>
+
+  -->
 
     <button class="button button-block button-positive" ng-click="snapPicture();">
         Upload Picture
@@ -38,5 +54,6 @@
     <button class="button button-block button-positive" ng-click="addNewItem();">
         List Item For Sale
     </button>
+
   <ion-content>
 </ion-view>

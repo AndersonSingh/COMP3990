@@ -76,16 +76,6 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
     controller: 'SignUpCtrl'
   })
 
-  .state('app.seller-add-item', {
-    url: '/seller-add-item',
-    views: {
-        'menuContent': {
-        templateUrl: 'templates/seller-add-item.html',
-        controller:'SellerCtrl'
-        }
-    }
-  })
-
    .state('view-my-items', {
     url: '/view-my-items',
     templateUrl: 'templates/view-my-items.html',
