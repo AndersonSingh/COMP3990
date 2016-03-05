@@ -194,7 +194,9 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
        var ref = new Firebase("https://comp3990.firebaseio.com");
        //FOR TEST PURPOSES!
+       
        var userId = localData['uid'];
+
 
        $scope.products = $firebaseObject(ref.child('/products'));
        $scope.products.$loaded(function(data){
