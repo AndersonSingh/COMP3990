@@ -89,7 +89,7 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
   })
   
   .state('item-details', {
-    url: '/item-details',
+    url: '/item-details?userId&productId',
     templateUrl: 'templates/item-details.html',
     controller:'ItemDetailCtrl'
 

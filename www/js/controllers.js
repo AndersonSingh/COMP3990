@@ -202,10 +202,13 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     });
 }])
 
-.controller('ItemDetailCtrl', ['$scope', function($scope){
-    
-    
-
+.controller('ItemDetailCtrl', ['$scope', '$stateParams' ,'$firebaseArray', function($scope, $stateParams,  $firebaseArray){
+    var ref = new Firebase("https://comp3990.firebaseio.com");
+    $scope.products = $firebaseArray(ref.child('/products'));
+    $scope.products.$loaded(function(data){
+        $scope.itemDetails = data[$stateParams.userId][$stateParams.productId];
+        console.log($scope.itemDetails);
+    });
 }])
 
 .controller('SideMenuCtrl', ['$scope', '$ionicSideMenuDelegate', function($scope, $ionicSideMenuDelegate){
