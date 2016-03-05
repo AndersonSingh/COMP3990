@@ -139,10 +139,10 @@ angular.module('starter.controllers',['ionic','ngCordova'])
         //destinationType : Camera.DestinationType.DATA_URL,              // specify format of value returned is Base64 encoded string
         //sourceType : Camera.PictureSourceType.CAMERA,                   // specify take picture from camera
         //encodingType : Camera.EncodingType.JPEG,
-        cameraDirection : 0,
-        sourceType : 1,
-        encodingType : 0,
-        destinationType : 0,
+        cameraDirection : 0,                                              // specify use rear camera
+        sourceType : 1,                                                   // specify take picture from camera
+        encodingType : 0,                                                 // specify
+        destinationType : 0,                                              // specify format of value returned is Base64 encoded string
         cameraDirection : 0,
         quality : 60,
         targetWidth : 250,
@@ -186,7 +186,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
        var ref = new Firebase("https://comp3990.firebaseio.com");
        //FOR TEST PURPOSES!
-       var userId="5e224fc5-b956-43c3-84b5-f6eecfc9cffb ";
+       var userId = localData['uid'];
 
        $scope.products = $firebaseObject(ref.child('/products'));
        $scope.products.$loaded(function(data){
@@ -204,8 +204,8 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 }])
 
 .controller('ItemDetailCtrl', ['$scope', function($scope){
-    
-    
+
+
 
 }])
 
