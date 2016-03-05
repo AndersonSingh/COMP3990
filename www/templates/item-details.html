@@ -1,0 +1,49 @@
+<ion-view view-title="Item Details">
+    <ion-content>
+        
+        <div class="list card">
+            <div class="list">
+                <label class="item item-input item-stacked-label">
+                    <span class="input-label">Item Name</span>
+                    <input type="text" placeholder="Turbo Charger">
+                </label>
+                <label class="item item-input item-stacked-label">
+                    <span class="input-label">Category</span>
+                    <input type="text" placeholder="Car Parts">
+                </label>
+                <label class="item item-input item-stacked-label">
+                    <span class="input-label">Description</span>
+                    <input type="text" placeholder="This makes  your car really fast!">
+                </label>
+                
+                <label class="item item-input item-stacked-label">
+                    <span class="input-label">Price</span>
+                    <input type="text" placeholder="$59.99">
+                </label>
+                
+                <div class="item item-divider">
+                    Image
+                </div>
+                <img class="full-image" src="http://www.365carclub.com/wp-content/uploads/2015/09/turbochargers.jpg">
+                
+                <div class="item item-divider">
+                    Buying Options
+                </div>
+                <ion-list>
+
+                    <ion-checkbox ng-disabled="true" ng-checked="true" ng-model="filter.blue">Paypal</ion-checkbox>
+                    <ion-checkbox ng-disabled="true" ng-model="filter.yellow">Cash</ion-checkbox>
+
+                </ion-list>
+                
+                
+            </div>
+        </div>
+        
+        
+    </ion-content>
+</ion-view>
+
+<div class="bar bar-footer bar-balanced">
+    <div class="title">Buy Item</div>
+</div>

@@ -203,6 +203,12 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     });
 }])
 
+.controller('ItemDetailCtrl', ['$scope', function($scope){
+    
+    
+
+}])
+
 .controller('SideMenuCtrl', ['$scope', '$ionicSideMenuDelegate', function($scope, $ionicSideMenuDelegate){
 
   $scope.showMenu = function () {
