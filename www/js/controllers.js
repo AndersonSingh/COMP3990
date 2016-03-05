@@ -106,13 +106,9 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
   // stores attributes of an item entered via view
   $scope.item = {};
-  console.log("Test 1");
+
   // defult in case no picture is added
   $scope.item.picture = "N/A";
-
-  $scope.test = function(){
-    console.log("Test");
-  };
 
   // get user uid that is currently logged in
   var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
@@ -139,10 +135,15 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       console.log("device ready");
       // specifiying camera options
       var options = {
-        cameraDirection : Camera.Direction.BACK,
-        destinationType : Camera.DestinationType.DATA_URL,              // specify format of value returned is Base64 encoded string
-        sourceType : Camera.PictureSourceType.CAMERA,                   // specify take picture from camera
-        encodingType : Camera.EncodingType.JPEG,
+        //cameraDirection : Camera.Direction.BACK,
+        //destinationType : Camera.DestinationType.DATA_URL,              // specify format of value returned is Base64 encoded string
+        //sourceType : Camera.PictureSourceType.CAMERA,                   // specify take picture from camera
+        //encodingType : Camera.EncodingType.JPEG,
+        cameraDirection : 0,
+        sourceType : 1,
+        encodingType : 0,
+        destinationType : 0,
+        cameraDirection : 0,
         quality : 60,
         targetWidth : 250,
         targetHeight : 250,
