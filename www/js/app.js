@@ -82,10 +82,23 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
     controller: 'SignUpCtrl'
   })
 
+
    .state('seller-view-items-sale', {
     url: '/seller-view-items-sale',
     templateUrl: 'templates/seller-view-items-sale.html',
     controller:'ViewItemCtrl'
+
+   .state('view-my-items', {
+    url: '/view-my-items',
+    templateUrl: 'templates/item-details.html',
+    controller:'ViewItemCtrl'
+  })
+
+  .state('item-details', {
+    url: '/item-details',
+    templateUrl: 'templates/item-details.html',
+    controller:'ItemDetailCtrl'
+
   })
 
   .state('menu-selling', {
