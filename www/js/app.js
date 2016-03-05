@@ -64,6 +64,12 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
      }
    })
 
+   .state('seller-add-item', {
+     url: '/seller-add-item',
+     templateUrl: 'templates/seller-add-item.html',
+     controller: 'SellerCtrl'
+   })
+
   .state('sign-in', {
     url: '/sign-in',
     templateUrl: 'templates/sign-in.html',
@@ -81,6 +87,11 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
     templateUrl: 'templates/view-my-items.html',
     controller:'ViewItemCtrl'
 
+  })
+
+  .state('menu-selling', {
+    url: '/menu-selling',
+    templateUrl: 'templates/menu-selling.html'
   })
 
   .state('app.home', {
