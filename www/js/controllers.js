@@ -185,7 +185,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
        var ref = new Firebase("https://comp3990.firebaseio.com");
        //FOR TEST PURPOSES!
-       var userId="5e224fc5-b956-43c3-84b5-f6eecfc9cffb ";
+       var userId="5e224fc5-b956-43c3-84b5-f6eecfc9cffb";
 
        $scope.products = $firebaseObject(ref.child('/products'));
        $scope.products.$loaded(function(data){
@@ -203,8 +203,8 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 }])
 
 .controller('ItemDetailCtrl', ['$scope', function($scope){
-    
-    
+
+
 
 }])
 
