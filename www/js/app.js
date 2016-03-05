@@ -87,11 +87,6 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
     url: '/seller-view-items-sale',
     templateUrl: 'templates/seller-view-items-sale.html',
     controller:'ViewItemCtrl'
-
-   .state('view-my-items', {
-    url: '/view-my-items',
-    templateUrl: 'templates/item-details.html',
-    controller:'ViewItemCtrl'
   })
 
   .state('item-details', {
@@ -104,16 +99,6 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
   .state('menu-selling', {
     url: '/menu-selling',
     templateUrl: 'templates/menu-selling.html'
-  })
-
-  .state('app.home', {
-    url: '/home',
-    views: {
-        'menuContent': {
-        templateUrl: 'templates/home.html',
-        controller: 'HomeCtrl'
-        }
-    }
   });
 
   $urlRouterProvider.otherwise('sign-in');
