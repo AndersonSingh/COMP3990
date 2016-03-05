@@ -78,8 +78,14 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
 
    .state('view-my-items', {
     url: '/view-my-items',
-    templateUrl: 'templates/view-my-items.html',
+    templateUrl: 'templates/item-details.html',
     controller:'ViewItemCtrl'
+  })
+  
+  .state('item-details', {
+    url: '/item-details',
+    templateUrl: 'templates/item-details.html',
+    controller:'ItemDetailCtrl'
 
   })
 
