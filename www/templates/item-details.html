@@ -24,16 +24,21 @@
                 <div class="item item-divider">
                     Image
                 </div>
-                <img class="full-image" src="http://www.365carclub.com/wp-content/uploads/2015/09/turbochargers.jpg">
+                
+                <a class="full-image" href="#">
+                    <img data-ng-src="data:image/jpeg;base64,{{itemDetails.picture}}" alt="no picture">
+                </a>
                 
                 <div class="item item-divider">
                     Buying Options
                 </div>
                 <ion-list>
-
-                    <ion-checkbox ng-disabled="true" ng-checked="true" ng-model="filter.blue">Paypal</ion-checkbox>
-                    <ion-checkbox ng-disabled="true" ng-model="filter.yellow">Cash</ion-checkbox>
-
+                    <ion-checkbox ng-repeat="item in paymentList"
+                      ng-model="item.checked" 
+                      ng-checked="item.checked"
+                      ng-disabled=true>
+                     {{ item.text }}
+                     </ion-checkbox>
                 </ion-list>
                 
                 

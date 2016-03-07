@@ -219,7 +219,12 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     $scope.products = $firebaseArray(ref.child('/products'));
     $scope.products.$loaded(function(data){
         $scope.itemDetails = data[$stateParams.userId][$stateParams.productId];
-        console.log($scope.itemDetails);
+        console.log($scope.itemDetails.payments.cash);
+        $scope.paymentList = [
+            { text: "Paypal", checked: Boolean($scope.itemDetails.payments.paypal) },
+            { text: "Cash", checked: Boolean($scope.itemDetails.payments.cash) },
+            { text: "Bitcoin", checked: Boolean($scope.itemDetails.payments.bitcoin) }
+        ];
     });
 }])
 
