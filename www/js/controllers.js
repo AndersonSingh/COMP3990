@@ -100,7 +100,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
 }])
 
-.controller('SellerCtrl',['$scope', '$cordovaCamera', function($scope, $cordovaCamera){
+.controller('SellerCtrl',['$scope', '$state', '$cordovaCamera', function($scope, $state, $cordovaCamera){
   // create a reference to firebase database products section
   var firebaseRef = new Firebase("https://comp3990.firebaseio.com/products")
 
@@ -109,6 +109,12 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
   // defult in case no picture is added
   $scope.item.picture = "N/A";
+
+  // initializing all payment methods to false
+  $scope.item.payments = {};
+  $scope.item.payments.bitcoin = "false";
+  $scope.item.payments.cash = "false";
+  $scope.item.payments.paypal = "false";
 
   // get user uid that is currently logged in
   var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
@@ -123,6 +129,8 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
       // push new item to firebase
       userProductsRef.push($scope.item);
+
+      $state.go('menu-selling');
   };
 
   // this function will allow the user to take a photo with the device's camera
@@ -144,7 +152,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
         encodingType : 0,                                                 // specify
         destinationType : 0,                                              // specify format of value returned is Base64 encoded string
         cameraDirection : 0,
-        quality : 60,
+        quality : 75,
         targetWidth : 250,
         targetHeight : 250,
         saveToPhotoAlbum : false
@@ -205,10 +213,19 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     });
 }])
 
-.controller('ItemDetailCtrl', ['$scope', function($scope){
 
-
-
+.controller('ItemDetailCtrl', ['$scope', '$stateParams' ,'$firebaseArray', function($scope, $stateParams,  $firebaseArray){
+    var ref = new Firebase("https://comp3990.firebaseio.com");
+    $scope.products = $firebaseArray(ref.child('/products'));
+    $scope.products.$loaded(function(data){
+        $scope.itemDetails = data[$stateParams.userId][$stateParams.productId];
+        console.log($scope.itemDetails.payments.cash);
+        $scope.paymentList = [
+            { text: "Paypal", checked: Boolean($scope.itemDetails.payments.paypal) },
+            { text: "Cash", checked: Boolean($scope.itemDetails.payments.cash) },
+            { text: "Bitcoin", checked: Boolean($scope.itemDetails.payments.bitcoin) }
+        ];
+    });
 }])
 
 .controller('SideMenuCtrl', ['$scope', '$ionicSideMenuDelegate', function($scope, $ionicSideMenuDelegate){

@@ -31,13 +31,11 @@
         </select>
       </label>
 
-      <label class="item item-input">
-        <input type="text" placeholder="Enter your Category here" ng-model="item.category" ng-show="item.category === 'Other'" ng-hide="item.category === 'Other'">
-      </label>
-
       <div class="input-label">
         Payment Methods Accepted
       </div>
+
+      {{item.payments.cash}}
 
       <ion-checkbox ng-model="item.payments.paypal" ng-true-value="'true'" ng-false-value="'false'">PayPal</ion-checkbox>
       <ion-checkbox ng-model="item.payments.cash" ng-true-value="'true'" ng-false-value="'false'">Cash</ion-checkbox>
