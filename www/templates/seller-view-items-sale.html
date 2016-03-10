@@ -11,7 +11,7 @@
 
     <div class="list">
       <a class="item item-thumbnail-left" ng-repeat="item in items | filter:query">
-        <img src="http://placehold.it/150x150">
+        <img data-ng-src="data:image/jpeg;base64,{{item.picture}}">
         <h2>{{item.name}}</h2>
         <p>{{item.price | currency}}</p>
         <p>This is a description</p>
