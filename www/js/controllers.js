@@ -194,7 +194,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
        var ref = new Firebase("https://comp3990.firebaseio.com");
        //FOR TEST PURPOSES!
-       
+
        var userId = localData['uid'];
 
 
@@ -233,5 +233,67 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   $scope.showMenu = function () {
     $ionicSideMenuDelegate.toggleLeft();
   };
+
+}])
+
+
+.controller('NewItemInterestedCtrl', ['$scope', '$stateParams', function($scope, $stateParams){
+
+  $scope.transaction = {};
+  $scope.message = {};
+
+  /* firebase reference*/
+  var ref = new Firebase("https://comp3990.firebaseio.com");
+
+
+  /* get the userid of the person selling the product, as well as the product id. */
+
+  $scope.sellerId = $stateParams.sellerId;
+  $scope.productId = $stateParams.productId;
+
+  /* access localStorage to get the loggedin user's userid. */
+  var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
+  $scope.buyerId = localData['uid'];
+
+  /* place the uid in the message object to know who sent the message. */
+  $scope.message.sender = $scope.buyerId;
+
+  /* this function runs when user clicks on the interested button */
+  $scope.interestedButton = function(){
+
+    /* create a product interest on firebase. */
+    var transactionRef = ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/' + $scope.buyerId);
+
+    /* push data to firebase. */
+    transactionRef.child('/messages').push($scope.message);
+  };
+
+}])
+
+.controller('BuyerInterestedItemsCtrl', ['$scope', '$firebaseObject', function($scope, $firebaseObject){
+
+  /* firebase reference*/
+  var ref = new Firebase("https://comp3990.firebaseio.com");
+
+  /* pull out buyer id from localStorage. */
+  var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
+  $scope.buyerId = localData['uid'];
+
+  /*  we need to pull a list of all interests and use ng repeats to pick out correct items. */
+  $scope.interests = $firebaseObject(ref.child('/interests'));
+
+  /* we also need products list. */
+  $scope.products = $firebaseObject(ref.child('/products'));
+
+  /* we also need a users list. */
+  $scope.appUsers = $firebaseObject(ref.child('/users'));
+}])
+
+.controller('MessengerCtrl', ['$scope', '$stateParams', function($scope, $stateParams){
+
+  /* get the data sent over by stateParams. */
+  $scope.sellerId = $stateParams.sellerId;
+  $scope.buyerId = $stateParams.buyerId;
+  $scope.productId = $stateParams.productId;
 
 }]);

@@ -96,9 +96,35 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
 
   })
 
+  .state('new-item-interested', {
+    url: '/new-item-interested?sellerId&productId',
+    templateUrl: 'templates/new-item-interested.html',
+    controller: 'NewItemInterestedCtrl'
+
+  })
+
+  .state('items-interested', {
+    url: '/items-interested',
+    templateUrl: 'templates/items-interested.html',
+    controller: 'BuyerInterestedItemsCtrl'
+
+  })
+
+  .state('messenger', {
+    url: '/messenger?sellerId&buyerId&productId',
+    templateUrl: 'templates/messenger.html',
+    controller: 'MessengerCtrl'
+
+  })
+
   .state('menu-selling', {
     url: '/menu-selling',
     templateUrl: 'templates/menu-selling.html'
+  })
+
+  .state('menu-buying', {
+    url: '/menu-buying',
+    templateUrl: 'templates/menu-buying.html'
   });
 
   $urlRouterProvider.otherwise('sign-in');
