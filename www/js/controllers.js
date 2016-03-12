@@ -181,8 +181,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 }])
 
 .controller('ShopCtrl',['$scope', '$firebaseArray', function($scope, $firebaseArray){
-    var ref = new Firebase("https://comp3990.firebaseio.com");
-    $scope.allProducts = $firebaseArray(ref.child('/products'));
+    
 
 }])
 
@@ -228,8 +227,13 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     });
 }])
 
-.controller('SideMenuCtrl', ['$scope', '$ionicSideMenuDelegate', function($scope, $ionicSideMenuDelegate){
+.controller('CategoryListCtrl',['$scope','$firebaseArray', '$stateParams', function($scope,$firebaseArray, $stateParams){
+     $scope.category=$stateParams.category;
+     var ref = new Firebase("https://comp3990.firebaseio.com");
+     $scope.allProducts = $firebaseArray(ref.child('/products'));
+}])
 
+.controller('SideMenuCtrl', ['$scope', '$ionicSideMenuDelegate', function($scope, $ionicSideMenuDelegate){
   $scope.showMenu = function () {
     $ionicSideMenuDelegate.toggleLeft();
   };

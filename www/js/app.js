@@ -93,7 +93,12 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
     url: '/item-details?userId&productId',
     templateUrl: 'templates/item-details.html',
     controller:'ItemDetailCtrl'
-
+  })
+  
+  .state('list-items-category', {
+    url: '/list-items-category?category',
+    templateUrl: 'templates/list-items-category.html',
+    controller:'CategoryListCtrl'
   })
 
   .state('new-item-interested', {
