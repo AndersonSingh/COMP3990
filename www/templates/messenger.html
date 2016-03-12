@@ -1,5 +1,13 @@
 <ion-view view-title="Messenger">
   <ion-content>
-    {{buyerId | json}}
+    <div class="triangle-obtuse" ng-class="{left : messageClass(message.sender), right : (!messageClass(message.sender))}" ng-repeat="message in messages">
+      {{message.text}}
+    </div>
   </ion-content>
+  <div class="bar bar-footer bar-stable">
+    <input class="col col-75 ng-valid-minlength" type="text" ng-model="chatText" placeholder="Type a message">
+    <button class="col button button-positive" ng-click="sendMessage(chatText);">
+      Send
+    </button>
+  </div>
 </ion-view>

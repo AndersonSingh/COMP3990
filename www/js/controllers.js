@@ -295,11 +295,44 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   $scope.appUsers = $firebaseObject(ref.child('/users'));
 }])
 
-.controller('MessengerCtrl', ['$scope', '$stateParams', function($scope, $stateParams){
+.controller('MessengerCtrl', ['$scope', '$stateParams', '$firebaseObject', function($scope, $stateParams, $firebaseObject){
+  /* firebase reference*/
+  var ref = new Firebase("https://comp3990.firebaseio.com");
 
   /* get the data sent over by stateParams. */
   $scope.sellerId = $stateParams.sellerId;
   $scope.buyerId = $stateParams.buyerId;
   $scope.productId = $stateParams.productId;
+  $scope.perspective = $stateParams.perspective;
+  $scope.me = null;
+  $scope.chatText = null;
+
+  /* pull the interests list. */
+  $scope.messages = $firebaseObject(ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/' + $scope.buyerId + '/messages'));
+
+  /* this function decides which css class to apply to each message. */
+  $scope.messageClass = function(sender){
+    if($scope.perspective === 'buyer' && sender === $scope.buyerId){
+      $scope.me = $scope.buyerId;
+      return true;
+    }
+    else if($scope.perspective === 'seller' && sender === $scope.sellerId){
+      $scope.me = $scope.sellerId;
+      return true;
+    }
+    else{
+      return false;
+    }
+  };
+
+  $scope.sendMessage = function(message){
+    ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/' + $scope.buyerId + '/messages').push({
+      sender : $scope.me,
+      text : message
+    });
+
+    /* clear chatText */
+    $scope.chatText = "";
+  }
 
 }]);
