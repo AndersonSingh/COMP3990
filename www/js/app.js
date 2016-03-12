@@ -111,7 +111,7 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
   })
 
   .state('messenger', {
-    url: '/messenger?sellerId&buyerId&productId',
+    url: '/messenger?sellerId&buyerId&productId&perspective',
     templateUrl: 'templates/messenger.html',
     controller: 'MessengerCtrl'
 
