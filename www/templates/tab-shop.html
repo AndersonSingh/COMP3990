@@ -1,22 +1,29 @@
-<ion-view view-title="Shop">
-  <ion-content>
-    <div id="search-bar">
-            <div class="item item-input-inset">
-            <label class="item-input-wrapper" id="search-input">
-                <i class="icon ion-search placeholder-icon"></i>
-                <input type="text" placeholder="Search" ng-model="query">
-            </label>
-            </div>
-        </div>
-
-        <div ng-repeat="(key,value) in allProducts | filter:query">
-                    <div class="ion-list" ng-repeat="(key2, value2) in value">
-                        <a class="item item-thumbnail-left" href="#" ui-sref="item-details({userId:key,productId:key2})">
-                        <img data-ng-src="data:image/jpeg;base64,{{value2.picture}}" alt="no picture">
-                            <h2> {{value2.name}}</h2>
-                            <h2> Price: {{value2.price | currency}} </h2>
-                        </a>
-                    </div>
-        </div>
-  <ion-content>
+<ion-view view-title="Select Category">
+    <ion-content> 
+     <a class="item item-thumbnail-left" href="#" ui-sref="list-items-category({category: 'Electronics'})">
+        <img src="cover.jpg">
+        <h2>Electronics</h2>
+        <p>Tap to View All Electronic Items</p>
+    </a>
+    <a class="item item-thumbnail-left" href="#" ui-sref="list-items-category({category: 'Clothes'})">
+        <img src="cover.jpg">
+        <h2>Clothes</h2>
+        <p>Tap to View All Clothing Items</p>
+    </a>
+    <a class="item item-thumbnail-left" href="#" ui-sref="list-items-category({category: 'Textbook'})">
+        <img src="cover.jpg">
+        <h2>TextBooks</h2>
+        <p>Tap to View All TextBooks</p>
+    </a>
+    <a class="item item-thumbnail-left" href="#" ui-sref="list-items-category({category: 'Household'})">
+        <img src="cover.jpg">
+        <h2>Household</h2>
+        <p>Tap to View All HouseHold Items</p>
+    </a>
+    <a class="item item-thumbnail-left" href="#" ui-sref="list-items-category({category: 'Other'})">
+        <img src="cover.jpg">
+        <h2>Others</h2>
+        <p>Tap to View All Other Items</p>
+    </a>
+    </ion-content>
 </ion-view>
