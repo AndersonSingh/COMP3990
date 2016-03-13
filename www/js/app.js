@@ -3,7 +3,7 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.services'])
+angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.services','angular-toArrayFilter'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -93,7 +93,12 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
     url: '/item-details?userId&productId',
     templateUrl: 'templates/item-details.html',
     controller:'ItemDetailCtrl'
+  })
 
+  .state('list-items-category', {
+    url: '/list-items-category?category',
+    templateUrl: 'templates/list-items-category.html',
+    controller:'CategoryListCtrl'
   })
 
   .state('new-item-interested', {
@@ -110,8 +115,14 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
 
   })
 
+  .state('buyer-item-interested-overview', {
+    url: '/buyer-item-interested-overview?sellerId&buyerId&productId&perspective',
+    templateUrl: 'templates/buyer-item-interested-overview.html',
+    controller: 'BuyerInterestedItemOverviewCtrl'
+  })
+
   .state('messenger', {
-    url: '/messenger?sellerId&buyerId&productId',
+    url: '/messenger?sellerId&buyerId&productId&perspective',
     templateUrl: 'templates/messenger.html',
     controller: 'MessengerCtrl'
 

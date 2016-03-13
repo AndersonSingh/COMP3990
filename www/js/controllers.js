@@ -181,8 +181,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 }])
 
 .controller('ShopCtrl',['$scope', '$firebaseArray', function($scope, $firebaseArray){
-    var ref = new Firebase("https://comp3990.firebaseio.com");
-    $scope.allProducts = $firebaseArray(ref.child('/products'));
+
 
 }])
 
@@ -214,12 +213,14 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 }])
 
 
-.controller('ItemDetailCtrl', ['$scope', '$stateParams' ,'$firebaseArray', function($scope, $stateParams,  $firebaseArray){
+.controller('ItemDetailCtrl', ['$scope', '$stateParams' ,'$firebaseArray', function($scope, $stateParams, $firebaseArray){
     var ref = new Firebase("https://comp3990.firebaseio.com");
     $scope.products = $firebaseArray(ref.child('/products'));
     $scope.products.$loaded(function(data){
+       // console.log($stateParams.userId);
+        //console.log($stateParams.productId);
         $scope.itemDetails = data[$stateParams.userId][$stateParams.productId];
-        console.log($scope.itemDetails.payments.cash);
+        //console.log($scope.itemDetails.name);
         $scope.paymentList = [
             { text: "Paypal", checked: Boolean($scope.itemDetails.payments.paypal) },
             { text: "Cash", checked: Boolean($scope.itemDetails.payments.cash) },
@@ -228,8 +229,13 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     });
 }])
 
-.controller('SideMenuCtrl', ['$scope', '$ionicSideMenuDelegate', function($scope, $ionicSideMenuDelegate){
+.controller('CategoryListCtrl',['$scope','$firebaseArray', '$stateParams', function($scope, $firebaseObject, $stateParams){
+     $scope.category=$stateParams.category;
+     var ref = new Firebase("https://comp3990.firebaseio.com");
+     $scope.allProducts = $firebaseObject(ref.child('/products'));
+}])
 
+.controller('SideMenuCtrl', ['$scope', '$ionicSideMenuDelegate', function($scope, $ionicSideMenuDelegate){
   $scope.showMenu = function () {
     $ionicSideMenuDelegate.toggleLeft();
   };
@@ -289,12 +295,55 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   $scope.appUsers = $firebaseObject(ref.child('/users'));
 }])
 
-.controller('MessengerCtrl', ['$scope', '$stateParams', function($scope, $stateParams){
+.controller('BuyerInterestedItemOverviewCtrl', ['$scope', '$stateParams', function($scope, $stateParams){
+
+  /* get the information passed over from the previous page. */
+  $scope.sellerId = $stateParams.sellerId;
+  $scope.buyerId = $stateParams.buyerId;
+  $scope.productId = $stateParams.productId;
+  $scope.perspective = $stateParams.perspective;
+
+}])
+
+.controller('MessengerCtrl', ['$scope', '$stateParams', '$firebaseObject', function($scope, $stateParams, $firebaseObject){
+  /* firebase reference*/
+  var ref = new Firebase("https://comp3990.firebaseio.com");
 
   /* get the data sent over by stateParams. */
   $scope.sellerId = $stateParams.sellerId;
   $scope.buyerId = $stateParams.buyerId;
   $scope.productId = $stateParams.productId;
+  $scope.perspective = $stateParams.perspective;
+  $scope.me = null;
+  $scope.chatText = null;
+
+  /* pull the interests list. */
+  $scope.messages = $firebaseObject(ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/' + $scope.buyerId + '/messages'));
+
+  /* this function decides which css class to apply to each message. */
+  $scope.messageClass = function(sender){
+    if($scope.perspective === 'buyer' && sender === $scope.buyerId){
+      $scope.me = $scope.buyerId;
+      return true;
+    }
+    else if($scope.perspective === 'seller' && sender === $scope.sellerId){
+      $scope.me = $scope.sellerId;
+      return true;
+    }
+    else{
+      return false;
+    }
+  };
+
+  $scope.sendMessage = function(message){
+    ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/' + $scope.buyerId + '/messages').push({
+      sender : $scope.me,
+      text : message
+    });
+
+    /* clear chatText */
+    $scope.chatText = "";
+  }
 
 }])
 

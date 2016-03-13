@@ -1,0 +1,22 @@
+<ion-view view-title="{{category}}">
+  <ion-content>
+    <div id="search-bar">
+            <div class="item item-input-inset">
+            <label class="item-input-wrapper" id="search-input">
+                <i class="icon ion-search placeholder-icon"></i>
+                <input type="text" placeholder="Search" ng-model="query">
+            </label>
+            </div>
+        </div>
+
+        <div ng-repeat="(key,value) in allProducts">
+            <div class="ion-list" ng-repeat="item in value | toArray | filter:{'category':category} | filter:{'name':query} ">
+                <a class="item item-thumbnail-left" href="#" ui-sref="item-details({userId:key ,productId:item.$key})">
+                <img data-ng-src="data:image/jpeg;base64,{{item.picture}}" alt="no picture">
+                    <h2> {{item.name}}</h2>
+                    <h2> Price: {{item.price | currency}} </h2>
+                </a>
+            </div>
+        </div>
+  <ion-content>
+</ion-view>
