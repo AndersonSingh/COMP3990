@@ -1,4 +1,4 @@
-<ion-view view-title="Shop">
+<ion-view view-title="{{category}}">
   <ion-content>
     <div id="search-bar">
             <div class="item item-input-inset">
@@ -10,13 +10,13 @@
         </div>
 
         <div ng-repeat="(key,value) in allProducts">
-                    <div class="ion-list" ng-repeat="(key2, value2) in value | toArray:false | filter:{'category':category} ">
-                        <a class="item item-thumbnail-left" href="#" ui-sref="item-details({userId:key,productId:key2})">
-                        <img data-ng-src="data:image/jpeg;base64,{{value2.picture}}" alt="no picture">
-                            <h2> {{value2.name}}</h2>
-                            <h2> Price: {{value2.price | currency}} </h2>
-                        </a>
-                    </div>
+            <div class="ion-list" ng-repeat="item in value | toArray | filter:{'category':category} ">
+                <a class="item item-thumbnail-left" href="#" ui-sref="item-details({userId:key ,productId:item.$key})">
+                <img data-ng-src="data:image/jpeg;base64,{{item.picture}}" alt="no picture">
+                    <h2> {{item.name}}</h2>
+                    <h2> Price: {{item.price | currency}} </h2>
+                </a>
+            </div>
         </div>
   <ion-content>
 </ion-view>
