@@ -213,12 +213,14 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 }])
 
 
-.controller('ItemDetailCtrl', ['$scope', '$stateParams' ,'$firebaseArray', function($scope, $stateParams,  $firebaseArray){
+.controller('ItemDetailCtrl', ['$scope', '$stateParams' ,'$firebaseArray', function($scope, $stateParams, $firebaseArray){
     var ref = new Firebase("https://comp3990.firebaseio.com");
     $scope.products = $firebaseArray(ref.child('/products'));
     $scope.products.$loaded(function(data){
+       // console.log($stateParams.userId);
+        //console.log($stateParams.productId);
         $scope.itemDetails = data[$stateParams.userId][$stateParams.productId];
-        console.log($scope.itemDetails.payments.cash);
+        //console.log($scope.itemDetails.name);
         $scope.paymentList = [
             { text: "Paypal", checked: Boolean($scope.itemDetails.payments.paypal) },
             { text: "Cash", checked: Boolean($scope.itemDetails.payments.cash) },
@@ -227,10 +229,10 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     });
 }])
 
-.controller('CategoryListCtrl',['$scope','$firebaseArray', '$stateParams', function($scope,$firebaseArray, $stateParams){
+.controller('CategoryListCtrl',['$scope','$firebaseArray', '$stateParams', function($scope, $firebaseObject, $stateParams){
      $scope.category=$stateParams.category;
      var ref = new Firebase("https://comp3990.firebaseio.com");
-     $scope.allProducts = $firebaseArray(ref.child('/products'));
+     $scope.allProducts = $firebaseObject(ref.child('/products'));
 }])
 
 .controller('SideMenuCtrl', ['$scope', '$ionicSideMenuDelegate', function($scope, $ionicSideMenuDelegate){
