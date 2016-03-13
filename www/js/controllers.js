@@ -181,7 +181,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 }])
 
 .controller('ShopCtrl',['$scope', '$firebaseArray', function($scope, $firebaseArray){
-    
+
 
 }])
 
@@ -293,6 +293,16 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
   /* we also need a users list. */
   $scope.appUsers = $firebaseObject(ref.child('/users'));
+}])
+
+.controller('BuyerInterestedItemOverviewCtrl', ['$scope', '$stateParams', function($scope, $stateParams){
+
+  /* get the information passed over from the previous page. */
+  $scope.sellerId = $stateParams.sellerId;
+  $scope.buyerId = $stateParams.buyerId;
+  $scope.productId = $stateParams.productId;
+  $scope.perspective = $stateParams.perspective;
+
 }])
 
 .controller('MessengerCtrl', ['$scope', '$stateParams', '$firebaseObject', function($scope, $stateParams, $firebaseObject){
