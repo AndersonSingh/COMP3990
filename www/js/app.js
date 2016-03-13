@@ -94,7 +94,7 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
     templateUrl: 'templates/item-details.html',
     controller:'ItemDetailCtrl'
   })
-  
+
   .state('list-items-category', {
     url: '/list-items-category?category',
     templateUrl: 'templates/list-items-category.html',
@@ -113,6 +113,12 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
     templateUrl: 'templates/items-interested.html',
     controller: 'BuyerInterestedItemsCtrl'
 
+  })
+
+  .state('buyer-item-interested-overview', {
+    url: '/buyer-item-interested-overview?sellerId&buyerId&productId&perspective',
+    templateUrl: 'templates/buyer-item-interested-overview.html',
+    controller: 'BuyerInterestedItemOverviewCtrl'
   })
 
   .state('messenger', {

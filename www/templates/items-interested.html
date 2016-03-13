@@ -6,7 +6,7 @@
       <!-- this section of code picks out the items the logged in user is interested in -->
       <span ng-repeat="(sellerId, product) in  interests">
         <span ng-repeat="(productId, users) in product">
-          <div class="item item-thumbnail-left" ng-repeat="(userId, transaction) in users" ng-if="userId == buyerId" ui-sref="messenger({'sellerId' : sellerId, 'productId' : productId, 'buyerId': userId, 'perspective' : 'buyer'})">
+          <div class="item item-thumbnail-left" ng-repeat="(userId, transaction) in users" ng-if="userId == buyerId" ui-sref="buyer-item-interested-overview({'sellerId' : sellerId, 'productId' : productId, 'buyerId': userId, 'perspective' : 'buyer'})">
             <img data-ng-src="data:image/jpeg;base64,{{products[sellerId][productId].picture}}" alt="no picture">
                 <h2> Item: {{products[sellerId][productId].name}}</h2>
                 <p> Price: {{products[sellerId][productId].price | currency}} </p>
