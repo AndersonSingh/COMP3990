@@ -102,7 +102,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
 .controller('SellerCtrl',['$scope', '$state', '$cordovaCamera', function($scope, $state, $cordovaCamera){
   // create a reference to firebase database products section
-  var firebaseRef = new Firebase("https://comp3990.firebaseio.com/products")
+  var firebaseRef = new Firebase("https://comp3990.firebaseio.com/products");
 
   // stores attributes of an item entered via view
   $scope.item = {};
@@ -296,4 +296,30 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   $scope.buyerId = $stateParams.buyerId;
   $scope.productId = $stateParams.productId;
 
-}]);
+}])
+
+.controller('EmailCtrl', ['$scope', '$state', function($scope, $state){
+
+  $scope.paypal = null;
+
+  // create a reference to firebase database products section
+  var firebaseRef = new Firebase("https://comp3990.firebaseio.com/users");
+
+  // get user uid that is currently logged in
+  var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
+  var uid = localData['uid'];
+
+  $scope.saveEmail = function(email){
+    console.log("saving email");
+
+    var obj = {paypal : email};
+
+    //move down directly to the particular user
+    var userRef = firebaseRef.child(uid);
+
+    //update firebase with new attribute for this user
+    userRef.update(obj);
+
+    $state.go('menu-settings');
+  };
+}])

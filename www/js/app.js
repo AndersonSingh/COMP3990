@@ -125,7 +125,18 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
   .state('menu-buying', {
     url: '/menu-buying',
     templateUrl: 'templates/menu-buying.html'
-  });
+  })
+
+  .state('menu-settings', {
+    url: '/menu-settings',
+    templateUrl: 'templates/menu-settings.html'
+  })
+
+  .state('settings-email-setup', {
+   url: '/settings-email-setup',
+   templateUrl: 'templates/settings-email-setup.html',
+   controller: 'EmailCtrl'
+ })
 
   $urlRouterProvider.otherwise('sign-in');
 
