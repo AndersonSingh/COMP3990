@@ -5,6 +5,6 @@
     "ionic": "driftyco/ionic-bower#1.2.4"
   },
   "dependencies": {
-    "angular-toArrayFilter": "~1.0.1"
+    "angular-toArrayFilter": "^1.0.1"
   }
 }

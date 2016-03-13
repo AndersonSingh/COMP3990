@@ -59,7 +59,7 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
      views: {
          'sell-tab': {
          templateUrl: 'templates/tab-sell.html',
-         controller:'SellerCtrl'
+         controller:'SellingCtrl'
          }
      }
    })

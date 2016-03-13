@@ -1,0 +1,15 @@
+<ion-view view-title="Select Interested Item">
+  <ion-content>
+
+        <div ng-repeat="item in matchedProducts">
+            <div class="ion-list">
+                <a class="item item-thumbnail-left" href="#">
+                <img data-ng-src="data:image/jpeg;base64,{{item.picture}}" alt="no picture">
+                    <h2> {{item.name}}</h2>
+                    <h2> Price: {{item.price | currency}} </h2>
+                </a>
+            </div>
+        </div>
+
+  <ion-content>
+</ion-view>

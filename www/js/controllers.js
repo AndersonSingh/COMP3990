@@ -100,6 +100,36 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
 }])
 
+.controller("SellingCtrl", ['$scope', '$state', '$firebaseObject', function($scope, $state, $firebaseObject){
+
+  // create a reference to firebase database
+  var ref = new Firebase("https://comp3990.firebaseio.com");
+
+  // get user uid that is currently logged in
+  var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
+  var uid = localData['uid'];
+
+  // download interested items for this user into local object
+  $scope.allInterested = $firebaseObject(ref.child('/interests').child(uid));
+
+  // download all prouducts for this user into local object to be used as a means of crossreference
+  $scope.allUserProducts = $firebaseObject(ref.child('/products').child(uid));
+
+  // to store those products which are currently interested in.
+  $scope.matchedProducts = [];
+
+  $scope.allUserProducts.$loaded(function(data){
+    $scope.allInterested.$loaded(function(data2){
+      for(prodId in data){
+        if(prodId.charAt(0) != '$' && prodId != 'forEach' && prodId in data2){
+          $scope.matchedProducts.push(data[prodId]);
+        }
+      }
+    });
+  });
+
+}])
+
 .controller('SellerCtrl',['$scope', '$state', '$cordovaCamera', function($scope, $state, $cordovaCamera){
   // create a reference to firebase database products section
   var firebaseRef = new Firebase("https://comp3990.firebaseio.com/products");
