@@ -243,27 +243,26 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 }])
 
 
-.controller('ItemDetailCtrl', ['$scope', '$stateParams' ,'$firebaseArray', function($scope, $stateParams, $firebaseArray){
+.controller('ItemDetailCtrl', ['$scope', '$stateParams' ,'$firebaseObject', function($scope, $stateParams, $firebaseObject){
+    var userId= $stateParams.userId;
+    var productId= $stateParams.productId;
+    
     var ref = new Firebase("https://comp3990.firebaseio.com");
-    $scope.products = $firebaseArray(ref.child('/products'));
-    $scope.products.$loaded(function(data){
-       // console.log($stateParams.userId);
-        //console.log($stateParams.productId);
-        $scope.itemDetails = data[$stateParams.userId][$stateParams.productId];
-        //console.log($scope.itemDetails.name);
-        $scope.paymentList = [
+    $scope.product = $firebaseObject(ref.child('/products/'+userId+'/'+productId+''));
+    $scope.product.$loaded(function(data){
+       $scope.itemDetails = data;
+       $scope.paymentList = [
             { text: "Paypal", checked: Boolean($scope.itemDetails.payments.paypal) },
             { text: "Cash", checked: Boolean($scope.itemDetails.payments.cash) },
             { text: "Bitcoin", checked: Boolean($scope.itemDetails.payments.bitcoin) }
         ];
-    });
+    }); 
+    
 }])
 
-.controller('CategoryListCtrl',['$scope','$firebaseArray', '$stateParams','AllProductsService', function($scope, $firebaseObject, $stateParams, AllProductsService){
+.controller('CategoryListCtrl',['$scope','$firebaseObject', '$stateParams','AllProductsService', function($scope, $firebaseObject, $stateParams, AllProductsService){
      $scope.category=$stateParams.category;
-    //  var ref = new Firebase("https://comp3990.firebaseio.com");
      $scope.allProducts = {};
-     
      $scope.loadProducts = function(){
          AllProductsService.$bindTo($scope,"allProducts");
      }
