@@ -1,5 +1,5 @@
 <ion-view view-title="My Items For Sale">
-  <ion-content>
+  <ion-content ng-init=loadProducts();>
     <div id="search-bar">
       <div class="item item-input-inset">
         <label class="item-input-wrapper" id="search-input">
@@ -10,7 +10,7 @@
     </div>
 
     <div class="list">
-      <a class="item item-thumbnail-left" ng-repeat="item in items | filter:query">
+      <a class="item item-thumbnail-left" ng-repeat="item in allProducts">
         <img data-ng-src="data:image/jpeg;base64,{{item.picture}}">
         <h2>{{item.name}}</h2>
         <p>{{item.price | currency}}</p>
