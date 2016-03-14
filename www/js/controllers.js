@@ -259,10 +259,14 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     });
 }])
 
-.controller('CategoryListCtrl',['$scope','$firebaseArray', '$stateParams', function($scope, $firebaseObject, $stateParams){
+.controller('CategoryListCtrl',['$scope','$firebaseArray', '$stateParams','AllProductsService', function($scope, $firebaseObject, $stateParams, AllProductsService){
      $scope.category=$stateParams.category;
-     var ref = new Firebase("https://comp3990.firebaseio.com");
-     $scope.allProducts = $firebaseObject(ref.child('/products'));
+    //  var ref = new Firebase("https://comp3990.firebaseio.com");
+     $scope.allProducts = {};
+     
+     $scope.loadProducts = function(){
+         AllProductsService.$bindTo($scope,"allProducts");
+     }
 }])
 
 .controller('SideMenuCtrl', ['$scope', '$ionicSideMenuDelegate', function($scope, $ionicSideMenuDelegate){
