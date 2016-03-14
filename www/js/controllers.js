@@ -247,7 +247,9 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     
     //DO NOT TOUCH
     
-    
+    var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
+    // $scope.userId = localData['uid'];
+    $scope.userId = '874d9189-4147-4795-a5f5-d28d9e9e5924';
     $scope.allProducts = {};
     $scope.loadProducts = function(){
         UserProductsService.$bindTo($scope,"allProducts");
