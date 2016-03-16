@@ -201,54 +201,78 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
 }])
 
-.controller('ViewItemCtrl', ['$scope', '$firebaseObject', function($scope, $firebaseObject){
+.controller('ViewItemCtrl', ['$scope', '$firebaseObject', 'UserProductsService', function($scope, $firebaseObject, UserProductsService){
+    // //FIX CODE
+    
+    //    var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
+    //    console.log(localData['uid']);
+    //    //UID LOCATED AND STORED
 
-       var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
-       console.log(localData['uid']);
-       //UID LOCATED AND STORED
+    //    var ref = new Firebase("https://comp3990.firebaseio.com");
+    //    //FOR TEST PURPOSES!
 
-       var ref = new Firebase("https://comp3990.firebaseio.com");
-       //FOR TEST PURPOSES!
-
-       var userId = localData['uid'];
+    // //    var userId = localData['uid'];
+    
+    // var userId = '5e224fc5-b956-43c3-84b5-f6eecfc9cffb';
 
 
-       $scope.products = $firebaseObject(ref.child('/products'));
-       $scope.products.$loaded(function(data){
-       $scope.items=[];
-       for(var user in data){
-           if(user.charAt(0) != '$' && user != 'forEach'){
-                if(userId.localeCompare(String(user))==0){
-                    for(var item in $scope.products[user]){
-                        $scope.items.push($scope.products[user][item]);
-                    }
-                }
-           }
-       }
-    });
+    //    $scope.products = $firebaseObject(ref.child('/products'));
+    //    $scope.products.$loaded(function(data){
+    //    $scope.items=[];
+    //    for(var user in data){
+    //        if(user.charAt(0) != '$' && user != 'forEach'){
+    //              if(userId.localeCompare(String(user))==0){
+    //                 for(var item in $scope.products[user]){
+    //                     $scope.items.push($scope.products[user][item]);
+    //                     console.log("HELLO");
+    //                 }
+    //              }
+    //        }
+    //    }
+    // });
+    
+    //DO NOT TOUCH
+    
+    var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
+    // $scope.userId = localData['uid'];
+    $scope.userId = '874d9189-4147-4795-a5f5-d28d9e9e5924';
+    $scope.allProducts = {};
+    $scope.loadProducts = function(){
+        UserProductsService.$bindTo($scope,"allProducts");
+    }
+    
+    
 }])
 
 
-.controller('ItemDetailCtrl', ['$scope', '$stateParams' ,'$firebaseArray', function($scope, $stateParams, $firebaseArray){
+.controller('ItemDetailCtrl', ['$scope', '$stateParams' ,'$firebaseObject', function($scope, $stateParams, $firebaseObject){
+    var userId= $stateParams.userId;
+    var productId= $stateParams.productId;
+    
     var ref = new Firebase("https://comp3990.firebaseio.com");
-    $scope.products = $firebaseArray(ref.child('/products'));
-    $scope.products.$loaded(function(data){
-       // console.log($stateParams.userId);
-        //console.log($stateParams.productId);
-        $scope.itemDetails = data[$stateParams.userId][$stateParams.productId];
-        //console.log($scope.itemDetails.name);
-        $scope.paymentList = [
-            { text: "Paypal", checked: Boolean($scope.itemDetails.payments.paypal) },
-            { text: "Cash", checked: Boolean($scope.itemDetails.payments.cash) },
-            { text: "Bitcoin", checked: Boolean($scope.itemDetails.payments.bitcoin) }
-        ];
-    });
+    $scope.product = $firebaseObject(ref.child('/products/'+userId+'/'+productId+''));
+    $scope.product.$loaded(function(data){
+       $scope.itemDetails = data;
+       $scope.paymentList = []; 
+       if(Boolean($scope.itemDetails.payments.paypal)===true){
+           $scope.paymentList.push( { text: "Paypal", checked:false });
+           console.log(Boolean($scope.itemDetails.payments.paypal));
+       }
+       if(Boolean($scope.itemDetails.payments.cash)===true){
+           $scope.paymentList.push( { text: "Cash", checked:false });
+       }
+       if(Boolean($scope.itemDetails.payments.bitcoin)===true){
+           $scope.paymentList.push( { text: "Bitcoin", checked:false });
+       }
+    }); 
 }])
 
-.controller('CategoryListCtrl',['$scope','$firebaseArray', '$stateParams', function($scope, $firebaseObject, $stateParams){
+.controller('CategoryListCtrl',['$scope','$firebaseObject', '$stateParams','AllProductsService', function($scope, $firebaseObject, $stateParams, AllProductsService){
      $scope.category=$stateParams.category;
-     var ref = new Firebase("https://comp3990.firebaseio.com");
-     $scope.allProducts = $firebaseObject(ref.child('/products'));
+     $scope.allProducts = {};
+     $scope.loadProducts = function(){
+         AllProductsService.$bindTo($scope,"allProducts");
+     }
 }])
 
 .controller('SideMenuCtrl', ['$scope', '$ionicSideMenuDelegate', function($scope, $ionicSideMenuDelegate){
