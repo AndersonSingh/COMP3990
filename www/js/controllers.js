@@ -204,40 +204,9 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 }])
 
 .controller('ViewItemCtrl', ['$scope', '$firebaseObject', 'UserProductsService', function($scope, $firebaseObject, UserProductsService){
-    // //FIX CODE
-
-    //    var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
-    //    console.log(localData['uid']);
-    //    //UID LOCATED AND STORED
-
-    //    var ref = new Firebase("https://comp3990.firebaseio.com");
-    //    //FOR TEST PURPOSES!
-
-    // //    var userId = localData['uid'];
-
-    // var userId = '5e224fc5-b956-43c3-84b5-f6eecfc9cffb';
-
-
-    //    $scope.products = $firebaseObject(ref.child('/products'));
-    //    $scope.products.$loaded(function(data){
-    //    $scope.items=[];
-    //    for(var user in data){
-    //        if(user.charAt(0) != '$' && user != 'forEach'){
-    //              if(userId.localeCompare(String(user))==0){
-    //                 for(var item in $scope.products[user]){
-    //                     $scope.items.push($scope.products[user][item]);
-    //                     console.log("HELLO");
-    //                 }
-    //              }
-    //        }
-    //    }
-    // });
-
-    //DO NOT TOUCH
 
     var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
-    // $scope.userId = localData['uid'];
-    $scope.userId = '874d9189-4147-4795-a5f5-d28d9e9e5924';
+    $scope.userId = localData['uid'];
     $scope.allProducts = {};
     $scope.loadProducts = function(){
         UserProductsService.$bindTo($scope,"allProducts");
