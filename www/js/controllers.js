@@ -242,11 +242,36 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
 
 .controller('ItemDetailCtrl', ['$scope', '$stateParams' ,'$firebaseObject', function($scope, $stateParams, $firebaseObject){
-    var userId= $stateParams.userId;
-    var productId= $stateParams.productId;
+    
+    
+    $scope.transaction = {};
+    $scope.message = {};
+    
+    /* get the userid of the person selling the product, as well as the product id. */
+    $scope.sellerId= $stateParams.userId;
+    $scope.productId= $stateParams.productId;
 
+    /* firebase reference*/
     var ref = new Firebase("https://comp3990.firebaseio.com");
-    $scope.product = $firebaseObject(ref.child('/products/'+userId+'/'+productId+''));
+
+    /* access localStorage to get the loggedin user's userid. */
+    var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
+    
+    $scope.buyerId = localData['uid'];
+    /* place the uid in the message object to know who sent the message. */
+    
+    $scope.message.sender = $scope.buyerId;
+    /* this function runs when user clicks on the interested button */
+    
+    $scope.interestedButton = function(){
+        /* create a product interest on firebase. */
+        var transactionRef = ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/' + $scope.buyerId);
+        /* push data to firebase. */
+        transactionRef.child('/messages').push($scope.message);
+    };
+  
+    /* information of the specific item is now lodaded ionto the page via scope */
+    $scope.product = $firebaseObject(ref.child('/products/'+$scope.sellerId+'/'+$scope.productId+''));
     $scope.product.$loaded(function(data){
        $scope.itemDetails = data;
        $scope.paymentList = [];
