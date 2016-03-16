@@ -45,3 +45,32 @@
   margin-right:50px;
   background:#c81e2b;
 }
+
+/* messenger css elements */
+
+.chat-text {
+    display: inline-block;
+    padding: 10px;
+    border-radius: 20px;
+    max-width: 200px;
+}
+
+.chat-me .chat-text {
+    color: #ffffff;
+}
+
+.item p.chat-text {
+    white-space: normal;
+}
+
+.positive-bg {
+    background-color: #009FE8;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-left {
+  text-align: left
+}

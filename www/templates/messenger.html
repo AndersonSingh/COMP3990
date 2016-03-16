@@ -1,13 +1,21 @@
 <ion-view view-title="Messenger">
   <ion-content>
-    <div class="triangle-obtuse" ng-class="{left : messageClass(message.sender), right : (!messageClass(message.sender))}" ng-repeat="message in messages">
-      {{message.text}}
+
+    <div class="list" ng-repeat="message in messages">
+      <div class="" ng-class="{'chat-me' : messageClass(message.sender), 'text-right' : messageClass(message.sender)}">
+        <p class="chat-text text-left" ng-class="{'positive-bg': messageClass(message.sender), 'stable-bg': (!messageClass(message.sender))}">
+        {{message.text}}
+      </p>
+      </div>
     </div>
+
   </ion-content>
+
   <div class="bar bar-footer bar-stable">
     <input class="col col-75 ng-valid-minlength" type="text" ng-model="chatText" placeholder="Type a message">
     <button class="col button button-positive" ng-click="sendMessage(chatText);">
       Send
     </button>
   </div>
+  
 </ion-view>
