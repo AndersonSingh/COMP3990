@@ -267,13 +267,18 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     $scope.product = $firebaseObject(ref.child('/products/'+userId+'/'+productId+''));
     $scope.product.$loaded(function(data){
        $scope.itemDetails = data;
-       $scope.paymentList = [
-            { text: "Paypal", checked: Boolean($scope.itemDetails.payments.paypal) },
-            { text: "Cash", checked: Boolean($scope.itemDetails.payments.cash) },
-            { text: "Bitcoin", checked: Boolean($scope.itemDetails.payments.bitcoin) }
-        ];
+       $scope.paymentList = []; 
+       if(Boolean($scope.itemDetails.payments.paypal)===true){
+           $scope.paymentList.push( { text: "Paypal", checked:false });
+           console.log(Boolean($scope.itemDetails.payments.paypal));
+       }
+       if(Boolean($scope.itemDetails.payments.cash)===true){
+           $scope.paymentList.push( { text: "Cash", checked:false });
+       }
+       if(Boolean($scope.itemDetails.payments.bitcoin)===true){
+           $scope.paymentList.push( { text: "Bitcoin", checked:false });
+       }
     }); 
-    
 }])
 
 .controller('CategoryListCtrl',['$scope','$firebaseObject', '$stateParams','AllProductsService', function($scope, $firebaseObject, $stateParams, AllProductsService){
