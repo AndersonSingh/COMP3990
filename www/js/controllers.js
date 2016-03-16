@@ -128,9 +128,9 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
   // initializing all payment methods to false
   $scope.item.payments = {};
-  $scope.item.payments.bitcoin = "false";
-  $scope.item.payments.cash = "false";
-  $scope.item.payments.paypal = "false";
+  $scope.item.payments.bitcoin = false;
+  $scope.item.payments.cash = false;
+  $scope.item.payments.paypal = false;
 
   // get user uid that is currently logged in
   var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
@@ -159,13 +159,9 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       console.log("device ready");
       // specifiying camera options
       var options = {
-        //cameraDirection : Camera.Direction.BACK,
-        //destinationType : Camera.DestinationType.DATA_URL,              // specify format of value returned is Base64 encoded string
-        //sourceType : Camera.PictureSourceType.CAMERA,                   // specify take picture from camera
-        //encodingType : Camera.EncodingType.JPEG,
         cameraDirection : 0,                                              // specify use rear camera
         sourceType : 1,                                                   // specify take picture from camera
-        encodingType : 0,                                                 // specify
+        encodingType : 0,                                                 // specify the image is encoded as a jpeg
         destinationType : 0,                                              // specify format of value returned is Base64 encoded string
         cameraDirection : 0,
         quality : 75,
@@ -203,7 +199,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
 .controller('ViewItemCtrl', ['$scope', '$firebaseObject', 'UserProductsService', function($scope, $firebaseObject, UserProductsService){
     // //FIX CODE
-    
+
     //    var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
     //    console.log(localData['uid']);
     //    //UID LOCATED AND STORED
@@ -212,7 +208,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     //    //FOR TEST PURPOSES!
 
     // //    var userId = localData['uid'];
-    
+
     // var userId = '5e224fc5-b956-43c3-84b5-f6eecfc9cffb';
 
 
@@ -230,9 +226,9 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     //        }
     //    }
     // });
-    
+
     //DO NOT TOUCH
-    
+
     var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
     // $scope.userId = localData['uid'];
     $scope.userId = '874d9189-4147-4795-a5f5-d28d9e9e5924';
@@ -240,20 +236,20 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     $scope.loadProducts = function(){
         UserProductsService.$bindTo($scope,"allProducts");
     }
-    
-    
+
+
 }])
 
 
 .controller('ItemDetailCtrl', ['$scope', '$stateParams' ,'$firebaseObject', function($scope, $stateParams, $firebaseObject){
     var userId= $stateParams.userId;
     var productId= $stateParams.productId;
-    
+
     var ref = new Firebase("https://comp3990.firebaseio.com");
     $scope.product = $firebaseObject(ref.child('/products/'+userId+'/'+productId+''));
     $scope.product.$loaded(function(data){
        $scope.itemDetails = data;
-       $scope.paymentList = []; 
+       $scope.paymentList = [];
        if(Boolean($scope.itemDetails.payments.paypal)===true){
            $scope.paymentList.push( { text: "Paypal", checked:false });
            console.log(Boolean($scope.itemDetails.payments.paypal));
@@ -264,7 +260,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
        if(Boolean($scope.itemDetails.payments.bitcoin)===true){
            $scope.paymentList.push( { text: "Bitcoin", checked:false });
        }
-    }); 
+    });
 }])
 
 .controller('CategoryListCtrl',['$scope','$firebaseObject', '$stateParams','AllProductsService', function($scope, $firebaseObject, $stateParams, AllProductsService){
@@ -435,5 +431,5 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
 .controller('InterestedOverviewCtrl', ['$scope', '$stateParams', function($scope, $stateParams){
   $scope.interestedUser = $stateParams.userId;
-  
+
 }])
