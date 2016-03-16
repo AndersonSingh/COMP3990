@@ -100,7 +100,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
 }])
 
-.controller("SellingCtrl", ['$scope', '$state', '$firebaseObject', function($scope, $state, $firebaseObject){
+.controller("SellingCtrl", ['$scope', '$firebaseObject', function($scope, $firebaseObject){
 
   // create a reference to firebase database
   var ref = new Firebase("https://comp3990.firebaseio.com");
@@ -114,20 +114,6 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
   // download all prouducts for this user into local object to be used as a means of crossreference
   $scope.allUserProducts = $firebaseObject(ref.child('/products').child(uid));
-
-  // to store those products which are currently interested in.
-  $scope.matchedProducts = [];
-
-  $scope.allUserProducts.$loaded(function(data){
-    $scope.allInterested.$loaded(function(data2){
-      for(prodId in data){
-        if(prodId.charAt(0) != '$' && prodId != 'forEach' && prodId in data2){
-          $scope.matchedProducts.push(data[prodId]);
-        }
-      }
-    });
-  });
-
 }])
 
 .controller('SellerCtrl',['$scope', '$state', '$cordovaCamera', function($scope, $state, $cordovaCamera){
@@ -381,7 +367,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
   $scope.paypal = null;
 
-  // create a reference to firebase database products section
+  // create a reference to firebase database users section
   var firebaseRef = new Firebase("https://comp3990.firebaseio.com/users");
 
   // get user uid that is currently logged in
@@ -401,4 +387,29 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
     $state.go('menu-settings');
   };
+}])
+
+.controller('InterestedSellerCtrl', ['$scope', '$stateParams', '$firebaseObject', function($scope, $stateParams, $firebaseObject){
+
+  // retrieve the productId the user clicked on to get to this page
+  var productId = $stateParams.prodId;
+
+  // create a reference to firebase database
+  var firebaseRef = new Firebase("https://comp3990.firebaseio.com/");
+
+  // get user uid that is currently logged in
+  var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
+  var uid = localData['uid'];
+
+  // download all the users who are interested in this seller's particular product
+  $scope.allInterestedUsers = $firebaseObject(firebaseRef.child('interests').child(uid).child(productId));
+
+  // download all the users to use as a crossreference
+  $scope.users = $firebaseObject(firebaseRef.child('users'));
+
+}])
+
+.controller('InterestedOverviewCtrl', ['$scope', '$stateParams', function($scope, $stateParams){
+  $scope.interestedUser = $stateParams.userId;
+  
 }])

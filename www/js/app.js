@@ -149,6 +149,18 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
    controller: 'EmailCtrl'
  })
 
+ .state('seller-interested-people', {
+  url: '/seller-interested-people?prodId',
+  templateUrl: 'templates/seller-interested-people.html',
+  controller: 'InterestedSellerCtrl'
+})
+
+.state('seller-interested-overview', {
+ url: '/seller-interested-overview?userId',
+ templateUrl: 'templates/seller-interested-overview.html',
+ controller: 'InterestedOverviewCtrl'
+})
+
   $urlRouterProvider.otherwise('sign-in');
 
 });
