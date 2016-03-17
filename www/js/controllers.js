@@ -204,41 +204,6 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 }])
 
 .controller('ViewItemCtrl', ['$scope', '$firebaseObject', 'UserProductsService', function($scope, $firebaseObject, UserProductsService){
-<<<<<<< HEAD
-    // //FIX CODE
-
-    //    var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
-    //    console.log(localData['uid']);
-    //    //UID LOCATED AND STORED
-
-    //    var ref = new Firebase("https://comp3990.firebaseio.com");
-    //    //FOR TEST PURPOSES!
-
-    // //    var userId = localData['uid'];
-
-    // var userId = '5e224fc5-b956-43c3-84b5-f6eecfc9cffb';
-
-
-    //    $scope.products = $firebaseObject(ref.child('/products'));
-    //    $scope.products.$loaded(function(data){
-    //    $scope.items=[];
-    //    for(var user in data){
-    //        if(user.charAt(0) != '$' && user != 'forEach'){
-    //              if(userId.localeCompare(String(user))==0){
-    //                 for(var item in $scope.products[user]){
-    //                     $scope.items.push($scope.products[user][item]);
-    //                     console.log("HELLO");
-    //                 }
-    //              }
-    //        }
-    //    }
-    // });
-
-    //DO NOT TOUCH
-
-=======
-
->>>>>>> 179bee228724a116e3ea8d8e2ea35d6228461f9d
     var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
     $scope.userId = localData['uid'];
     $scope.allProducts = {};
@@ -251,12 +216,6 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
 
 .controller('ItemDetailCtrl', ['$scope', '$stateParams' ,'$firebaseObject', function($scope, $stateParams, $firebaseObject){
-<<<<<<< HEAD
-    var userId= $stateParams.userId;
-    var productId= $stateParams.productId;
-
-=======
-
 
     $scope.transaction = {};
     $scope.message = {};
@@ -266,7 +225,6 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     $scope.productId= $stateParams.productId;
 
     /* firebase reference*/
->>>>>>> 179bee228724a116e3ea8d8e2ea35d6228461f9d
     var ref = new Firebase("https://comp3990.firebaseio.com");
 
     /* access localStorage to get the loggedin user's userid. */
