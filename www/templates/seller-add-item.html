@@ -10,12 +10,12 @@
 
       <label class="item item-input item-stacked-label">
         <span class="input-label">Item Description</span>
-        <input type="text" placeholder="Item Name" ng-model="item.description">
+        <input type="text" placeholder="Item Description" ng-model="item.description">
       </label>
 
       <label class="item item-input item-stacked-label">
         <span class="input-label">Item Price</span>
-        <input type="text" placeholder="Item Name" ng-model="item.price">
+        <input type="text" placeholder="Item Price" ng-model="item.price">
       </label>
 
       <label class="item item-input item-select">
@@ -35,11 +35,9 @@
         Payment Methods Accepted
       </div>
 
-      {{item.payments.cash}}
-
-      <ion-checkbox ng-model="item.payments.paypal" ng-true-value="'true'" ng-false-value="'false'">PayPal</ion-checkbox>
-      <ion-checkbox ng-model="item.payments.cash" ng-true-value="'true'" ng-false-value="'false'">Cash</ion-checkbox>
-      <ion-checkbox ng-model="item.payments.bitcoin" ng-true-value="'true'" ng-false-value="'false'">BitCoin</ion-checkbox>
+      <ion-checkbox ng-model="item.payments.paypal" ng-true-value="true" ng-false-value="false">PayPal</ion-checkbox>
+      <ion-checkbox ng-model="item.payments.cash" ng-true-value="true" ng-false-value="false">Cash</ion-checkbox>
+      <ion-checkbox ng-model="item.payments.bitcoin" ng-true-value="true" ng-false-value="false">BitCoin</ion-checkbox>
 
       <a class="item item-thumbnail-left" href="#">
         <img data-ng-src="data:image/jpeg;base64,{{item.picture}}" alt="no picture">

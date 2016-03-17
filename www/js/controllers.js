@@ -128,9 +128,12 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
   // initializing all payment methods to false
   $scope.item.payments = {};
-  $scope.item.payments.bitcoin = "false";
-  $scope.item.payments.cash = "false";
-  $scope.item.payments.paypal = "false";
+  $scope.item.payments.bitcoin = false;
+  $scope.item.payments.cash = false;
+  $scope.item.payments.paypal = false;
+
+  // this number will reflect at any given time how many users are interested in buying this product
+  $scope.item.interested = 0;
 
   // get user uid that is currently logged in
   var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
@@ -138,6 +141,9 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
   // this function will store a new item for the logged in user in the database
   $scope.addNewItem = function(){
+
+      // convert string to double for price
+      $scope.item.price = parseFloat($scope.item.price);
 
       // move down directly to the products area for this particular user
       var userProductsRef = firebaseRef.child(uid);
@@ -159,13 +165,9 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       console.log("device ready");
       // specifiying camera options
       var options = {
-        //cameraDirection : Camera.Direction.BACK,
-        //destinationType : Camera.DestinationType.DATA_URL,              // specify format of value returned is Base64 encoded string
-        //sourceType : Camera.PictureSourceType.CAMERA,                   // specify take picture from camera
-        //encodingType : Camera.EncodingType.JPEG,
         cameraDirection : 0,                                              // specify use rear camera
         sourceType : 1,                                                   // specify take picture from camera
-        encodingType : 0,                                                 // specify
+        encodingType : 0,                                                 // specify the image is encoded as a jpeg
         destinationType : 0,                                              // specify format of value returned is Base64 encoded string
         cameraDirection : 0,
         quality : 75,
@@ -202,6 +204,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 }])
 
 .controller('ViewItemCtrl', ['$scope', '$firebaseObject', 'UserProductsService', function($scope, $firebaseObject, UserProductsService){
+<<<<<<< HEAD
     // //FIX CODE
 
     //    var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
@@ -233,9 +236,11 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
     //DO NOT TOUCH
 
+=======
+
+>>>>>>> 179bee228724a116e3ea8d8e2ea35d6228461f9d
     var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
-    // $scope.userId = localData['uid'];
-    $scope.userId = '874d9189-4147-4795-a5f5-d28d9e9e5924';
+    $scope.userId = localData['uid'];
     $scope.allProducts = {};
     $scope.loadProducts = function(){
         UserProductsService.$bindTo($scope,"allProducts");
@@ -246,11 +251,42 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
 
 .controller('ItemDetailCtrl', ['$scope', '$stateParams' ,'$firebaseObject', function($scope, $stateParams, $firebaseObject){
+<<<<<<< HEAD
     var userId= $stateParams.userId;
     var productId= $stateParams.productId;
 
+=======
+
+
+    $scope.transaction = {};
+    $scope.message = {};
+
+    /* get the userid of the person selling the product, as well as the product id. */
+    $scope.sellerId= $stateParams.userId;
+    $scope.productId= $stateParams.productId;
+
+    /* firebase reference*/
+>>>>>>> 179bee228724a116e3ea8d8e2ea35d6228461f9d
     var ref = new Firebase("https://comp3990.firebaseio.com");
-    $scope.product = $firebaseObject(ref.child('/products/'+userId+'/'+productId+''));
+
+    /* access localStorage to get the loggedin user's userid. */
+    var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
+
+    $scope.buyerId = localData['uid'];
+    /* place the uid in the message object to know who sent the message. */
+
+    $scope.message.sender = $scope.buyerId;
+    /* this function runs when user clicks on the interested button */
+
+    $scope.interestedButton = function(){
+        /* create a product interest on firebase. */
+        var transactionRef = ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/' + $scope.buyerId);
+        /* push data to firebase. */
+        transactionRef.child('/messages').push($scope.message);
+    };
+
+    /* information of the specific item is now lodaded ionto the page via scope */
+    $scope.product = $firebaseObject(ref.child('/products/'+$scope.sellerId+'/'+$scope.productId+''));
     $scope.product.$loaded(function(data){
        $scope.itemDetails = data;
        $scope.paymentList = [];
@@ -389,9 +425,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
 }])
 
-.controller('EmailCtrl', ['$scope', '$state', function($scope, $state){
-
-  $scope.paypal = null;
+.controller('EmailCtrl', ['$scope', '$state', '$firebaseObject', function($scope, $state, $firebaseObject){
 
   // create a reference to firebase database users section
   var firebaseRef = new Firebase("https://comp3990.firebaseio.com/users");
@@ -399,6 +433,8 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   // get user uid that is currently logged in
   var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
   var uid = localData['uid'];
+
+  $scope.paypal = $firebaseObject(firebaseRef.child(uid));
 
   $scope.saveEmail = function(email){
     console.log("saving email");
@@ -439,8 +475,10 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 }])
 
 .controller('InterestedOverviewCtrl', ['$scope', '$stateParams', function($scope, $stateParams){
+
   $scope.buyerId = $stateParams.buyerId;
   $scope.sellerId = $stateParams.sellerId;
   $scope.productId = $stateParams.productId;
   $scope.perspective = "seller";
+
 }])
