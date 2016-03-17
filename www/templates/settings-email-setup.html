@@ -4,12 +4,12 @@
     <div class='list'>
       <label class="item item-input item-stacked-label">
         <span class="input-label">Email Address </span>
-        <input ng-model="paypal" type="email" placeholder="Email Address">
+        <input ng-model="paypal.paypal" type="email" placeholder="Email Address">
       </label>
     </div>
 
     <div class='padding'>
-      <button class="button button-block button-positive" ng-click="saveEmail(paypal);">
+      <button class="button button-block button-positive" ng-click="saveEmail(paypal.paypal);">
           Save Email
       </button>
     </div>

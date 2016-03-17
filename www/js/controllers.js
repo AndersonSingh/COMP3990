@@ -132,12 +132,18 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   $scope.item.payments.cash = false;
   $scope.item.payments.paypal = false;
 
+  // this number will reflect at any given time how many users are interested in buying this product
+  $scope.item.interested = 0;
+
   // get user uid that is currently logged in
   var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
   var uid = localData['uid'];
 
   // this function will store a new item for the logged in user in the database
   $scope.addNewItem = function(){
+
+      // convert string to double for price
+      $scope.item.price = parseFloat($scope.item.price);
 
       // move down directly to the products area for this particular user
       var userProductsRef = firebaseRef.child(uid);
@@ -383,9 +389,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
 }])
 
-.controller('EmailCtrl', ['$scope', '$state', function($scope, $state){
-
-  $scope.paypal = null;
+.controller('EmailCtrl', ['$scope', '$state', '$firebaseObject', function($scope, $state, $firebaseObject){
 
   // create a reference to firebase database users section
   var firebaseRef = new Firebase("https://comp3990.firebaseio.com/users");
@@ -393,6 +397,8 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   // get user uid that is currently logged in
   var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
   var uid = localData['uid'];
+
+  $scope.paypal = $firebaseObject(firebaseRef.child(uid));
 
   $scope.saveEmail = function(email){
     console.log("saving email");
