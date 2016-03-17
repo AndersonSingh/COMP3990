@@ -203,7 +203,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
 .controller('ViewItemCtrl', ['$scope', '$firebaseObject', 'UserProductsService', function($scope, $firebaseObject, UserProductsService){
     // //FIX CODE
-    
+
     //    var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
     //    console.log(localData['uid']);
     //    //UID LOCATED AND STORED
@@ -212,7 +212,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     //    //FOR TEST PURPOSES!
 
     // //    var userId = localData['uid'];
-    
+
     // var userId = '5e224fc5-b956-43c3-84b5-f6eecfc9cffb';
 
 
@@ -230,9 +230,9 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     //        }
     //    }
     // });
-    
+
     //DO NOT TOUCH
-    
+
     var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
     // $scope.userId = localData['uid'];
     $scope.userId = '874d9189-4147-4795-a5f5-d28d9e9e5924';
@@ -240,20 +240,20 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     $scope.loadProducts = function(){
         UserProductsService.$bindTo($scope,"allProducts");
     }
-    
-    
+
+
 }])
 
 
 .controller('ItemDetailCtrl', ['$scope', '$stateParams' ,'$firebaseObject', function($scope, $stateParams, $firebaseObject){
     var userId= $stateParams.userId;
     var productId= $stateParams.productId;
-    
+
     var ref = new Firebase("https://comp3990.firebaseio.com");
     $scope.product = $firebaseObject(ref.child('/products/'+userId+'/'+productId+''));
     $scope.product.$loaded(function(data){
        $scope.itemDetails = data;
-       $scope.paymentList = []; 
+       $scope.paymentList = [];
        if(Boolean($scope.itemDetails.payments.paypal)===true){
            $scope.paymentList.push( { text: "Paypal", checked:false });
            console.log(Boolean($scope.itemDetails.payments.paypal));
@@ -264,7 +264,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
        if(Boolean($scope.itemDetails.payments.bitcoin)===true){
            $scope.paymentList.push( { text: "Bitcoin", checked:false });
        }
-    }); 
+    });
 }])
 
 .controller('CategoryListCtrl',['$scope','$firebaseObject', '$stateParams','AllProductsService', function($scope, $firebaseObject, $stateParams, AllProductsService){
@@ -345,7 +345,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
 }])
 
-.controller('MessengerCtrl', ['$scope', '$stateParams', '$firebaseObject', function($scope, $stateParams, $firebaseObject){
+.controller('MessengerCtrl', ['$scope', '$stateParams', '$firebaseObject', '$ionicScrollDelegate', function($scope, $stateParams, $firebaseObject, $ionicScrollDelegate){
   /* firebase reference*/
   var ref = new Firebase("https://comp3990.firebaseio.com");
 
@@ -360,19 +360,21 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   /* pull the interests list. */
   $scope.messages = $firebaseObject(ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/' + $scope.buyerId + '/messages'));
 
+  var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
+  var uid = localData['uid'];
+
   /* this function decides which css class to apply to each message. */
   $scope.messageClass = function(sender){
-    if($scope.perspective === 'buyer' && sender === $scope.buyerId){
-      $scope.me = $scope.buyerId;
+    $ionicScrollDelegate.scrollBottom();
+    if(sender === uid){
+      $scope.me = uid;
       return true;
     }
-    else if($scope.perspective === 'seller' && sender === $scope.sellerId){
-      $scope.me = $scope.sellerId;
-      return true;
-    }
-    else{
+    else if(sender !== uid){
+      $scope.me = uid;
       return false;
     }
+
   };
 
   $scope.sendMessage = function(message){
@@ -427,6 +429,9 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
   // download all the users who are interested in this seller's particular product
   $scope.allInterestedUsers = $firebaseObject(firebaseRef.child('interests').child(uid).child(productId));
+  $scope.sellerId = uid;
+  $scope.productId = productId;
+
 
   // download all the users to use as a crossreference
   $scope.users = $firebaseObject(firebaseRef.child('users'));
@@ -434,6 +439,8 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 }])
 
 .controller('InterestedOverviewCtrl', ['$scope', '$stateParams', function($scope, $stateParams){
-  $scope.interestedUser = $stateParams.userId;
-  
+  $scope.buyerId = $stateParams.buyerId;
+  $scope.sellerId = $stateParams.sellerId;
+  $scope.productId = $stateParams.productId;
+  $scope.perspective = "seller";
 }])

@@ -1,5 +1,5 @@
 <ion-view view-title="Messenger">
-  <ion-content>
+  <ion-content class="has-footer">
 
     <div class="list" ng-repeat="message in messages">
       <div class="" ng-class="{'chat-me' : messageClass(message.sender), 'text-right' : messageClass(message.sender)}">
@@ -17,5 +17,5 @@
       Send
     </button>
   </div>
-  
+
 </ion-view>

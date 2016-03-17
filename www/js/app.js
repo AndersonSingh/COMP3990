@@ -156,7 +156,7 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
 })
 
 .state('seller-interested-overview', {
- url: '/seller-interested-overview?userId',
+ url: '/seller-interested-overview?buyerId&sellerId&perspective&productId',
  templateUrl: 'templates/seller-interested-overview.html',
  controller: 'InterestedOverviewCtrl'
 })
