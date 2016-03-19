@@ -235,12 +235,45 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
     $scope.message.sender = $scope.buyerId;
     /* this function runs when user clicks on the interested button */
-
+    
+    
     $scope.interestedButton = function(){
-        /* create a product interest on firebase. */
-        var transactionRef = ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/' + $scope.buyerId);
-        /* push data to firebase. */
-        transactionRef.child('/messages').push($scope.message);
+        $scope.interestExists = $firebaseObject(ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId));
+        $scope.interestExists.$loaded(function(data){
+            if(data.$value!==null){
+                console.log("You are already interested in this item!");
+            }
+            else{
+                /* create a product interest on firebase. */
+                var transactionRef = ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/' + $scope.buyerId);
+                /* push data to firebase. */
+                transactionRef.child('/messages').push($scope.message);
+                
+                //Check and push state information if it does not exist.
+                $scope.stateInfo = $firebaseObject(ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/statusInformation/'));
+                $scope.stateInfo.$loaded(function(data){
+                    if(data.$value!==null){
+                        console.log(data);
+                    }
+                    else{
+                        var stateInfoRef = ref.child('/interests/'+ $scope.sellerId + '/' + $scope.productId);
+                        $scope.stateInformation={};
+                        //addition of new field to indicate the chosen buyer
+                        $scope.stateInformation.selectedBuyer = "N/A";
+                        //addition of a status for the interest
+                        $scope.stateInformation.status = "Available";
+                        stateInfoRef.child('/statusInformation').set($scope.stateInformation);
+                        //Update the interests by adding 1 to the value in the firebase
+                        var productRef = ref.child('/products/'+$scope.sellerId+'/'+$scope.productId);
+                        $scope.product = $firebaseObject(productRef);
+                        $scope.product.$loaded(function(data){
+                            console.log(data.interested);
+                            productRef.child('/interested').set(data.interested+1);
+                        });
+                    }
+                });
+            }
+        });      
     };
 
     /* information of the specific item is now lodaded ionto the page via scope */
