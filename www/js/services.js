@@ -1,5 +1,23 @@
 angular.module('starter.services', [])
 
+.service('SideMenuStateService',[function(){
+
+  var signedIn = false;
+
+  return{
+
+    getSignedIn : function(){
+      return signedIn;
+    },
+
+    setSignedIn : function(value){
+      signedIn = value;
+    }
+
+  };
+
+}])
+
 .service('AllProductsService',['$firebaseObject', function($firebaseObject){
     var ref = new Firebase("https://comp3990.firebaseio.com/products");
     //var products = ref.child('/products');
