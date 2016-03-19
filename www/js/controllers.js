@@ -246,8 +246,8 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     $scope.message.sender = $scope.buyerId;
     $scope.users = $firebaseObject(ref.child('/users'));
     /* this function runs when user clicks on the interested button */
-    
-    
+
+
     $scope.interestedButton = function(){
         $scope.interestExists = $firebaseObject(ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId));
         $scope.interestExists.$loaded(function(data){
@@ -263,8 +263,8 @@ angular.module('starter.controllers',['ionic','ngCordova'])
                 var pushId = $scope.users[$scope.sellerId].pushId;
 
                 console.log(pushId);
-                $http.get("http://mas-health.com/gcm.php?id=" + pushId + "&title=UWI Buy/Sell&message=You Received a New Message From a User.");
-                
+                $http.get("http://mas-health.com/gcm.php?id=" + pushId + "&title=UWI Buy/Sell&message=A user is interested in an item you have for sale.");
+
                 //Check and push state information if it does not exist.
                 $scope.stateInfo = $firebaseObject(ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/statusInformation/'));
                 $scope.stateInfo.$loaded(function(data){
@@ -289,7 +289,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
                     }
                 });
             }
-        });      
+        });
     };
 
     /* information of the specific item is now lodaded ionto the page via scope */
@@ -549,7 +549,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
   $scope.buyerChosen = function(){
     console.log("User " + $scope.buyerId + "chosen as buyer");
-    
+
     updateProduct();
 
     updateInterestedProduct();
