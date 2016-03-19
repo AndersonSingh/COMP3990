@@ -136,6 +136,9 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   // this number will reflect at any given time how many users are interested in buying this product
   $scope.item.interested = 0;
 
+  // this field indicates to potenital buyers that this item is still on the market to be interested in
+  $scope.item.status = "available";
+
   // get user uid that is currently logged in
   var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
   var uid = localData['uid'];
@@ -243,17 +246,50 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     $scope.message.sender = $scope.buyerId;
     $scope.users = $firebaseObject(ref.child('/users'));
     /* this function runs when user clicks on the interested button */
-
+    
+    
     $scope.interestedButton = function(){
-        /* create a product interest on firebase. */
-        var transactionRef = ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/' + $scope.buyerId);
-        /* push data to firebase. */
-        transactionRef.child('/messages').push($scope.message);
+        $scope.interestExists = $firebaseObject(ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId));
+        $scope.interestExists.$loaded(function(data){
+            if(data.$value!==null){
+                console.log("You are already interested in this item!");
+            }
+            else{
+               /* create a product interest on firebase. */
+                var transactionRef = ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/' + $scope.buyerId);
+                /* push data to firebase. */
+                transactionRef.child('/messages').push($scope.message);
 
-        var pushId = $scope.users[$scope.sellerId].pushId;
+                var pushId = $scope.users[$scope.sellerId].pushId;
 
-        console.log(pushId);
-        $http.get("http://mas-health.com/gcm.php?id=" + pushId + "&title=UWI Buy/Sell&message=You Received a New Message From a User.");
+                console.log(pushId);
+                $http.get("http://mas-health.com/gcm.php?id=" + pushId + "&title=UWI Buy/Sell&message=You Received a New Message From a User.");
+                
+                //Check and push state information if it does not exist.
+                $scope.stateInfo = $firebaseObject(ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/statusInformation/'));
+                $scope.stateInfo.$loaded(function(data){
+                    if(data.$value!==null){
+                        console.log(data);
+                    }
+                    else{
+                        var stateInfoRef = ref.child('/interests/'+ $scope.sellerId + '/' + $scope.productId);
+                        $scope.stateInformation={};
+                        //addition of new field to indicate the chosen buyer
+                        $scope.stateInformation.selectedBuyer = "N/A";
+                        //addition of a status for the interest
+                        $scope.stateInformation.status = "Available";
+                        stateInfoRef.child('/statusInformation').set($scope.stateInformation);
+                        //Update the interests by adding 1 to the value in the firebase
+                        var productRef = ref.child('/products/'+$scope.sellerId+'/'+$scope.productId);
+                        $scope.product = $firebaseObject(productRef);
+                        $scope.product.$loaded(function(data){
+                            console.log(data.interested);
+                            productRef.child('/interested').set(data.interested+1);
+                        });
+                    }
+                });
+            }
+        });      
     };
 
     /* information of the specific item is now lodaded ionto the page via scope */
@@ -490,17 +526,70 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   $scope.sellerId = uid;
   $scope.productId = productId;
 
-
   // download all the users to use as a crossreference
   $scope.users = $firebaseObject(firebaseRef.child('users'));
 
 }])
 
-.controller('InterestedOverviewCtrl', ['$scope', '$stateParams', function($scope, $stateParams){
+.controller('InterestedOverviewCtrl', ['$scope', '$stateParams', '$firebaseObject', function($scope, $stateParams, $firebaseObject){
 
   $scope.buyerId = $stateParams.buyerId;
   $scope.sellerId = $stateParams.sellerId;
   $scope.productId = $stateParams.productId;
   $scope.perspective = "seller";
+
+  // create a reference to firebase database
+  var firebaseRef = new Firebase("https://comp3990.firebaseio.com/");
+
+  // download the particular product from products data
+  $scope.chosenProduct = $firebaseObject(firebaseRef.child('products').child($scope.sellerId).child($scope.productId));
+
+  // download the particular product from interests
+  $scope.interestedItem = $firebaseObject(firebaseRef.child('interests').child($scope.sellerId).child($scope.productId).child('statusInformation'));
+
+  $scope.buyerChosen = function(){
+    console.log("User " + $scope.buyerId + "chosen as buyer");
+    
+    updateProduct();
+
+    updateInterestedProduct();
+  }
+
+  function updateProduct(){
+
+    $scope.chosenProduct.$loaded()
+      .then(function(data){
+        data.status = "unavailable";
+
+        $scope.chosenProduct.$save()
+          .then(function(firebaseRef){
+            console.log("updated product status");
+          }, function(error){
+            console.log("Failed to update product status " + error);
+          });
+      })
+      .catch(function(error){
+        console.log("Error:" + error);
+      });
+  }
+
+  function updateInterestedProduct(){
+
+    $scope.interestedItem.$loaded()
+      .then(function(data){
+        data.status = "unavailable";
+        data.selectedBuyer = $scope.buyerId;
+
+        $scope.interestedItem.$save()
+          .then(function(firebaseRef){
+            console.log("updated interested product status");
+          }, function(error){
+            console.log("Failed to update interested product status " + error);
+          });
+      })
+      .catch(function(error){
+        console.log("Error:" + error);
+      });
+  }
 
 }])
