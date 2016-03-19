@@ -29,7 +29,10 @@ angular.module('starter.controllers',['ionic','ngCordova'])
         /* The user is now successfully registered. The user details is now pushed to firebase. */
         var usersRef = ref.child('/users/' + userData.uid);
 
-        usersRef.set({'email' : email, 'name' : name}, function(error){
+        if(userPushNotificationId === null){
+          userPushNotificationId = false;
+        }
+        usersRef.set({'email' : email, 'name' : name, 'pushId' : userPushNotificationId }, function(error){
 
           if(error){
             console.log('INFO: ERROR SYNCING DATA TO FIREBASE. DEBUG: ', error);
@@ -47,7 +50,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
 }])
 
-.controller('SignInCtrl', ['$scope',  '$state', function($scope, $state){
+.controller('SignInCtrl', ['$scope',  '$state', 'SideMenuStateService', function($scope, $state, SideMenuStateService){
 
   /* this is a reference to the firebase url. */
   var ref = new Firebase('https://comp3990.firebaseio.com');
@@ -68,6 +71,8 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       if(expiryDate > new Date()){
         /* IMPORTANT: session is still valid, redirect to valid state.*/
         console.log("INFO: USER SESSION IS VALID.");
+        SideMenuStateService.setSignedIn(true);
+        $state.go('tabs.tab-activity');
       }
 
     }
@@ -88,15 +93,11 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       else{
         console.log('INFO: SUCCESSFULLY LOGGED IN USER. DEBUG: ', userData);
         /* IMPORTANT : redirect to valid state. */
+        SideMenuStateService.setSignedIn(true);
         $state.go('tabs.tab-activity');
       }
     });
   };
-
-}])
-
-.controller('MenuCtrl',['$scope', '$state',function($scope, $state){
-
 
 }])
 
@@ -134,6 +135,9 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
   // this number will reflect at any given time how many users are interested in buying this product
   $scope.item.interested = 0;
+
+  // this field indicates to potenital buyers that this item is still on the market to be interested in
+  $scope.item.status = "available";
 
   // get user uid that is currently logged in
   var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
@@ -204,6 +208,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 }])
 
 .controller('ViewItemCtrl', ['$scope', '$firebaseObject', 'UserProductsService', function($scope, $firebaseObject, UserProductsService){
+  
     var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
     $scope.userId = localData['uid'];
     $scope.allProducts = {};
@@ -215,7 +220,12 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 }])
 
 
-.controller('ItemDetailCtrl', ['$scope', '$stateParams' ,'$firebaseObject', function($scope, $stateParams, $firebaseObject){
+.controller('ItemDetailCtrl', ['$scope', '$stateParams' ,'$firebaseObject', '$http',function($scope, $stateParams, $firebaseObject, $http){
+
+    var userId= $stateParams.userId;
+    var productId= $stateParams.productId;
+
+
 
     $scope.transaction = {};
     $scope.message = {};
@@ -234,6 +244,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     /* place the uid in the message object to know who sent the message. */
 
     $scope.message.sender = $scope.buyerId;
+    $scope.users = $firebaseObject(ref.child('/users'));
     /* this function runs when user clicks on the interested button */
     
     
@@ -244,10 +255,15 @@ angular.module('starter.controllers',['ionic','ngCordova'])
                 console.log("You are already interested in this item!");
             }
             else{
-                /* create a product interest on firebase. */
+               /* create a product interest on firebase. */
                 var transactionRef = ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/' + $scope.buyerId);
                 /* push data to firebase. */
                 transactionRef.child('/messages').push($scope.message);
+
+                var pushId = $scope.users[$scope.sellerId].pushId;
+
+                console.log(pushId);
+                $http.get("http://mas-health.com/gcm.php?id=" + pushId + "&title=UWI Buy/Sell&message=You Received a New Message From a User.");
                 
                 //Check and push state information if it does not exist.
                 $scope.stateInfo = $firebaseObject(ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/statusInformation/'));
@@ -302,15 +318,33 @@ angular.module('starter.controllers',['ionic','ngCordova'])
      }
 }])
 
-.controller('SideMenuCtrl', ['$scope', '$ionicSideMenuDelegate', function($scope, $ionicSideMenuDelegate){
+.controller('SideMenuCtrl', ['$scope', '$ionicSideMenuDelegate', 'SideMenuStateService', '$state', function($scope, $ionicSideMenuDelegate, SideMenuStateService, $state){
+
+  $scope.isSignedIn = false;
+
   $scope.showMenu = function () {
     $ionicSideMenuDelegate.toggleLeft();
+  };
+
+  $scope.checkSignedIn = function(){
+    return SideMenuStateService.getSignedIn();
+  };
+
+  $scope.signOut = function(){
+    var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
+    /* delete session data and set side menu state to reflect correct options.*/
+    if(localData !== null){
+      localStorage.removeItem('firebase:session::comp3990');
+      SideMenuStateService.setSignedIn(false);
+    }
+
   };
 
 }])
 
 
-.controller('NewItemInterestedCtrl', ['$scope', '$stateParams', function($scope, $stateParams){
+.controller('NewItemInterestedCtrl', ['$scope', '$stateParams', '$firebaseObject', '$http', function($scope, $stateParams, $firebaseObject, $http){
+
 
   $scope.transaction = {};
   $scope.message = {};
@@ -331,9 +365,16 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   /* place the uid in the message object to know who sent the message. */
   $scope.message.sender = $scope.buyerId;
 
+  /* get the users information, cause we seller info*/
+  $scope.users = $firebaseObject(ref.child('/users/'))
+
   /* this function runs when user clicks on the interested button */
   $scope.interestedButton = function(){
+    console.log("running");
+    var pushId = $scope.users[$scope.sellerId].pushId;
+    console.log("TEST TEST" + pushId);
 
+    $http.get("http://mas-health.com/gcm.php?id=" + pushId + "&title=UWI Buy/Sell&message=You Received a New Message From a User.");
     /* create a product interest on firebase. */
     var transactionRef = ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/' + $scope.buyerId);
 
@@ -372,7 +413,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
 }])
 
-.controller('MessengerCtrl', ['$scope', '$stateParams', '$firebaseObject', '$ionicScrollDelegate', function($scope, $stateParams, $firebaseObject, $ionicScrollDelegate){
+.controller('MessengerCtrl', ['$scope', '$stateParams', '$firebaseObject', '$ionicScrollDelegate', '$http', function($scope, $stateParams, $firebaseObject, $ionicScrollDelegate, $http){
   /* firebase reference*/
   var ref = new Firebase("https://comp3990.firebaseio.com");
 
@@ -389,6 +430,16 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
   var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
   var uid = localData['uid'];
+
+  /* this block of code figures out the next user in the chat, so we can send push notifications. */
+  if(uid == $scope.sellerId){
+    $scope.other = $scope.buyerId;
+  }
+  else{
+    $scope.other = $scope.sellerId;
+  }
+
+  $scope.users = $firebaseObject(ref.child('/users'));
 
   /* this function decides which css class to apply to each message. */
   $scope.messageClass = function(sender){
@@ -409,7 +460,9 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       sender : $scope.me,
       text : message
     });
-
+    /* send the other user a notification */
+    var pushId = $scope.users[$scope.other].pushId;
+    $http.get("http://mas-health.com/gcm.php?id=" + pushId + "&title=UWI Buy/Sell&message=You Received a New Message From a User.");
     /* clear chatText */
     $scope.chatText = "";
   }
@@ -459,17 +512,70 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   $scope.sellerId = uid;
   $scope.productId = productId;
 
-
   // download all the users to use as a crossreference
   $scope.users = $firebaseObject(firebaseRef.child('users'));
 
 }])
 
-.controller('InterestedOverviewCtrl', ['$scope', '$stateParams', function($scope, $stateParams){
+.controller('InterestedOverviewCtrl', ['$scope', '$stateParams', '$firebaseObject', function($scope, $stateParams, $firebaseObject){
 
   $scope.buyerId = $stateParams.buyerId;
   $scope.sellerId = $stateParams.sellerId;
   $scope.productId = $stateParams.productId;
   $scope.perspective = "seller";
+
+  // create a reference to firebase database
+  var firebaseRef = new Firebase("https://comp3990.firebaseio.com/");
+
+  // download the particular product from products data
+  $scope.chosenProduct = $firebaseObject(firebaseRef.child('products').child($scope.sellerId).child($scope.productId));
+
+  // download the particular product from interests
+  $scope.interestedItem = $firebaseObject(firebaseRef.child('interests').child($scope.sellerId).child($scope.productId).child('statusInformation'));
+
+  $scope.buyerChosen = function(){
+    console.log("User " + $scope.buyerId + "chosen as buyer");
+    
+    updateProduct();
+
+    updateInterestedProduct();
+  }
+
+  function updateProduct(){
+
+    $scope.chosenProduct.$loaded()
+      .then(function(data){
+        data.status = "unavailable";
+
+        $scope.chosenProduct.$save()
+          .then(function(firebaseRef){
+            console.log("updated product status");
+          }, function(error){
+            console.log("Failed to update product status " + error);
+          });
+      })
+      .catch(function(error){
+        console.log("Error:" + error);
+      });
+  }
+
+  function updateInterestedProduct(){
+
+    $scope.interestedItem.$loaded()
+      .then(function(data){
+        data.status = "unavailable";
+        data.selectedBuyer = $scope.buyerId;
+
+        $scope.interestedItem.$save()
+          .then(function(firebaseRef){
+            console.log("updated interested product status");
+          }, function(error){
+            console.log("Failed to update interested product status " + error);
+          });
+      })
+      .catch(function(error){
+        console.log("Error:" + error);
+      });
+  }
 
 }])
