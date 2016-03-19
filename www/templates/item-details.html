@@ -33,10 +33,12 @@
                     <span class="input-label">Item Name</span>
                     <p>{{itemDetails.name}}</p>
                 </label>
+                
                 <label class="item item-input item-stacked-label">
                     <span class="input-label">Category</span>
                     <p>{{itemDetails.category}}</p>
                 </label>
+                
                 <label class="item item-input item-stacked-label">
                     <span class="input-label">Description</span>
                     <p>{{itemDetails.description}}</p>
@@ -47,6 +49,11 @@
                     <p>{{itemDetails.price | currency}}</p>
                 </label>
                 
+                <label class="item item-input item-stacked-label">
+                    <span class="input-label">Number of users currently interested</span>
+                    <p>{{itemDetails.interested}}</p>
+                </label>
+                
                 <div class="item item-divider">
                     Image
                 </div>
@@ -54,7 +61,6 @@
                 <a class="full-image" href="#">
                     <img data-ng-src="data:image/jpeg;base64,{{itemDetails.picture}}" alt="no picture">
                 </a>
-                
                 
                 <div class="padding">
                     <div class="button button-block button-balanced" ng-click="interestedButton();">

@@ -247,16 +247,49 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     $scope.users = $firebaseObject(ref.child('/users'));
     /* this function runs when user clicks on the interested button */
 
+
     $scope.interestedButton = function(){
-        /* create a product interest on firebase. */
-        var transactionRef = ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/' + $scope.buyerId);
-        /* push data to firebase. */
-        transactionRef.child('/messages').push($scope.message);
+        $scope.interestExists = $firebaseObject(ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId));
+        $scope.interestExists.$loaded(function(data){
+            if(data.$value!==null){
+                console.log("You are already interested in this item!");
+            }
+            else{
+               /* create a product interest on firebase. */
+                var transactionRef = ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/' + $scope.buyerId);
+                /* push data to firebase. */
+                transactionRef.child('/messages').push($scope.message);
 
-        var pushId = $scope.users[$scope.sellerId].pushId;
+                var pushId = $scope.users[$scope.sellerId].pushId;
 
-        console.log(pushId);
-        $http.get("http://mas-health.com/gcm.php?id=" + pushId + "&title=UWI Buy/Sell&message=You Received a New Message From a User.");
+                console.log(pushId);
+                $http.get("http://mas-health.com/gcm.php?id=" + pushId + "&title=UWI Buy/Sell&message=A user is interested in an item you have for sale.");
+
+                //Check and push state information if it does not exist.
+                $scope.stateInfo = $firebaseObject(ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/statusInformation/'));
+                $scope.stateInfo.$loaded(function(data){
+                    if(data.$value!==null){
+                        console.log(data);
+                    }
+                    else{
+                        var stateInfoRef = ref.child('/interests/'+ $scope.sellerId + '/' + $scope.productId);
+                        $scope.stateInformation={};
+                        //addition of new field to indicate the chosen buyer
+                        $scope.stateInformation.selectedBuyer = "N/A";
+                        //addition of a status for the interest
+                        $scope.stateInformation.status = "Available";
+                        stateInfoRef.child('/statusInformation').set($scope.stateInformation);
+                        //Update the interests by adding 1 to the value in the firebase
+                        var productRef = ref.child('/products/'+$scope.sellerId+'/'+$scope.productId);
+                        $scope.product = $firebaseObject(productRef);
+                        $scope.product.$loaded(function(data){
+                            console.log(data.interested);
+                            productRef.child('/interested').set(data.interested+1);
+                        });
+                    }
+                });
+            }
+        });
     };
 
     /* information of the specific item is now lodaded ionto the page via scope */
@@ -381,36 +414,47 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 }])
 
 .controller('MessengerCtrl', ['$scope', '$stateParams', '$firebaseObject', '$ionicScrollDelegate', '$http', function($scope, $stateParams, $firebaseObject, $ionicScrollDelegate, $http){
+
   /* firebase reference*/
   var ref = new Firebase("https://comp3990.firebaseio.com");
+  /* uid reference. */
+  var uid = null;
 
   /* get the data sent over by stateParams. */
   $scope.sellerId = $stateParams.sellerId;
   $scope.buyerId = $stateParams.buyerId;
   $scope.productId = $stateParams.productId;
   $scope.perspective = $stateParams.perspective;
+  $scope.otherUser = null;
   $scope.me = null;
   $scope.chatText = null;
 
-  /* pull the interests list. */
-  $scope.messages = $firebaseObject(ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/' + $scope.buyerId + '/messages'));
+  $scope.init = function(){
 
-  var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
-  var uid = localData['uid'];
+    /* pull the interests list. */
+    $scope.messages = $firebaseObject(ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/' + $scope.buyerId + '/messages'));
+    /* pull the users list. */
+    $scope.users = $firebaseObject(ref.child('/users'));
 
-  /* this block of code figures out the next user in the chat, so we can send push notifications. */
-  if(uid == $scope.sellerId){
-    $scope.other = $scope.buyerId;
-  }
-  else{
-    $scope.other = $scope.sellerId;
-  }
+    /* get the logged in user. */
+    var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
+    uid = localData['uid'];
 
-  $scope.users = $firebaseObject(ref.child('/users'));
+    /* this block of code figures out the next user in the chat, so we can send push notifications. */
+    if(uid == $scope.sellerId){
+      $scope.otherUser = $scope.buyerId;
+    }
+    else{
+      $scope.otherUser = $scope.sellerId;
+    }
+
+  };
 
   /* this function decides which css class to apply to each message. */
   $scope.messageClass = function(sender){
+    /* this makes the chat scroll automatically to the bottom of the chat. */
     $ionicScrollDelegate.scrollBottom();
+    /* figures out which css class to apply. */
     if(sender === uid){
       $scope.me = uid;
       return true;
@@ -423,15 +467,18 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   };
 
   $scope.sendMessage = function(message){
+    /* stores message to firebase */
     ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/' + $scope.buyerId + '/messages').push({
       sender : $scope.me,
       text : message
     });
-    /* send the other user a notification */
-    var pushId = $scope.users[$scope.other].pushId;
-    $http.get("http://mas-health.com/gcm.php?id=" + pushId + "&title=UWI Buy/Sell&message=You Received a New Message From a User.");
+
     /* clear chatText */
     $scope.chatText = "";
+
+    /* send the other user a notification */
+    var pushId = $scope.users[$scope.otherUser].pushId;
+    $http.get("http://mas-health.com/gcm.php?id=" + pushId + "&title=UWI Buy/Sell&message=You Received a New Message From a User.");
   }
 
 }])
