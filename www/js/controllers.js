@@ -205,7 +205,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 }])
 
 .controller('ViewItemCtrl', ['$scope', '$firebaseObject', 'UserProductsService', function($scope, $firebaseObject, UserProductsService){
-
+  
     var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
     $scope.userId = localData['uid'];
     $scope.allProducts = {};
@@ -221,7 +221,6 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
     var userId= $stateParams.userId;
     var productId= $stateParams.productId;
-
 
 
 
