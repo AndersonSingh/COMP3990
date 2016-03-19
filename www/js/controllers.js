@@ -208,7 +208,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 }])
 
 .controller('ViewItemCtrl', ['$scope', '$firebaseObject', 'UserProductsService', function($scope, $firebaseObject, UserProductsService){
-  
+
     var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
     $scope.userId = localData['uid'];
     $scope.allProducts = {};
@@ -502,10 +502,14 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
   $scope.buyerChosen = function(){
     console.log("User " + $scope.buyerId + "chosen as buyer");
-    
+
     updateProduct();
 
     updateInterestedProduct();
+  }
+
+  $scope.completeTransaction = function(){
+    console.log("transaction complete");
   }
 
   function updateProduct(){

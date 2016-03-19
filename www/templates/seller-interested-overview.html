@@ -4,8 +4,16 @@
       Messenger
     </button>
 
-    <button class="button button-block button-positve" ng-click="buyerChosen();">
+    <button class="button button-block button-stable" ng-click="buyerChosen();">
       Choose this buyer
+    </button>
+
+    <ion-list>
+      <ion-checkbox ng-hide="chosenProduct.status == 'available'" ng-model="agree_status" ng-true-value="true" ng-false-value="false">I agree that transaction is completed </ion-checkbox>
+    </ion-list>
+
+    <button ng-show="agree_status == true" class="button button-block button-stable" ng-click="completeTransaction();">
+      Transaction Complete
     </button>
   </ion-content>
 </ion-view>
