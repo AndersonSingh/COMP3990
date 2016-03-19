@@ -60,7 +60,7 @@
          </ion-side-menu-content>
 
          <!-- the layout of the left side menu -->
-         <ion-side-menu side="left">
+         <ion-side-menu side="left" ng-controller="SideMenuCtrl">
 
            <!-- left menu header -->
            <ion-header-bar class="bar bar-header bar-light">
@@ -71,10 +71,12 @@
            <ion-content has-header="true">
              <ul class="list">
                <li>
-                 <a class="item" menu-close nav-clear ui-sref="tabs.tab-activity">Home</a>
-                 <a class="item" menu-close nav-clear ui-sref="menu-selling">Selling</a>
-                 <a class="item" menu-close nav-clear ui-sref="menu-buying">Buying</a>
-                 <a class="item" menu-close nav-clear ui-sref="menu-settings">Settings</a>
+                 <a class="item" menu-close nav-clear ui-sref="sign-in" ng-hide="checkSignedIn()">Sign In</a>
+                 <a class="item" menu-close nav-clear ui-sref="tabs.tab-activity" ng-show="checkSignedIn()">Home</a>
+                 <a class="item" menu-close nav-clear ui-sref="menu-selling" ng-show="checkSignedIn()">Selling</a>
+                 <a class="item" menu-close nav-clear ui-sref="menu-buying" ng-show="checkSignedIn()">Buying</a>
+                 <a class="item" menu-close nav-clear ui-sref="menu-settings" ng-show="checkSignedIn()">Settings</a>
+                 <a class="item" menu-close nav-clear ui-sref="sign-in" ng-show="checkSignedIn()" ng-click="signOut()">Sign Out</a>
                </li>
              </ul>
            </ion-content>

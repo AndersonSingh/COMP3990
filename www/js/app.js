@@ -3,10 +3,29 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
+
+userPushNotificationId = null;
+
 angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.services','angular-toArrayFilter'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
+    //push notifications
+    var pushNotification;
+
+    document.addEventListener("deviceready", function(){
+    pushNotification = window.plugins.pushNotification;
+    });
+
+    if ( device.platform == 'android' || device.platform == 'Android' || device.platform == "amazon-fireos" ){
+      pushNotification.register(
+      successHandler,
+      errorHandler,
+      {
+          "senderID":"462662367187",
+          "ecb":"onNotification"
+      });
+    }
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs).
     // The reason we default this to hidden is that native apps don't usually show an accessory bar, at
@@ -164,3 +183,54 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
   $urlRouterProvider.otherwise('sign-in');
 
 });
+
+function onNotification(e) {
+
+    switch( e.event )
+    {
+    case 'registered':
+        if ( e.regid.length > 0 )
+        {
+            // Your GCM push server needs to know the regID before it can push to this device
+            // here is where you might want to send it the regID for later use.
+            console.log("regID = " + e.regid);
+            userPushNotificationId  = e.regid;
+        }
+    break;
+
+    case 'message':
+        // if this flag is set, this notification happened while we were in the foreground.
+        // you might want to play a sound to get the user's attention, throw up a dialog, etc.
+        if ( e.foreground )
+        {
+          console.log("push notification came in while user in app.");
+        }
+        else
+        {  // otherwise we were launched because the user touched a notification in the notification tray.
+            if ( e.coldstart )
+            {
+              console.log("push notification cold start.");
+            }
+            else
+            {
+            }
+        }
+    break;
+
+    case 'error':
+        console.log("Error with push notification" + e.msg);
+    break;
+
+    default:
+      console.log("Unknown push notification event received.");
+    break;
+  }
+}
+
+function errorHandler (error) {
+    alert('error = ' + error);
+}
+
+function successHandler (result) {
+    alert('result = ' + result);
+}
