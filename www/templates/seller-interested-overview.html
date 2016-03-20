@@ -1,10 +1,20 @@
 <ion-view>
   <ion-content>
+
+    <div class="ion-list" ng-hide="chosenProduct.status == 'available'">
+        <a class="item item-avatar" href="#" >
+        <img data-ng-src="" alt="profile pic">
+            <h2> Chosen Buyer </h2>
+            <h2> Name: {{buyer.name}} </h2>
+            <h2> Email: {{buyer.email}} </h2>
+        </a>
+    </div>
+
     <button class="button button-block button-stable" ui-sref="messenger({'sellerId' : sellerId, 'productId' : productId, 'buyerId': buyerId, 'perspective' : 'seller'})">
       Messenger
     </button>
 
-    <button class="button button-block button-stable" ng-click="buyerChosen();">
+    <button class="button button-block button-stable" ng-click="buyerChosen();" ng-show="chosenProduct.status == 'available'">
       Choose this buyer
     </button>
 

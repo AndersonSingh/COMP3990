@@ -3,7 +3,7 @@
 
     <div ng-repeat="(key, value) in allInterestedUsers">
       <div class="ion-list" ng-repeat="(key2, value2) in users" ng-if="key == key2">
-          <a class="item item-thumbnail-left" href="#" ui-sref="seller-interested-overview({'buyerId': key2, 'sellerId' : sellerId, perspective : 'seller', 'productId' : productId})">
+          <a class="item item-avatar" href="#" ui-sref="seller-interested-overview({'buyerId': key2, 'sellerId' : sellerId, perspective : 'seller', 'productId' : productId})">
           <img data-ng-src="" alt="no picture">
               <h2> Name: {{value2.name}} </h2>
               <h2> Email: {{value2.email}} </h2>

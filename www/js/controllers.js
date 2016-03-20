@@ -547,6 +547,9 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   // download the particular product from interests
   $scope.interestedItem = $firebaseObject(firebaseRef.child('interests').child($scope.sellerId).child($scope.productId).child('statusInformation'));
 
+  // download info on buyer
+  $scope.buyer = $firebaseObject(firebaseRef.child('users').child($scope.buyerId));
+
   $scope.buyerChosen = function(){
     console.log("User " + $scope.buyerId + "chosen as buyer");
 
