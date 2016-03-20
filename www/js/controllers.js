@@ -412,7 +412,6 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
   $scope.buyerIdLocalStorage = localData['uid'];
   
-  
   /* get the information passed over from the previous page. */
   $scope.sellerId = $stateParams.sellerId;
   $scope.buyerId = $stateParams.buyerId;
@@ -422,16 +421,19 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   var ref = new Firebase("https://comp3990.firebaseio.com");
   $scope.interestsRef = $firebaseObject(ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/statusInformation' ));
   $scope.interestsRef.$loaded(function(data){
-      //Show the transaction button if user is permitted else show message saying user is not allowed.
+      //item is unavailable and id matches
       if(data.status === "unavailable" && data.selectedBuyer===$scope.buyerId){
           $scope.allowedToBuyPositive=true;
       }
-      else{
+      //item is unavailable and id does not match
+      else if(data.status === "unavailable" && data.selectedBuyer!==$scope.buyerId){
           $scope.allowedToBuyNegative=true;
       }
+      //item is avaialble
+      else{
+          
+      }
   });
-  
-  
 }])
 
 .controller('MessengerCtrl', ['$scope', '$stateParams', '$firebaseObject', '$ionicScrollDelegate', '$http', function($scope, $stateParams, $firebaseObject, $ionicScrollDelegate, $http){
