@@ -403,14 +403,35 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   $scope.appUsers = $firebaseObject(ref.child('/users'));
 }])
 
-.controller('BuyerInterestedItemOverviewCtrl', ['$scope', '$stateParams', function($scope, $stateParams){
-
+.controller('BuyerInterestedItemOverviewCtrl', ['$scope', '$stateParams', '$firebaseObject', function($scope, $stateParams, $firebaseObject){
+   //Set both sets of information to be displayed to false
+   $scope.allowedToBuyPositive=false; 
+   $scope.allowedToBuyNegative=false;
+    
+  //get the user's ID
+  var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
+  $scope.buyerIdLocalStorage = localData['uid'];
+  
+  
   /* get the information passed over from the previous page. */
   $scope.sellerId = $stateParams.sellerId;
   $scope.buyerId = $stateParams.buyerId;
   $scope.productId = $stateParams.productId;
   $scope.perspective = $stateParams.perspective;
-
+  /* firebase reference*/
+  var ref = new Firebase("https://comp3990.firebaseio.com");
+  $scope.interestsRef = $firebaseObject(ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/statusInformation' ));
+  $scope.interestsRef.$loaded(function(data){
+      //Show the transaction button if user is permitted else show message saying user is not allowed.
+      if(data.status === "unavailable" && data.selectedBuyer===$scope.buyerId){
+          $scope.allowedToBuyPositive=true;
+      }
+      else{
+          $scope.allowedToBuyNegative=true;
+      }
+  });
+  
+  
 }])
 
 .controller('MessengerCtrl', ['$scope', '$stateParams', '$firebaseObject', '$ionicScrollDelegate', '$http', function($scope, $stateParams, $firebaseObject, $ionicScrollDelegate, $http){
