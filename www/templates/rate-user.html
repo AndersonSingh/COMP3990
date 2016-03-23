@@ -1,0 +1,21 @@
+<ion-view view-title="Activity">
+  <ion-content>
+    <label class="item item-input item-stacked-label">
+                <span class="input-label">Enter User's Rating</span>
+                <input type="text" placeholder="User Rating" ng-model="userRating.rating">
+            </label>
+            
+            <rating ng-model="userRating.rating" max="rating.max">
+                
+            </rating>
+            
+            <label class="item item-input item-stacked-label">
+                <span class="input-label">Enter a comment if desired</span>
+                <input type="text" placeholder="User Comment" ng-model="userRating.comment">
+            </label> 
+    <button class="button button-block button-positive" ng-click="postRating();">
+    Block Button
+    </button>
+    
+  <ion-content>
+</ion-view>

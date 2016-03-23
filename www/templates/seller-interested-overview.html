@@ -25,5 +25,10 @@
     <button ng-show="agree_status == true" class="button button-block button-stable" ng-click="completeTransaction();">
       Transaction Complete
     </button>
+    
+    <button ng-show="agree_status === true" class="button button-block button-stable" ui-sref="rateuser({'buyerId':buyerId, 'sellerId' : sellerId})">
+        Review User
+    </button>
+      
   </ion-content>
 </ion-view>

@@ -6,7 +6,7 @@
 
 userPushNotificationId = null;
 
-angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.services','angular-toArrayFilter'])
+angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.services','angular-toArrayFilter','ionic.rating'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -178,6 +178,12 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
  url: '/seller-interested-overview?buyerId&sellerId&perspective&productId',
  templateUrl: 'templates/seller-interested-overview.html',
  controller: 'InterestedOverviewCtrl'
+})
+
+.state('rateuser', {
+ url: '/rateuser?buyerId&sellerId',
+ templateUrl: 'templates/rate-user.html',
+ controller: 'UserRatingCtrl'
 })
 
   $urlRouterProvider.otherwise('sign-in');

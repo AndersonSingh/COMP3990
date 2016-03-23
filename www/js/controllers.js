@@ -554,6 +554,46 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
 }])
 
+
+.controller('UserRatingCtrl', ['$scope', '$stateParams', '$firebaseObject', function($scope, $stateParams, $firebaseObject){
+    
+  var ref = new Firebase("https://comp3990.firebaseio.com");
+  
+  $scope.rating = {};
+  $scope.rating.max = 5;
+  
+  $scope.userRating={rating:4 , comment:''};
+    
+  var buyerId = $stateParams.buyerId;
+  var sellerId = $stateParams.sellerId;
+  var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
+  var uid = localData['uid'];
+  
+  var seller=false;
+  $scope.userType="";
+  if(uid===buyerId){
+      $scope.userType="Buyer";
+  }
+  else if(uid===sellerId){
+      $scope.userType="Seller";
+      seller=true;
+  }
+  
+  $scope.postRating=function(){
+      console.log("INSIDE!!!");
+      if(seller){
+        var productRef = ref.child('/users/'+buyerId+'');
+        productRef.child('/ratings').push($scope.userRating);
+      }
+      else{
+        var productRef = ref.child('/users/'+sellerId+'');
+        productRef.child('/ratings').push($scope.userRating);
+      }
+  }
+  
+}])
+
+
 .controller('InterestedOverviewCtrl', ['$scope', '$stateParams', '$firebaseObject', function($scope, $stateParams, $firebaseObject){
 
   $scope.buyerId = $stateParams.buyerId;
