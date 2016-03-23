@@ -556,41 +556,53 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
 
 .controller('UserRatingCtrl', ['$scope', '$stateParams', '$firebaseObject', function($scope, $stateParams, $firebaseObject){
-    
+  //Setup firebase reference
   var ref = new Firebase("https://comp3990.firebaseio.com");
   
+  //Set up rating for rating object on UI side
   $scope.rating = {};
   $scope.rating.max = 5;
-  
-  $scope.userRating={rating:4 , comment:''};
+  $scope.userRating={rating: 0, comment:''};
     
+  //Obtain buyer and seller ID's
   var buyerId = $stateParams.buyerId;
   var sellerId = $stateParams.sellerId;
   var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
   var uid = localData['uid'];
   
+  //Determine if current user is the buyer or seller
   var seller=false;
+  
+  //set up necessary variables for displaying information on the UI
   $scope.userType="";
+  $scope.userData={};
+  var userIdRef;
+  
   if(uid===buyerId){
       $scope.userType="Buyer";
+      userIdRef=buyerId;
   }
   else if(uid===sellerId){
       $scope.userType="Seller";
+      userIdRef=sellerId;
       seller=true;
   }
   
-  $scope.postRating=function(){
-      console.log("INSIDE!!!");
-      if(seller){
-        var productRef = ref.child('/users/'+buyerId+'');
-        productRef.child('/ratings').push($scope.userRating);
-      }
-      else{
-        var productRef = ref.child('/users/'+sellerId+'');
-        productRef.child('/ratings').push($scope.userRating);
-      }
-  }
+  var userCurrentRating;
+  $scope.userData = $firebaseObject(ref.child('/users/'+userIdRef));
+  $scope.userData.$loaded(function(data){
+      userCurrentRating=data.ratings.overallRating;
+  });
   
+  
+  //Perform post of review to firebase
+  $scope.postRating=function(){
+      var userRef = ref.child('/users/'+userIdRef+'');
+      userRef.child('/ratings').push($scope.userRating);
+      //Grab user average rating and update it
+      var newRating = (parseFloat(userCurrentRating) + parseFloat($scope.userRating.rating))/2;
+      userRef.child('/ratings/overallRating').set((newRating));
+  }
 }])
 
 
