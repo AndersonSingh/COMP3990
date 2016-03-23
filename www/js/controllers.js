@@ -79,24 +79,27 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   };
 
   /* this function will attempt to sign in a user. */
-  $scope.signIn = function(email, password){
+  $scope.signIn = function(form, email, password){
 
-    /* use authWithPassword from firebase to authenticate a user. */
-    ref.authWithPassword({
-      email : email,
-      password: password
-    },
-    function(error, userData){
-      if(error){
-        console.log('INFO: ERROR LOGGING USER IN. DEBUG: ', error);
-      }
-      else{
-        console.log('INFO: SUCCESSFULLY LOGGED IN USER. DEBUG: ', userData);
-        /* IMPORTANT : redirect to valid state. */
-        SideMenuStateService.setSignedIn(true);
-        $state.go('tabs.tab-activity');
-      }
-    });
+    /* only attempt to signin if the form is complete. */
+    if(form.$valid){
+      /* use authWithPassword from firebase to authenticate a user. */
+      ref.authWithPassword({
+        email : email,
+        password: password
+      },
+      function(error, userData){
+        if(error){
+          console.log('INFO: ERROR LOGGING USER IN. DEBUG: ', error);
+        }
+        else{
+          console.log('INFO: SUCCESSFULLY LOGGED IN USER. DEBUG: ', userData);
+          /* IMPORTANT : redirect to valid state. */
+          SideMenuStateService.setSignedIn(true);
+          $state.go('tabs.tab-activity');
+        }
+      });
+    }
   };
 
 }])
@@ -405,13 +408,13 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
 .controller('BuyerInterestedItemOverviewCtrl', ['$scope', '$stateParams', '$firebaseObject', function($scope, $stateParams, $firebaseObject){
    //Set both sets of information to be displayed to false
-   $scope.allowedToBuyPositive=false; 
+   $scope.allowedToBuyPositive=false;
    $scope.allowedToBuyNegative=false;
-    
+
   //get the user's ID
   var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
   $scope.buyerIdLocalStorage = localData['uid'];
-  
+
   /* get the information passed over from the previous page. */
   $scope.sellerId = $stateParams.sellerId;
   $scope.buyerId = $stateParams.buyerId;
@@ -431,7 +434,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       }
       //item is avaialble
       else{
-          
+
       }
   });
 }])
@@ -558,26 +561,26 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 .controller('UserRatingCtrl', ['$scope', '$stateParams', '$firebaseObject', function($scope, $stateParams, $firebaseObject){
   //Setup firebase reference
   var ref = new Firebase("https://comp3990.firebaseio.com");
-  
+
   //Set up rating for rating object on UI side
   $scope.rating = {};
   $scope.rating.max = 5;
   $scope.userRating={rating: 0, comment:''};
-    
+
   //Obtain buyer and seller ID's
   var buyerId = $stateParams.buyerId;
   var sellerId = $stateParams.sellerId;
   var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
   var uid = localData['uid'];
-  
+
   //Determine if current user is the buyer or seller
   var seller=false;
-  
+
   //set up necessary variables for displaying information on the UI
   $scope.userType="";
   $scope.userData={};
   var userIdRef;
-  
+
   if(uid===buyerId){
       $scope.userType="Buyer";
       userIdRef=buyerId;
@@ -587,14 +590,14 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       userIdRef=sellerId;
       seller=true;
   }
-  
+
   var userCurrentRating;
   $scope.userData = $firebaseObject(ref.child('/users/'+userIdRef));
   $scope.userData.$loaded(function(data){
       userCurrentRating=data.ratings.overallRating;
   });
-  
-  
+
+
   //Perform post of review to firebase
   $scope.postRating=function(){
       var userRef = ref.child('/users/'+userIdRef+'');
