@@ -36,8 +36,10 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
           if(userPushNotificationId === null){
             userPushNotificationId = false;
+
           }
-          usersRef.set({'email' : email, 'name' : name, 'pushId' : userPushNotificationId }, function(error){
+
+          usersRef.set({'email' : email, 'name' : name, 'pushId' : userPushNotificationId}, function(error){
 
             if(error){
               console.log('INFO: ERROR SYNCING DATA TO FIREBASE. DEBUG: ', error);
@@ -100,6 +102,14 @@ angular.module('starter.controllers',['ionic','ngCordova'])
         }
         else{
           console.log('INFO: SUCCESSFULLY LOGGED IN USER. DEBUG: ', userData);
+
+          var uid = userData['uid']
+          var provider = userData['provider'];
+          var profileImageURL = userData[provider]['profileImageURL'];
+
+          /* make profile image available on firebase. */
+         ref.child('/users/' + uid ).update({'profileImageURL' : profileImageURL});
+
           /* IMPORTANT : redirect to valid state. */
           SideMenuStateService.setSignedIn(true);
           $state.go('tabs.tab-activity');
@@ -115,20 +125,13 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   // create a reference to firebase database
   var ref = new Firebase("https://comp3990.firebaseio.com");
 
-  $scope.profileImageURL = null;
-  $scope.name = null;
   $scope.profileData = null;
 
   $scope.init = function(){
       var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
-      var uid = localData['uid'];
 
       if(localData !== null){
-
-        /* get profile image. */
-        var provider = localData.provider;
-        $scope.profileImageURL = localData[provider].profileImageURL;
-
+        var uid = localData['uid'];
         /* get profile data from firbase. */
         $scope.profileData = $firebaseObject(ref.child('/users/' + uid));
       }
