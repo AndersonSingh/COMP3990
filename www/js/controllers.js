@@ -9,42 +9,48 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   $scope.name = null;
   $scope.email = null;
   $scope.password = null;
-
+  $scope.formSuccess = true;
+  $scope.errorMessage = "";
   /* this function will attempt to sign a user up for an account. */
-  $scope.signUp = function(name, email, password){
+  $scope.signUp = function(form, name, email, password){
 
-    /* use firebase function createUser to attempt to create user account.*/
-    ref.createUser({
-      email: email,
-      password: password
-    },
-    function(error, userData){
+    if(form.$valid){
+      /* use firebase function createUser to attempt to create user account.*/
+      ref.createUser({
+        email: email,
+        password: password
+      },
+      function(error, userData){
 
-      if(error){
-        console.log('INFO: ERROR CREATING USER ACCOUNT. DEBUG: ', error);
-      }
-      else{
-        console.log('INFO: SUCCESSFULLY CREATED USER ACCOUNT. DEBUG: ', userData);
-
-        /* The user is now successfully registered. The user details is now pushed to firebase. */
-        var usersRef = ref.child('/users/' + userData.uid);
-
-        if(userPushNotificationId === null){
-          userPushNotificationId = false;
+        if(error){
+          console.log('INFO: ERROR CREATING USER ACCOUNT. DEBUG: ', error);
+          $scope.formSuccess = false;
+          $scope.errorMessage = error.toString();
+          $scope.$apply();
         }
-        usersRef.set({'email' : email, 'name' : name, 'pushId' : userPushNotificationId }, function(error){
+        else{
+          console.log('INFO: SUCCESSFULLY CREATED USER ACCOUNT. DEBUG: ', userData);
 
-          if(error){
-            console.log('INFO: ERROR SYNCING DATA TO FIREBASE. DEBUG: ', error);
-          }
-          else{
-            console.log('INFO: SUCCESSFULLY SYNCED DATA TO FIREBASE.');
-           $state.go('app.home');
-          }
-        });
-      }
+          /* The user is now successfully registered. The user details is now pushed to firebase. */
+          var usersRef = ref.child('/users/' + userData.uid);
 
-    });
+          if(userPushNotificationId === null){
+            userPushNotificationId = false;
+          }
+          usersRef.set({'email' : email, 'name' : name, 'pushId' : userPushNotificationId }, function(error){
+
+            if(error){
+              console.log('INFO: ERROR SYNCING DATA TO FIREBASE. DEBUG: ', error);
+            }
+            else{
+              console.log('INFO: SUCCESSFULLY SYNCED DATA TO FIREBASE.');
+             $state.go('sign-in');
+            }
+          });
+        }
+
+      });
+    }
 
   };
 

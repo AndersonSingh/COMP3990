@@ -12,7 +12,7 @@
         </label>
 
         <div class="error-container" ng-show="signInForm.email.$invalid && signInForm.email.$dirty" ng-messages="signInForm.email.$error">
-          <div class="error" ng-message="required" ng-show="signInForm.email.$error.email">
+          <div class="error" ng-message="required" ng-show="signInForm.email.$error.email  || signInForm.email.$error.required">
             <i class="ion-information-circled"></i>
             A valid email address is required!
           </div>
