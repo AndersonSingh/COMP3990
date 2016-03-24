@@ -59,6 +59,7 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
      views: {
          'activity-tab': {
          templateUrl: 'templates/tab-activity.html',
+         controller: 'ActivityCtrl'
          }
      }
    })

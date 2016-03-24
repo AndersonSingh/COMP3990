@@ -110,6 +110,32 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
 }])
 
+.controller("ActivityCtrl", ['$scope', '$firebaseObject', function($scope, $firebaseObject){
+
+  // create a reference to firebase database
+  var ref = new Firebase("https://comp3990.firebaseio.com");
+
+  $scope.profileImageURL = null;
+  $scope.name = null;
+  $scope.profileData = null;
+
+  $scope.init = function(){
+      var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
+      var uid = localData['uid'];
+
+      if(localData !== null){
+
+        /* get profile image. */
+        var provider = localData.provider;
+        $scope.profileImageURL = localData[provider].profileImageURL;
+
+        /* get profile data from firbase. */
+        $scope.profileData = $firebaseObject(ref.child('/users/' + uid));
+      }
+  };
+
+}])
+
 .controller("SellingCtrl", ['$scope', '$firebaseObject', function($scope, $firebaseObject){
 
   // create a reference to firebase database
