@@ -258,11 +258,26 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 }])
 
 
-.controller('ItemDetailCtrl', ['$scope', '$stateParams' ,'$firebaseObject', '$http',function($scope, $stateParams, $firebaseObject, $http){
+.controller('ItemDetailCtrl', ['$scope', '$stateParams' ,'$firebaseObject', '$http', '$ionicModal',function($scope, $stateParams, $firebaseObject, $http, $ionicModal){
+
+    $ionicModal.fromTemplateUrl('templates/item-details.html', {
+    scope: $scope,
+    animation: 'slide-in-up'
+    }).then(function(modal) {
+    $scope.modal = modal;
+    });
+  
+    $scope.openModal = function() {
+        $scope.modal.show();
+    };
+    $scope.closeModal = function() {
+        $scope.modal.hide();
+    };
 
     var userId= $stateParams.userId;
     var productId= $stateParams.productId;
-
+    
+    $scope.interestedButtonMessage="Interested";
 
 
     $scope.transaction = {};
@@ -291,6 +306,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
         $scope.interestExists.$loaded(function(data){
             if(data.$value!==null){
                 console.log("You are already interested in this item!");
+                $scope.interestedButtonMessage="You are already interested in this item";
             }
             else{
                /* create a product interest on firebase. */
