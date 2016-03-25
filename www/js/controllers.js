@@ -633,29 +633,48 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   var userIdRef;
 
   if(uid===buyerId){
-      $scope.userType="Buyer";
-      userIdRef=buyerId;
-  }
-  else if(uid===sellerId){
       $scope.userType="Seller";
       userIdRef=sellerId;
+  }
+  else if(uid===sellerId){
+      $scope.userType="Buyer";
+      userIdRef=buyerId;
       seller=true;
   }
 
   var userCurrentRating;
-  $scope.userData = $firebaseObject(ref.child('/users/'+userIdRef));
+  $scope.userData = $firebaseObject(ref.child('/users/'+userIdRef+'/overallRating'));
   $scope.userData.$loaded(function(data){
-      userCurrentRating=data.ratings.overallRating;
+      if(data.$value!==null){
+          console.log(data);
+          userCurrentRating=data.$value;
+      }
+      else{
+          userCurrentRating=0;
+          //console.log("USER DID NOT HAVE RATING BEFORE");
+      }
   });
 
 
   //Perform post of review to firebase
   $scope.postRating=function(){
-      var userRef = ref.child('/users/'+userIdRef+'');
-      userRef.child('/ratings').push($scope.userRating);
-      //Grab user average rating and update it
-      var newRating = (parseFloat(userCurrentRating) + parseFloat($scope.userRating.rating))/2;
-      userRef.child('/ratings/overallRating').set((newRating));
+      var userRef = ref.child('/users/'+userIdRef+'/ratings');
+      var userRatingRef = ref.child('/users/'+userIdRef+'/overallRating');
+      var newRating;
+      if(parseFloat(userCurrentRating)===0){
+          newRating = parseFloat($scope.userRating.rating);
+      }
+      else{
+          newRating = (parseFloat(userCurrentRating) + parseFloat($scope.userRating.rating))/2;
+      }
+      if(seller===true){
+        userRef.child('/'+sellerId+'/').push({rating:$scope.userRating.rating, comment:$scope.userRating.comment});
+        userRatingRef.set((newRating));
+      }
+      else{
+        userRef.child('/'+buyerId+'/').push($scope.userRating);
+        userRatingRef.set((newRating));  
+      }
   }
 }])
 
