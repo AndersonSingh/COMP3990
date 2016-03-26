@@ -1,10 +1,17 @@
 <ion-view view-title="Rate Transaction With {{userType}}">
   <ion-content>
+      
+    <div class="item item-divider">
+        {{userType}} Name
+    </div>
     <label class="item item-input item-stacked-label">
-        <span class="input-label">{{userType}} Name</span>
         <p>{{userData.name}}</p>
     </label>
     
+    
+    <div class="item item-divider">
+        {{userType}}'s' Rating
+    </div>
     <label class="item item-input item-stacked-label">
         <span class="input-label">Enter {{userType}}'s Rating</span>
         <input type="text" placeholder="User Rating" ng-model="userRating.rating">
@@ -13,12 +20,15 @@
     <rating ng-model="userRating.rating" max="rating.max">
                 
     </rating>
-            
+      
+    <div class="item item-divider">
+        Your Comment
+    </div>      
     <label class="item item-input item-stacked-label">
         <span class="input-label">Enter a comment if desired</span>
         <input type="text" placeholder="User Comment" ng-model="userRating.comment">
     </label> 
-    <button class="button button-block button-positive" ng-click="postRating();">
+    <button class="button button-block button-positive" ng-click="postRating();" ui-sref="tabs.tab-activity">
         Post Review
     </button>
     

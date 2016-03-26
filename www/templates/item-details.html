@@ -11,6 +11,15 @@
                 <label class="item item-input">
                     <input ng-model="message.text" type="text" placeholder="Introduce yourself and suggest a meeting place on campus.">
                 </label>
+                
+                
+                <div class="item item-divider">
+                    Seller Information
+                </div>
+                
+                <rating ng-model="userRating.rating" readonly="readOnly">
+                
+                </rating>
 
 
                 <div class="item item-divider">
@@ -57,21 +66,6 @@
                 <div class="item item-divider">
                     Image <h4>(Tap To View Full Screen) </h4>
                 </div>
-                
-                <script id="templates/item-details.html" type="text/ng-template">
-                    <ion-modal-view>
-                        
-                            <ion-header-bar class="bar bar-header bar-positive">
-                                <h1 class="title">Full Screen Image View</h1>
-                                <button class="button button-clear button-primary" ng-click="closeModal()">Close</button>
-                            </ion-header-bar>
-                            
-                            <div class="image-modal transparent"> 
-                                <img data-ng-src="data:image/jpeg;base64,{{itemDetails.picture}}" class="fullscreen-image" alt="no picture">
-                            </div>
-                        
-                    </ion-modal-view>
-                </script>
                 
                 
                 <label class="item item-input item-stacked-label" ng-click="openModal()">

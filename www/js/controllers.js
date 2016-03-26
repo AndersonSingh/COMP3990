@@ -260,12 +260,18 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
 .controller('ItemDetailCtrl', ['$scope', '$stateParams' ,'$firebaseObject', '$http', '$ionicModal',function($scope, $stateParams, $firebaseObject, $http, $ionicModal){
 
-    $ionicModal.fromTemplateUrl('templates/item-details.html', {
+    $ionicModal.fromTemplateUrl('templates/modal-view.html', {
     scope: $scope,
     animation: 'slide-in-up'
     }).then(function(modal) {
     $scope.modal = modal;
     });
+    
+    //Cleanup the modal when we're done with it!
+    $scope.$on('$destroy', function() {
+        $scope.modal.remove();
+    });
+	
   
     $scope.openModal = function() {
         $scope.modal.show();
@@ -273,6 +279,10 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     $scope.closeModal = function() {
         $scope.modal.hide();
     };
+    
+    //Set up rating for rating object on UI side
+    $scope.rating = {};
+    $scope.userRating={rating: 0, comment:''};
 
     var userId= $stateParams.userId;
     var productId= $stateParams.productId;
@@ -299,6 +309,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     $scope.message.sender = $scope.buyerId;
     $scope.users = $firebaseObject(ref.child('/users'));
     /* this function runs when user clicks on the interested button */
+    
 
 
     $scope.interestedButton = function(){
@@ -353,7 +364,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
        $scope.paymentList = [];
        if(Boolean($scope.itemDetails.payments.paypal)===true){
            $scope.paymentList.push( { text: "Paypal", checked:false });
-           console.log(Boolean($scope.itemDetails.payments.paypal));
+           //console.log(Boolean($scope.itemDetails.payments.paypal));
        }
        if(Boolean($scope.itemDetails.payments.cash)===true){
            $scope.paymentList.push( { text: "Cash", checked:false });
@@ -643,11 +654,13 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   }
 
   var userCurrentRating;
-  $scope.userData = $firebaseObject(ref.child('/users/'+userIdRef+'/overallRating'));
+  
+  $scope.userData = $firebaseObject(ref.child('/users/'+userIdRef));
   $scope.userData.$loaded(function(data){
-      if(data.$value!==null){
-          console.log(data);
-          userCurrentRating=data.$value;
+      //console.log(data);
+      if(data.overallRating!==null){
+          //console.log(data);
+          userCurrentRating=data.overallRating;
       }
       else{
           userCurrentRating=0;
@@ -675,6 +688,8 @@ angular.module('starter.controllers',['ionic','ngCordova'])
         userRef.child('/'+buyerId+'/').push($scope.userRating);
         userRatingRef.set((newRating));  
       }
+      
+      //WE NEED TO PREVENT ACCESS BT USER.
   }
 }])
 

@@ -1,0 +1,12 @@
+<ion-modal-view>
+                        
+        <ion-header-bar class="bar bar-header bar-positive">
+            <h1 class="title">Full Screen Image View</h1>
+            <button class="button button-clear button-primary" ng-click="closeModal()">Close</button>
+        </ion-header-bar>
+        
+        <div class="image-modal transparent"> 
+            <img data-ng-src="data:image/jpeg;base64,{{itemDetails.picture}}" class="fullscreen-image" alt="no picture">
+        </div>
+    
+</ion-modal-view>
