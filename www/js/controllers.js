@@ -268,23 +268,26 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     }).then(function(modal) {
     $scope.modal = modal;
     });
-    
+
     //Cleanup the modal when we're done with it!
     $scope.$on('$destroy', function() {
         $scope.modal.remove();
     });
-	
+    
     $scope.openModal = function() {
         $scope.modal.show();
     };
     $scope.closeModal = function() {
         $scope.modal.hide();
     };
-    
+
+    //Set up rating for rating object on UI side
+    $scope.rating = {};
+    $scope.userRating={rating: 0, comment:''};
 
     var userId= $stateParams.userId;
     var productId= $stateParams.productId;
-    
+
     $scope.interestedButtonMessage="Interested";
 
     $scope.transaction = {};
@@ -307,10 +310,10 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     $scope.message.sender = $scope.buyerId;
     $scope.users = $firebaseObject(ref.child('/users'));
     /* this function runs when user clicks on the interested button */
-    
 
 
     $scope.interestedButton = function(){
+
         $scope.interestExists = $firebaseObject(ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId));
         $scope.interestExists.$loaded(function(data){
             if(data.$value!==null){
@@ -321,7 +324,22 @@ angular.module('starter.controllers',['ionic','ngCordova'])
                /* create a product interest on firebase. */
                 var transactionRef = ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/' + $scope.buyerId);
                 /* push data to firebase. */
+
                 transactionRef.child('/messages').push($scope.message);
+
+                // find out which payment method was selected
+                var x;
+                var method;
+
+                for(x in $scope.paymentList){
+                  if($scope.paymentList[x].checked === true){
+                    method = $scope.paymentList[x].text;
+                  }
+                }
+
+                var paymentObj = {paymentMethod : method};
+
+                transactionRef.update(paymentObj);
 
                 var pushId = $scope.users[$scope.sellerId].pushId;
 
@@ -369,7 +387,10 @@ angular.module('starter.controllers',['ionic','ngCordova'])
        if(Boolean($scope.itemDetails.payments.bitcoin)===true){
            $scope.paymentList.push( { text: "Bitcoin", checked:false });
        }
+
     });
+
+
 }])
 
 .controller('CategoryListCtrl',['$scope','$firebaseObject', '$stateParams','AllProductsService', function($scope, $firebaseObject, $stateParams, AllProductsService){
@@ -465,7 +486,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   $scope.appUsers = $firebaseObject(ref.child('/users'));
 }])
 
-.controller('BuyerInterestedItemOverviewCtrl', ['$scope', '$stateParams', '$firebaseObject', function($scope, $stateParams, $firebaseObject){
+.controller('BuyerInterestedItemOverviewCtrl', ['$scope', '$state', '$stateParams', '$firebaseObject', 'PaypalService', function($scope, $state, $stateParams, $firebaseObject, PaypalService){
    //Set both sets of information to be displayed to false
    $scope.allowedToBuyPositive=false;
    $scope.allowedToBuyNegative=false;
@@ -482,6 +503,13 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   /* firebase reference*/
   var ref = new Firebase("https://comp3990.firebaseio.com");
   $scope.interestsRef = $firebaseObject(ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/statusInformation' ));
+
+  // download the information of buy proposal for this buyer
+  $scope.buyProposal = $firebaseObject(ref.child('interests').child($scope.sellerId).child($scope.productId).child($scope.buyerId));
+
+  // download all info on the product to be bought
+  $scope.productInfo = $firebaseObject(ref.child('products').child($scope.sellerId).child($scope.productId));
+
   $scope.interestsRef.$loaded(function(data){
       //item is unavailable and id matches
       if(data.status === "unavailable" && data.selectedBuyer===$scope.buyerId){
@@ -496,6 +524,32 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
       }
   });
+
+  $scope.processPaypal = function(){
+    console.log("initiating paypal payment process");
+
+    // when the product info is ready to be used
+    $scope.productInfo.$loaded(function(data){
+
+      PaypalService.initPaymentEnv().then(function(){
+        //console.log("initializing sandbox environment" + data.price + " " + data.name);
+        PaypalService.makePayment(data.price, data.name).then(onPaymentSuccess, onPaymentFail);
+      });
+    });
+  }
+
+  function onPaymentSuccess(result){
+    console.log(result);
+
+    // perform ops to delete product etc
+
+    // redirect to home page
+    $state.go('menu-buying');
+  }
+
+  function onPaymentFail(error){
+    console.log(error);
+  }
 }])
 
 .controller('MessengerCtrl', ['$scope', '$stateParams', '$firebaseObject', '$ionicScrollDelegate', '$http', function($scope, $stateParams, $firebaseObject, $ionicScrollDelegate, $http){
@@ -651,7 +705,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   }
 
   var userCurrentRating;
-  
+
   $scope.userData = $firebaseObject(ref.child('/users/'+userIdRef));
   $scope.userData.$loaded(function(data){
       //console.log(data);
@@ -749,8 +803,8 @@ angular.module('starter.controllers',['ionic','ngCordova'])
         userRef.child('/'+buyerId+'/').push($scope.userRating);
         userRatingRef.set(newRating); 
       }
-      
-      //NOT SURE IF TO PREVENT MULTIPLE RATINGS.
+
+      //WE NEED TO PREVENT ACCESS BT USER.
   }
 }])
 
@@ -764,6 +818,9 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
   // create a reference to firebase database
   var firebaseRef = new Firebase("https://comp3990.firebaseio.com/");
+
+  // download the information of buy proposal for this buyer
+  $scope.buyProposal = $firebaseObject(firebaseRef.child('interests').child($scope.sellerId).child($scope.productId).child($scope.buyerId));
 
   // download the particular product from products data
   $scope.chosenProduct = $firebaseObject(firebaseRef.child('products').child($scope.sellerId).child($scope.productId));

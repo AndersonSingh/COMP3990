@@ -1,9 +1,9 @@
 <ion-view view-title="Item Details">
     <ion-content>
-        
+
         <div class="list card" ng-model="itemDetails">
             <div class="list">
-                
+
                 <div class="item item-divider">
                     Message
                 </div>
@@ -11,8 +11,8 @@
                 <label class="item item-input">
                     <input ng-model="message.text" type="text" placeholder="Introduce yourself and suggest a meeting place on campus.">
                 </label>
-                
-                
+
+
                 <div class="item item-divider">
                     Brief Seller Information
                 </div>
@@ -23,8 +23,7 @@
                 <label class="item item-input item-stacked-label">
                     <span class="input-label">Seller's Rating</span>
                     <rating ng-model="sellerInfo.overallRating" max=5 readonly="1">
-                
-                </rating>
+                    </rating>
                 </label>
                 
 
@@ -34,7 +33,7 @@
                 </div>
                 <ion-list>
                     <ion-checkbox ng-repeat="item in paymentList"
-                      ng-model="item.checked" 
+                      ng-model="item.checked"
                       ng-checked="item.checked">
                      {{ item.text }}
                      </ion-checkbox>
@@ -44,49 +43,52 @@
                 <div class="item item-divider">
                     Purchase Review
                 </div>
-                
+
                 <label class="item item-input item-stacked-label">
                     <span class="input-label">Item Name</span>
                     <p>{{itemDetails.name}}</p>
                 </label>
-                
+
                 <label class="item item-input item-stacked-label">
                     <span class="input-label">Category</span>
                     <p>{{itemDetails.category}}</p>
                 </label>
-                
+
                 <label class="item item-input item-stacked-label">
                     <span class="input-label">Description</span>
                     <p>{{itemDetails.description}}</p>
                 </label>
-                
+
                 <label class="item item-input item-stacked-label">
                     <span class="input-label">Price</span>
                     <p>{{itemDetails.price | currency}}</p>
                 </label>
-                
+
                 <label class="item item-input item-stacked-label">
                     <span class="input-label">Number of users currently interested</span>
                     <p>{{itemDetails.interested}}</p>
                 </label>
-                
+
                 <div class="item item-divider">
                     Image <h4>(Tap To View Full Screen) </h4>
                 </div>
-                
-                
+
+                <a class="full-image" href="#">
+                    <img data-ng-src="data:image/jpeg;base64,{{itemDetails.picture}}" alt="no picture">
+                </a>
+
                 <label class="item item-input item-stacked-label" ng-click="openModal()">
                     <a href="#">
                         <img data-ng-src="data:image/jpeg;base64,{{itemDetails.picture}}" alt="no picture">
                     </a>
                 </label>
-                
+
                 <div class="padding">
                     <div class="button button-block button-balanced" ng-click="interestedButton();">
                     {{interestedButtonMessage}}
                     </div>
                 </div>
-                
+
             </div>
         </div>
     </ion-content>
