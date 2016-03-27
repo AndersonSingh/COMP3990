@@ -14,12 +14,19 @@
                 
                 
                 <div class="item item-divider">
-                    Seller Information
+                    Brief Seller Information
                 </div>
-                
-                <rating ng-model="userRating.rating" readonly="readOnly">
+                <label class="item item-input item-stacked-label">
+                    <span class="input-label">Seller's Name</span>
+                    <p>{{sellerInfo.name}}</p>
+                </label>
+                <label class="item item-input item-stacked-label">
+                    <span class="input-label">Seller's Rating</span>
+                    <rating ng-model="sellerInfo.overallRating" max=5 readonly="1">
                 
                 </rating>
+                </label>
+                
 
 
                 <div class="item item-divider">

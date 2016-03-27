@@ -13,7 +13,7 @@
         <ion-checkbox ng-model="agree_status" ng-show=allowedToBuyPositive ng-true-value="true" ng-false-value="false">I agree that transaction is completed </ion-checkbox>
       </ion-list>
 
-      <button ng-show="agree_status === true" class="button button-block button-stable" ui-sref="rateuser({'buyerId':buyerId, 'sellerId' : sellerId})" ng-click="completeTransaction();">
+      <button ng-show="agree_status === true" class="button button-block button-stable" ui-sref="rateuser2({'buyerId':buyerId, 'sellerId' : sellerId})" ng-click="completeTransaction();">
         Transaction Complete
       </button>
     </div>

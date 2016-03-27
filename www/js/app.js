@@ -181,6 +181,12 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
  controller: 'InterestedOverviewCtrl'
 })
 
+.state('rateuser2', {
+ url: '/rateuser2?buyerId&sellerId',
+ templateUrl: 'templates/rate-user2.html',
+ controller: 'UserRatingCtrl2'
+})
+
 .state('rateuser', {
  url: '/rateuser?buyerId&sellerId',
  templateUrl: 'templates/rate-user.html',

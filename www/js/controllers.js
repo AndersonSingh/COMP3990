@@ -39,7 +39,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
           }
 
-          usersRef.set({'email' : email, 'name' : name, 'pushId' : userPushNotificationId}, function(error){
+          usersRef.set({'email' : email, 'name' : name, 'pushId' : userPushNotificationId, overallRating : 0}, function(error){
 
             if(error){
               console.log('INFO: ERROR SYNCING DATA TO FIREBASE. DEBUG: ', error);
@@ -259,6 +259,8 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
 
 .controller('ItemDetailCtrl', ['$scope', '$stateParams' ,'$firebaseObject', '$http', '$ionicModal',function($scope, $stateParams, $firebaseObject, $http, $ionicModal){
+    /* firebase reference*/
+    var ref = new Firebase("https://comp3990.firebaseio.com");
 
     $ionicModal.fromTemplateUrl('templates/modal-view.html', {
     scope: $scope,
@@ -272,7 +274,6 @@ angular.module('starter.controllers',['ionic','ngCordova'])
         $scope.modal.remove();
     });
 	
-  
     $scope.openModal = function() {
         $scope.modal.show();
     };
@@ -280,15 +281,11 @@ angular.module('starter.controllers',['ionic','ngCordova'])
         $scope.modal.hide();
     };
     
-    //Set up rating for rating object on UI side
-    $scope.rating = {};
-    $scope.userRating={rating: 0, comment:''};
 
     var userId= $stateParams.userId;
     var productId= $stateParams.productId;
     
     $scope.interestedButtonMessage="Interested";
-
 
     $scope.transaction = {};
     $scope.message = {};
@@ -296,9 +293,10 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     /* get the userid of the person selling the product, as well as the product id. */
     $scope.sellerId= $stateParams.userId;
     $scope.productId= $stateParams.productId;
-
-    /* firebase reference*/
-    var ref = new Firebase("https://comp3990.firebaseio.com");
+    
+    //pull seller information for quick overview of seller details.
+    $scope.sellerInfo = $firebaseObject(ref.child('/users/'+$scope.sellerId));
+    
 
     /* access localStorage to get the loggedin user's userid. */
     var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
@@ -364,7 +362,6 @@ angular.module('starter.controllers',['ionic','ngCordova'])
        $scope.paymentList = [];
        if(Boolean($scope.itemDetails.payments.paypal)===true){
            $scope.paymentList.push( { text: "Paypal", checked:false });
-           //console.log(Boolean($scope.itemDetails.payments.paypal));
        }
        if(Boolean($scope.itemDetails.payments.cash)===true){
            $scope.paymentList.push( { text: "Cash", checked:false });
@@ -672,8 +669,8 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   //Perform post of review to firebase
   $scope.postRating=function(){
       var userRef = ref.child('/users/'+userIdRef+'/ratings');
-      var userRatingRef = ref.child('/users/'+userIdRef+'/overallRating');
-      var newRating;
+      var userRatingRef = ref.child('/users/'+userIdRef);
+      var newRating=0;
       if(parseFloat(userCurrentRating)===0){
           newRating = parseFloat($scope.userRating.rating);
       }
@@ -682,14 +679,78 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       }
       if(seller===true){
         userRef.child('/'+sellerId+'/').push({rating:$scope.userRating.rating, comment:$scope.userRating.comment});
-        userRatingRef.set((newRating));
+        userRatingRef.set({overallRating:newRating});
       }
       else{
         userRef.child('/'+buyerId+'/').push($scope.userRating);
-        userRatingRef.set((newRating));  
+        userRatingRef.set({overallRating:newRating});  
+      }
+      //WE NEED TO PREVENT ACCESS BT USER.
+  }
+}])
+
+//This is the new controller for the ratings.
+.controller('UserRatingCtrl2', ['$scope', '$stateParams', '$firebaseObject', function($scope, $stateParams, $firebaseObject){
+  //Setup firebase reference
+  var ref = new Firebase("https://comp3990.firebaseio.com");
+
+  //Set up rating for rating object on UI side
+   $scope.rating = {};
+   $scope.userRating={rating: 0, comment:''};
+
+  //Obtain buyer and seller ID's
+  var buyerId = $stateParams.buyerId;
+  var sellerId = $stateParams.sellerId;
+  var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
+  var uid = localData['uid'];
+
+  //Determine if current user is the buyer or seller
+  var seller=false;
+
+  //set up necessary variables for displaying information on the UI
+  $scope.userType="";
+  $scope.userData={};
+  var userIdRef;
+
+  if(uid===buyerId){
+      $scope.userType="Seller";
+      userIdRef=sellerId;
+  }
+  else if(uid===sellerId){
+      $scope.userType="Buyer";
+      userIdRef=buyerId;
+      seller=true;
+  }
+
+  var userCurrentRating;
+  
+  $scope.userData = $firebaseObject(ref.child('/users/'+userIdRef));
+  $scope.userData.$loaded(function(data){
+    userCurrentRating = parseFloat(data.overallRating);
+  });
+
+
+  //Perform post of review to firebase
+  $scope.postRating=function(){
+      var userRef = ref.child('/users/'+userIdRef+'/ratings');
+      var userRatingRef = ref.child('/users/'+userIdRef+'/overallRating');
+      var newRating=0.00;
+      if(parseFloat(userCurrentRating)===0){
+          newRating = parseFloat($scope.userRating.rating);
+      }
+      else{
+          newRating = (parseFloat(userCurrentRating) + parseFloat($scope.userRating.rating))/2;
+      }
+      if(seller===true){
+        userRef.child('/'+sellerId+'/').push({rating:$scope.userRating.rating, comment:$scope.userRating.comment});
+        userRatingRef.set(newRating); 
+      }
+      else{
+        userRef.child('/'+buyerId+'/').push($scope.userRating);
+        userRatingRef.set(newRating); 
       }
       
-      //WE NEED TO PREVENT ACCESS BT USER.
+      //NOT SURE IF TO PREVENT MULTIPLE RATINGS.
   }
 }])
 
