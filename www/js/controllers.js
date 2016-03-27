@@ -266,27 +266,27 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     }).then(function(modal) {
     $scope.modal = modal;
     });
-    
+
     //Cleanup the modal when we're done with it!
     $scope.$on('$destroy', function() {
         $scope.modal.remove();
     });
-	
-  
+
+
     $scope.openModal = function() {
         $scope.modal.show();
     };
     $scope.closeModal = function() {
         $scope.modal.hide();
     };
-    
+
     //Set up rating for rating object on UI side
     $scope.rating = {};
     $scope.userRating={rating: 0, comment:''};
 
     var userId= $stateParams.userId;
     var productId= $stateParams.productId;
-    
+
     $scope.interestedButtonMessage="Interested";
 
 
@@ -309,7 +309,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     $scope.message.sender = $scope.buyerId;
     $scope.users = $firebaseObject(ref.child('/users'));
     /* this function runs when user clicks on the interested button */
-    
+
 
     $scope.interestedButton = function(){
 
@@ -532,19 +532,23 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     $scope.productInfo.$loaded(function(data){
 
       PaypalService.initPaymentEnv().then(function(){
-        console.log("initializing sandbox environment" + data.price + " " + data.name);
-        PaypalService.makePayment(data.price, data.name).then(function(result){
-          console.log(result);
-
-          // perform ops to delete product etc
-
-          // redirect to home page
-          $state.go('menu-buying');
-        }, function(error){
-          console.log(error);
-        });
+        //console.log("initializing sandbox environment" + data.price + " " + data.name);
+        PaypalService.makePayment(data.price, data.name).then(onPaymentSuccess, onPaymentFail);
       });
     });
+  }
+
+  function onPaymentSuccess(result){
+    console.log(result);
+
+    // perform ops to delete product etc
+
+    // redirect to home page
+    $state.go('menu-buying');
+  }
+
+  function onPaymentFail(error){
+    console.log(error);
   }
 }])
 
@@ -701,7 +705,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   }
 
   var userCurrentRating;
-  
+
   $scope.userData = $firebaseObject(ref.child('/users/'+userIdRef));
   $scope.userData.$loaded(function(data){
       //console.log(data);
@@ -733,9 +737,9 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       }
       else{
         userRef.child('/'+buyerId+'/').push($scope.userRating);
-        userRatingRef.set((newRating));  
+        userRatingRef.set((newRating));
       }
-      
+
       //WE NEED TO PREVENT ACCESS BT USER.
   }
 }])
