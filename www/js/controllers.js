@@ -247,8 +247,8 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     $scope.users = $firebaseObject(ref.child('/users'));
     /* this function runs when user clicks on the interested button */
 
-
     $scope.interestedButton = function(){
+
         $scope.interestExists = $firebaseObject(ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId));
         $scope.interestExists.$loaded(function(data){
             if(data.$value!==null){
@@ -258,7 +258,22 @@ angular.module('starter.controllers',['ionic','ngCordova'])
                /* create a product interest on firebase. */
                 var transactionRef = ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/' + $scope.buyerId);
                 /* push data to firebase. */
+
                 transactionRef.child('/messages').push($scope.message);
+
+                // find out which payment method was selected
+                var x;
+                var method;
+
+                for(x in $scope.paymentList){
+                  if($scope.paymentList[x].checked === true){
+                    method = $scope.paymentList[x].text;
+                  }
+                }
+
+                var paymentObj = {paymentMethod : method};
+
+                transactionRef.update(paymentObj);
 
                 var pushId = $scope.users[$scope.sellerId].pushId;
 
@@ -307,7 +322,10 @@ angular.module('starter.controllers',['ionic','ngCordova'])
        if(Boolean($scope.itemDetails.payments.bitcoin)===true){
            $scope.paymentList.push( { text: "Bitcoin", checked:false });
        }
+
     });
+
+
 }])
 
 .controller('CategoryListCtrl',['$scope','$firebaseObject', '$stateParams','AllProductsService', function($scope, $firebaseObject, $stateParams, AllProductsService){
@@ -403,15 +421,15 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   $scope.appUsers = $firebaseObject(ref.child('/users'));
 }])
 
-.controller('BuyerInterestedItemOverviewCtrl', ['$scope', '$stateParams', '$firebaseObject', function($scope, $stateParams, $firebaseObject){
+.controller('BuyerInterestedItemOverviewCtrl', ['$scope', '$state', '$stateParams', '$firebaseObject', 'PaypalService', function($scope, $state, $stateParams, $firebaseObject, PaypalService){
    //Set both sets of information to be displayed to false
-   $scope.allowedToBuyPositive=false; 
+   $scope.allowedToBuyPositive=false;
    $scope.allowedToBuyNegative=false;
-    
+
   //get the user's ID
   var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
   $scope.buyerIdLocalStorage = localData['uid'];
-  
+
   /* get the information passed over from the previous page. */
   $scope.sellerId = $stateParams.sellerId;
   $scope.buyerId = $stateParams.buyerId;
@@ -420,6 +438,13 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   /* firebase reference*/
   var ref = new Firebase("https://comp3990.firebaseio.com");
   $scope.interestsRef = $firebaseObject(ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/statusInformation' ));
+
+  // download the information of buy proposal for this buyer
+  $scope.buyProposal = $firebaseObject(ref.child('interests').child($scope.sellerId).child($scope.productId).child($scope.buyerId));
+
+  // download all info on the product to be bought
+  $scope.productInfo = $firebaseObject(ref.child('products').child($scope.sellerId).child($scope.productId));
+
   $scope.interestsRef.$loaded(function(data){
       //item is unavailable and id matches
       if(data.status === "unavailable" && data.selectedBuyer===$scope.buyerId){
@@ -431,9 +456,31 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       }
       //item is avaialble
       else{
-          
+
       }
   });
+
+  $scope.processPaypal = function(){
+    console.log("initiating paypal payment process");
+
+    // when the product info is ready to be used
+    $scope.productInfo.$loaded(function(data){
+
+      PaypalService.initPaymentEnv().then(function(){
+        console.log("initializing sandbox environment" + data.price + " " + data.name);
+        PaypalService.makePayment(data.price, data.name).then(function(result){
+          console.log(result);
+
+          // perform ops to delete product etc
+
+          // redirect to home page
+          $state.go('menu-buying');
+        }, function(error){
+          console.log(error);
+        });
+      });
+    });
+  }
 }])
 
 .controller('MessengerCtrl', ['$scope', '$stateParams', '$firebaseObject', '$ionicScrollDelegate', '$http', function($scope, $stateParams, $firebaseObject, $ionicScrollDelegate, $http){
@@ -558,26 +605,26 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 .controller('UserRatingCtrl', ['$scope', '$stateParams', '$firebaseObject', function($scope, $stateParams, $firebaseObject){
   //Setup firebase reference
   var ref = new Firebase("https://comp3990.firebaseio.com");
-  
+
   //Set up rating for rating object on UI side
   $scope.rating = {};
   $scope.rating.max = 5;
   $scope.userRating={rating: 0, comment:''};
-    
+
   //Obtain buyer and seller ID's
   var buyerId = $stateParams.buyerId;
   var sellerId = $stateParams.sellerId;
   var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
   var uid = localData['uid'];
-  
+
   //Determine if current user is the buyer or seller
   var seller=false;
-  
+
   //set up necessary variables for displaying information on the UI
   $scope.userType="";
   $scope.userData={};
   var userIdRef;
-  
+
   if(uid===buyerId){
       $scope.userType="Buyer";
       userIdRef=buyerId;
@@ -587,14 +634,14 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       userIdRef=sellerId;
       seller=true;
   }
-  
+
   var userCurrentRating;
   $scope.userData = $firebaseObject(ref.child('/users/'+userIdRef));
   $scope.userData.$loaded(function(data){
       userCurrentRating=data.ratings.overallRating;
   });
-  
-  
+
+
   //Perform post of review to firebase
   $scope.postRating=function(){
       var userRef = ref.child('/users/'+userIdRef+'');
@@ -615,6 +662,9 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
   // create a reference to firebase database
   var firebaseRef = new Firebase("https://comp3990.firebaseio.com/");
+
+  // download the information of buy proposal for this buyer
+  $scope.buyProposal = $firebaseObject(firebaseRef.child('interests').child($scope.sellerId).child($scope.productId).child($scope.buyerId));
 
   // download the particular product from products data
   $scope.chosenProduct = $firebaseObject(firebaseRef.child('products').child($scope.sellerId).child($scope.productId));
