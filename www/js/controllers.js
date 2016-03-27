@@ -9,42 +9,50 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   $scope.name = null;
   $scope.email = null;
   $scope.password = null;
-
+  $scope.formSuccess = true;
+  $scope.errorMessage = "";
   /* this function will attempt to sign a user up for an account. */
-  $scope.signUp = function(name, email, password){
+  $scope.signUp = function(form, name, email, password){
 
-    /* use firebase function createUser to attempt to create user account.*/
-    ref.createUser({
-      email: email,
-      password: password
-    },
-    function(error, userData){
+    if(form.$valid){
+      /* use firebase function createUser to attempt to create user account.*/
+      ref.createUser({
+        email: email,
+        password: password
+      },
+      function(error, userData){
 
-      if(error){
-        console.log('INFO: ERROR CREATING USER ACCOUNT. DEBUG: ', error);
-      }
-      else{
-        console.log('INFO: SUCCESSFULLY CREATED USER ACCOUNT. DEBUG: ', userData);
-
-        /* The user is now successfully registered. The user details is now pushed to firebase. */
-        var usersRef = ref.child('/users/' + userData.uid);
-
-        if(userPushNotificationId === null){
-          userPushNotificationId = false;
+        if(error){
+          console.log('INFO: ERROR CREATING USER ACCOUNT. DEBUG: ', error);
+          $scope.formSuccess = false;
+          $scope.errorMessage = error.toString();
+          $scope.$apply();
         }
-        usersRef.set({'email' : email, 'name' : name, 'pushId' : userPushNotificationId }, function(error){
+        else{
+          console.log('INFO: SUCCESSFULLY CREATED USER ACCOUNT. DEBUG: ', userData);
 
-          if(error){
-            console.log('INFO: ERROR SYNCING DATA TO FIREBASE. DEBUG: ', error);
-          }
-          else{
-            console.log('INFO: SUCCESSFULLY SYNCED DATA TO FIREBASE.');
-           $state.go('app.home');
-          }
-        });
-      }
+          /* The user is now successfully registered. The user details is now pushed to firebase. */
+          var usersRef = ref.child('/users/' + userData.uid);
 
-    });
+          if(userPushNotificationId === null){
+            userPushNotificationId = false;
+
+          }
+
+          usersRef.set({'email' : email, 'name' : name, 'pushId' : userPushNotificationId}, function(error){
+
+            if(error){
+              console.log('INFO: ERROR SYNCING DATA TO FIREBASE. DEBUG: ', error);
+            }
+            else{
+              console.log('INFO: SUCCESSFULLY SYNCED DATA TO FIREBASE.');
+             $state.go('sign-in');
+            }
+          });
+        }
+
+      });
+    }
 
   };
 
@@ -79,24 +87,54 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   };
 
   /* this function will attempt to sign in a user. */
-  $scope.signIn = function(email, password){
+  $scope.signIn = function(form, email, password){
 
-    /* use authWithPassword from firebase to authenticate a user. */
-    ref.authWithPassword({
-      email : email,
-      password: password
-    },
-    function(error, userData){
-      if(error){
-        console.log('INFO: ERROR LOGGING USER IN. DEBUG: ', error);
+    /* only attempt to signin if the form is complete. */
+    if(form.$valid){
+      /* use authWithPassword from firebase to authenticate a user. */
+      ref.authWithPassword({
+        email : email,
+        password: password
+      },
+      function(error, userData){
+        if(error){
+          console.log('INFO: ERROR LOGGING USER IN. DEBUG: ', error);
+        }
+        else{
+          console.log('INFO: SUCCESSFULLY LOGGED IN USER. DEBUG: ', userData);
+
+          var uid = userData['uid']
+          var provider = userData['provider'];
+          var profileImageURL = userData[provider]['profileImageURL'];
+
+          /* make profile image available on firebase. */
+         ref.child('/users/' + uid ).update({'profileImageURL' : profileImageURL});
+
+          /* IMPORTANT : redirect to valid state. */
+          SideMenuStateService.setSignedIn(true);
+          $state.go('tabs.tab-activity');
+        }
+      });
+    }
+  };
+
+}])
+
+.controller("ActivityCtrl", ['$scope', '$firebaseObject', function($scope, $firebaseObject){
+
+  // create a reference to firebase database
+  var ref = new Firebase("https://comp3990.firebaseio.com");
+
+  $scope.profileData = null;
+
+  $scope.init = function(){
+      var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
+
+      if(localData !== null){
+        var uid = localData['uid'];
+        /* get profile data from firbase. */
+        $scope.profileData = $firebaseObject(ref.child('/users/' + uid));
       }
-      else{
-        console.log('INFO: SUCCESSFULLY LOGGED IN USER. DEBUG: ', userData);
-        /* IMPORTANT : redirect to valid state. */
-        SideMenuStateService.setSignedIn(true);
-        $state.go('tabs.tab-activity');
-      }
-    });
   };
 
 }])
@@ -220,11 +258,36 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 }])
 
 
-.controller('ItemDetailCtrl', ['$scope', '$stateParams' ,'$firebaseObject', '$http',function($scope, $stateParams, $firebaseObject, $http){
+.controller('ItemDetailCtrl', ['$scope', '$stateParams' ,'$firebaseObject', '$http', '$ionicModal',function($scope, $stateParams, $firebaseObject, $http, $ionicModal){
+
+    $ionicModal.fromTemplateUrl('templates/modal-view.html', {
+    scope: $scope,
+    animation: 'slide-in-up'
+    }).then(function(modal) {
+    $scope.modal = modal;
+    });
+    
+    //Cleanup the modal when we're done with it!
+    $scope.$on('$destroy', function() {
+        $scope.modal.remove();
+    });
+	
+  
+    $scope.openModal = function() {
+        $scope.modal.show();
+    };
+    $scope.closeModal = function() {
+        $scope.modal.hide();
+    };
+    
+    //Set up rating for rating object on UI side
+    $scope.rating = {};
+    $scope.userRating={rating: 0, comment:''};
 
     var userId= $stateParams.userId;
     var productId= $stateParams.productId;
-
+    
+    $scope.interestedButtonMessage="Interested";
 
 
     $scope.transaction = {};
@@ -246,6 +309,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     $scope.message.sender = $scope.buyerId;
     $scope.users = $firebaseObject(ref.child('/users'));
     /* this function runs when user clicks on the interested button */
+    
 
     $scope.interestedButton = function(){
 
@@ -253,6 +317,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
         $scope.interestExists.$loaded(function(data){
             if(data.$value!==null){
                 console.log("You are already interested in this item!");
+                $scope.interestedButtonMessage="You are already interested in this item";
             }
             else{
                /* create a product interest on firebase. */
@@ -314,7 +379,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
        $scope.paymentList = [];
        if(Boolean($scope.itemDetails.payments.paypal)===true){
            $scope.paymentList.push( { text: "Paypal", checked:false });
-           console.log(Boolean($scope.itemDetails.payments.paypal));
+           //console.log(Boolean($scope.itemDetails.payments.paypal));
        }
        if(Boolean($scope.itemDetails.payments.cash)===true){
            $scope.paymentList.push( { text: "Cash", checked:false });
@@ -626,29 +691,52 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   var userIdRef;
 
   if(uid===buyerId){
-      $scope.userType="Buyer";
-      userIdRef=buyerId;
-  }
-  else if(uid===sellerId){
       $scope.userType="Seller";
       userIdRef=sellerId;
+  }
+  else if(uid===sellerId){
+      $scope.userType="Buyer";
+      userIdRef=buyerId;
       seller=true;
   }
 
   var userCurrentRating;
+  
   $scope.userData = $firebaseObject(ref.child('/users/'+userIdRef));
   $scope.userData.$loaded(function(data){
-      userCurrentRating=data.ratings.overallRating;
+      //console.log(data);
+      if(data.overallRating!==null){
+          //console.log(data);
+          userCurrentRating=data.overallRating;
+      }
+      else{
+          userCurrentRating=0;
+          //console.log("USER DID NOT HAVE RATING BEFORE");
+      }
   });
 
 
   //Perform post of review to firebase
   $scope.postRating=function(){
-      var userRef = ref.child('/users/'+userIdRef+'');
-      userRef.child('/ratings').push($scope.userRating);
-      //Grab user average rating and update it
-      var newRating = (parseFloat(userCurrentRating) + parseFloat($scope.userRating.rating))/2;
-      userRef.child('/ratings/overallRating').set((newRating));
+      var userRef = ref.child('/users/'+userIdRef+'/ratings');
+      var userRatingRef = ref.child('/users/'+userIdRef+'/overallRating');
+      var newRating;
+      if(parseFloat(userCurrentRating)===0){
+          newRating = parseFloat($scope.userRating.rating);
+      }
+      else{
+          newRating = (parseFloat(userCurrentRating) + parseFloat($scope.userRating.rating))/2;
+      }
+      if(seller===true){
+        userRef.child('/'+sellerId+'/').push({rating:$scope.userRating.rating, comment:$scope.userRating.comment});
+        userRatingRef.set((newRating));
+      }
+      else{
+        userRef.child('/'+buyerId+'/').push($scope.userRating);
+        userRatingRef.set((newRating));  
+      }
+      
+      //WE NEED TO PREVENT ACCESS BT USER.
   }
 }])
 

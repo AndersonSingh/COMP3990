@@ -14,6 +14,15 @@
 
 
                 <div class="item item-divider">
+                    Seller Information
+                </div>
+
+                <rating ng-model="userRating.rating" readonly="readOnly">
+
+                </rating>
+
+
+                <div class="item item-divider">
                     Payment Method
                 </div>
                 <ion-list>
@@ -55,16 +64,22 @@
                 </label>
 
                 <div class="item item-divider">
-                    Image
+                    Image <h4>(Tap To View Full Screen) </h4>
                 </div>
 
                 <a class="full-image" href="#">
                     <img data-ng-src="data:image/jpeg;base64,{{itemDetails.picture}}" alt="no picture">
                 </a>
 
+                <label class="item item-input item-stacked-label" ng-click="openModal()">
+                    <a href="#">
+                        <img data-ng-src="data:image/jpeg;base64,{{itemDetails.picture}}" alt="no picture">
+                    </a>
+                </label>
+
                 <div class="padding">
                     <div class="button button-block button-balanced" ng-click="interestedButton();">
-                    Interested
+                    {{interestedButtonMessage}}
                     </div>
                 </div>
 

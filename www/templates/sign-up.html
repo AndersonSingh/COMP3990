@@ -1,24 +1,66 @@
 <ion-view view-title="Sign Up">
   <ion-content>
 
-    <div class="list list-inset">
+    <form name="signUpForm" novalidate="">
+      <div class="list list-inset">
 
-      <label class="item item-input">
-        <input ng-model="name" type="text" placeholder="Full Name">
-      </label>
+        <!-- full name input and validation start -->
+        <label class="item item-input" ng-class="{ 'has-errors' : signUpForm.name.$invalid && signUpForm.name.$dirty, 'no-errors' : signUpForm.name.$valid && signUpForm.name.$dirty}">
+          <input ng-model="name" type="text" placeholder="Full Name" name="name" required>
+        </label>
 
-      <label class="item item-input">
-        <input ng-model="email" type="email" placeholder="Email">
-      </label>
+        <div class="error-container" ng-show="signUpForm.name.$invalid && signUpForm.name.$dirty" ng-messages="signUpForm.name.$error">
+          <div class="error" ng-message="required" ng-show="signUpForm.name.$error.required">
+            <i class="ion-information-circled"></i>
+            A name is required!
+          </div>
+        </div>
+        <!-- full name input and validation end -->
 
-      <label class="item item-input">
-        <input ng-model="password" type="password" placeholder="Password">
-      </label>
+        <!-- email input and validation start -->
+        <label class="item item-input" ng-class="{ 'has-errors' : signUpForm.email.$invalid && signUpForm.email.$dirty, 'no-errors' : signUpForm.email.$valid && signUpForm.email.$dirty}">
+          <input ng-model="email" type="email" placeholder="Email" name="email" required>
+        </label>
 
-    </div>
+        <div class="error-container" ng-show="signUpForm.email.$invalid && signUpForm.email.$dirty" ng-messages="signUpForm.email.$error">
+          <div class="error" ng-message="required" ng-show="signUpForm.email.$error.email || signUpForm.email.$error.required">
+            <i class="ion-information-circled"></i>
+            A valid email address is required!
+          </div>
+        </div>
+        <!-- email input and validation end -->
+
+        <!-- password input and validation start -->
+        <label class="item item-input" ng-class="{ 'has-errors' : signUpForm.password.$invalid && signUpForm.password.$dirty, 'no-errors' : signUpForm.password.$valid && signUpForm.password.$dirty}">
+          <input ng-model="password" type="password" placeholder="Password" name="password" ng-minlength="8" ng-maxlength="16" required>
+        </label>
+
+        <div class="error-container" ng-show="signUpForm.password.$invalid && signUpForm.password.$dirty" ng-messages="signUpForm.password.$error">
+          <div class="error" ng-message="required"  ng-show="signUpForm.password.$error.required">
+            <i class="ion-information-circled"></i>
+            A password is required!
+          </div>
+          <div class="error" ng-message="minlength" ng-show="signUpForm.password.$error.minlength">
+            <i class="ion-information-circled"></i>
+            Password length must be at least 8 characters!
+          </div>
+          <div class="error" ng-message="maxlength" ng-show="signUpForm.password.$error.maxlength">
+            <i class="ion-information-circled"></i>
+            Password length must be at most 16 characters!
+          </div>
+        </div>
+      </div>
+        <!-- password input and validation end -->
+
+        <!-- error creating account message -->
+        <div class="error" ng-message="minlength" ng-hide="formSuccess">
+          <i class="ion-information-circled"></i>
+          {{errorMessage}}
+        </div>
+    </form>
 
     <div class="padding">
-      <button class="button button-block button-stable" ng-click="signUp(name, email, password);">
+      <button class="button button-block button-stable" ng-click="signUp(signUpForm, name, email, password);">
         Sign Up
       </button>
 
