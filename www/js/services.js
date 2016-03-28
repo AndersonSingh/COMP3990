@@ -57,7 +57,7 @@ angular.module('starter.services', ['ionic'])
 
           // PayPal Mobile SDK can operate in different environments to facilitate development and testing. So we set the relevant ids for both
           var clientIds = {
-            PayPalEnvironmentProduction : "AZ73uaWPUfvcuOpB-CA_ZpzadrIMOUmI3hbPxHe1_JXUe1ddwMmkuPfquBFQTq-TOSVt3uk3chZbjJoZ",
+            PayPalEnvironmentProduction : "mdls85@hotmail.com",
             PayPalEnvironmentSandbox : "AR8sguB-Mkv0xH5B10sRCEHvsQ3Wz7KINhneeAJffuoXDKop2ZmKd7EpaJI6KcEGgygeTiMGkILDTyRi"
           };
 
@@ -118,7 +118,7 @@ angular.module('starter.services', ['ionic'])
 
     function makePayment(amount, name){
       // create a new Deferred object to gain access to the associated Promise object
-      paymentDefer = $q.defer;
+      paymentDefer = $q.defer();
 
       // formats the number 'amount' to a string inclusive of two decimal places from number
       amount = $filter('number')(amount, 2);
