@@ -273,7 +273,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     $scope.$on('$destroy', function() {
         $scope.modal.remove();
     });
-    
+
     $scope.openModal = function() {
         $scope.modal.show();
     };
@@ -296,10 +296,10 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     /* get the userid of the person selling the product, as well as the product id. */
     $scope.sellerId= $stateParams.userId;
     $scope.productId= $stateParams.productId;
-    
+
     //pull seller information for quick overview of seller details.
     $scope.sellerInfo = $firebaseObject(ref.child('/users/'+$scope.sellerId));
-    
+
 
     /* access localStorage to get the loggedin user's userid. */
     var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
@@ -511,6 +511,9 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   // download all info on the product to be bought
   $scope.productInfo = $firebaseObject(ref.child('products').child($scope.sellerId).child($scope.productId));
 
+  // download all info on the seller
+  $scope.userInfo = $firebaseObject(ref.child('users').child($scope.sellerId));
+
   $scope.interestsRef.$loaded(function(data){
       //item is unavailable and id matches
       if(data.status === "unavailable" && data.selectedBuyer===$scope.buyerId){
@@ -531,10 +534,12 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
     // when the product info is ready to be used
     $scope.productInfo.$loaded(function(data){
-
-      PaypalService.initPaymentEnv().then(function(){
-        //console.log("initializing sandbox environment" + data.price + " " + data.name);
-        PaypalService.makePayment(data.price, data.name).then(onPaymentSuccess, onPaymentFail);
+      // when seller data is ready to be used
+      $scope.userInfo.$loaded(function(userData){
+        PaypalService.initPaymentEnv(userData.email).then(function(){
+          //console.log("initializing sandbox environment" + data.price + " " + data.name);
+          PaypalService.makePayment(data.price, data.name).then(onPaymentSuccess, onPaymentFail);
+        });
       });
     });
   }
@@ -549,7 +554,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   function onPaymentFail(error){
     console.log(error);
   }
-  
+
   $scope.processCash = function(){
   }
   
@@ -723,7 +728,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   }
 
   var userCurrentRating;
-  
+
   $scope.userData = $firebaseObject(ref.child('/users/'+userIdRef));
   $scope.userData.$loaded(function(data){
     userCurrentRating = parseFloat(data.overallRating);
@@ -743,11 +748,11 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       }
       if(seller===true){
         userRef.child('/'+sellerId+'/').push({rating:$scope.userRating.rating, comment:$scope.userRating.comment});
-        userRatingRef.set(newRating); 
+        userRatingRef.set(newRating);
       }
       else{
         userRef.child('/'+buyerId+'/').push($scope.userRating);
-        userRatingRef.set(newRating); 
+        userRatingRef.set(newRating);
       }
 
       //WE NEED TO PREVENT ACCESS BT USER.
