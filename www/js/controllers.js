@@ -540,15 +540,19 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
   function onPaymentSuccess(result){
     console.log(result);
+    //We now need to post a pending review!
+    //perform ops to delete product etc
 
-    // perform ops to delete product etc
-
-    // redirect to home page
+    //redirect to home page
     $state.go('menu-buying');
   }
 
   function onPaymentFail(error){
     console.log(error);
+  }
+  
+  $scope.processCash = function(){
+      //We also need to post a pending review here!
   }
 }])
 
@@ -841,6 +845,8 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
   $scope.completeTransaction = function(){
     console.log("transaction complete");
+    //upon completing a transaction, a pending review of the buyer will need to be done
+    //this will need to be reflected in the viewing of a user's account.
   }
 
   function updateProduct(){

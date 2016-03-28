@@ -27,13 +27,9 @@
       <ion-checkbox ng-show="chosenProduct.status === 'unavailable' && buyProposal.paymentMethod === 'Cash'" ng-model="agree_status" ng-true-value="true" ng-false-value="false">I agree that cash transaction is completed </ion-checkbox>
     </ion-list>
 
-    <button ng-show="agree_status === true" class="button button-block button-stable" ng-click="completeTransaction();">
+    <button ng-show="cash_agree_status === true" class="button button-block button-stable" ng-click="completeTransaction();">
       Cash Transaction Complete
     </button>
-<<<<<<< HEAD
-    
-    <button ng-show="agree_status === true" class="button button-block button-stable" ui-sref="rateuser2({'buyerId':buyerId, 'sellerId' : sellerId})">
-=======
 
     <ion-list>
       <ion-checkbox ng-show="chosenProduct.status === 'unavailable' && buyProposal.paymentMethod === 'Paypal'" ng-model="paypal_agree_status" ng-true-value="true" ng-false-value="false">I agree that Paypal transaction is completed </ion-checkbox>
@@ -43,8 +39,7 @@
       Paypal Transaction Complete
     </button>
 
-    <button ng-show="agree_status === true" class="button button-block button-stable" ui-sref="rateuser({'buyerId':buyerId, 'sellerId' : sellerId})">
->>>>>>> 2d7e5e9cf704bfc136a35ab03f027015a50a82eb
+    <button ng-show="cash_agree_status === true || paypal_agree_status === true" class="button button-block button-stable" ui-sref="rateuser2({'buyerId':buyerId, 'sellerId':sellerId})">
         Review User
     </button>
 

@@ -16,6 +16,10 @@
       <button ng-show="agree_status === true" class="button button-block button-stable" ui-sref="rateuser2({'buyerId':buyerId, 'sellerId' : sellerId})" ng-click="completeTransaction();">
         Transaction Complete
       </button>
+      
+      <button ng-show="allowedToBuyPositive && buyProposal.paymentMethod !== 'Paypal'" class="button button-block button-stable" ng-click="processCash();">
+        Make Cash Payment
+      </button>
 
       <button ng-show="allowedToBuyPositive && buyProposal.paymentMethod === 'Paypal'" class="button button-block button-stable" ng-click="processPaypal();">
         Make PayPal Payment
