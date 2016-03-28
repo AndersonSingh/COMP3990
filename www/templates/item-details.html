@@ -20,14 +20,18 @@
                     <span class="input-label">Seller's Name</span>
                     <p>{{sellerInfo.name}}</p>
                 </label>
+                
                 <label class="item item-input item-stacked-label">
                     <span class="input-label">Seller's Rating</span>
                     <rating ng-model="sellerInfo.overallRating" max=5 readonly="1">
                     </rating>
                 </label>
                 
-
-
+                <label class="item item-input item-stacked-label">
+                    <span class="input-label">Number of Pending Reviews</span>
+                    <p>{{sellerInfo.pendingReviews}}</p>
+                </label>
+                
                 <div class="item item-divider">
                     Payment Method
                 </div>

@@ -187,12 +187,6 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
  controller: 'UserRatingCtrl2'
 })
 
-.state('rateuser', {
- url: '/rateuser?buyerId&sellerId',
- templateUrl: 'templates/rate-user.html',
- controller: 'UserRatingCtrl'
-})
-
   $urlRouterProvider.otherwise('sign-in');
 
 });

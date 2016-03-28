@@ -500,6 +500,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   $scope.buyerId = $stateParams.buyerId;
   $scope.productId = $stateParams.productId;
   $scope.perspective = $stateParams.perspective;
+  
   /* firebase reference*/
   var ref = new Firebase("https://comp3990.firebaseio.com");
   $scope.interestsRef = $firebaseObject(ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/statusInformation' ));
@@ -540,9 +541,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
   function onPaymentSuccess(result){
     console.log(result);
-    //We now need to post a pending review!
     //perform ops to delete product etc
-
     //redirect to home page
     $state.go('menu-buying');
   }
@@ -552,7 +551,22 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   }
   
   $scope.processCash = function(){
-      //We also need to post a pending review here!
+  }
+  
+  $scope.generatePendingReview = function (){
+      //upon completing a transaction, a pending review of the buyer will need to be done
+    //this will need to be reflected in the viewing of a user's account.
+    
+    console.log("CREATING PENDING STUFF!");
+    //We also need to post a pending review here!
+     //add a pending review
+    ref.child('/pending-reviews/'+$scope.buyerId).push({relatedUser:$scope.sellerId, itemName:$scope.chosenProduct.name});
+    //increment number of pending reviews on user profile by 1
+    $scope.userData = $firebaseObject(ref.child('/users/'+$scope.buyerId));
+    $scope.userData.$loaded(function(data){
+        var numPendingReviews = data.pendingReviews+1;
+        ref.child('/users/'+$scope.buyerId+'/pendingReviews').set(numPendingReviews);
+    });
   }
 }])
 
@@ -675,78 +689,6 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 }])
 
 
-.controller('UserRatingCtrl', ['$scope', '$stateParams', '$firebaseObject', function($scope, $stateParams, $firebaseObject){
-  //Setup firebase reference
-  var ref = new Firebase("https://comp3990.firebaseio.com");
-
-  //Set up rating for rating object on UI side
-  $scope.rating = {};
-  $scope.rating.max = 5;
-  $scope.userRating={rating: 0, comment:''};
-
-  //Obtain buyer and seller ID's
-  var buyerId = $stateParams.buyerId;
-  var sellerId = $stateParams.sellerId;
-  var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
-  var uid = localData['uid'];
-
-  //Determine if current user is the buyer or seller
-  var seller=false;
-
-  //set up necessary variables for displaying information on the UI
-  $scope.userType="";
-  $scope.userData={};
-  var userIdRef;
-
-  if(uid===buyerId){
-      $scope.userType="Seller";
-      userIdRef=sellerId;
-  }
-  else if(uid===sellerId){
-      $scope.userType="Buyer";
-      userIdRef=buyerId;
-      seller=true;
-  }
-
-  var userCurrentRating;
-
-  $scope.userData = $firebaseObject(ref.child('/users/'+userIdRef));
-  $scope.userData.$loaded(function(data){
-      //console.log(data);
-      if(data.overallRating!==null){
-          //console.log(data);
-          userCurrentRating=data.overallRating;
-      }
-      else{
-          userCurrentRating=0;
-          //console.log("USER DID NOT HAVE RATING BEFORE");
-      }
-  });
-
-
-  //Perform post of review to firebase
-  $scope.postRating=function(){
-      var userRef = ref.child('/users/'+userIdRef+'/ratings');
-      var userRatingRef = ref.child('/users/'+userIdRef);
-      var newRating=0;
-      if(parseFloat(userCurrentRating)===0){
-          newRating = parseFloat($scope.userRating.rating);
-      }
-      else{
-          newRating = (parseFloat(userCurrentRating) + parseFloat($scope.userRating.rating))/2;
-      }
-      if(seller===true){
-        userRef.child('/'+sellerId+'/').push({rating:$scope.userRating.rating, comment:$scope.userRating.comment});
-        userRatingRef.set({overallRating:newRating});
-      }
-      else{
-        userRef.child('/'+buyerId+'/').push($scope.userRating);
-        userRatingRef.set({overallRating:newRating});  
-      }
-      //WE NEED TO PREVENT ACCESS BT USER.
-  }
-}])
-
 //This is the new controller for the ratings.
 .controller('UserRatingCtrl2', ['$scope', '$stateParams', '$firebaseObject', function($scope, $stateParams, $firebaseObject){
   //Setup firebase reference
@@ -847,6 +789,17 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     console.log("transaction complete");
     //upon completing a transaction, a pending review of the buyer will need to be done
     //this will need to be reflected in the viewing of a user's account.
+    
+    console.log("CREATING PENDING STUFF!");
+    //We also need to post a pending review here!
+    //add a pending review
+    firebaseRef.child('/pending-reviews/'+$scope.sellerId).push({relatedUser:$scope.buyerId, itemName:$scope.chosenProduct.name});
+    //increment number of pending reviews on user profile by 1
+    $scope.userData = $firebaseObject(firebaseRef.child('/users/'+$scope.sellerId));
+    $scope.userData.$loaded(function(data){
+        var numPendingReviews = data.pendingReviews+1;
+        firebaseRef.child('/users/'+$scope.sellerId+'/pendingReviews').set(numPendingReviews);
+    });
   }
 
   function updateProduct(){
