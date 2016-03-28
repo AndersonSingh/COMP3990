@@ -510,7 +510,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   // download all info on the product to be bought
   $scope.productInfo = $firebaseObject(ref.child('products').child($scope.sellerId).child($scope.productId));
 
-  // download all info on the user
+  // download all info on the seller
   $scope.userInfo = $firebaseObject(ref.child('users').child($scope.sellerId));
 
   $scope.interestsRef.$loaded(function(data){
@@ -533,10 +533,12 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
     // when the product info is ready to be used
     $scope.productInfo.$loaded(function(data){
-
-      PaypalService.initPaymentEnv().then(function(){
-        //console.log("initializing sandbox environment" + data.price + " " + data.name);
-        PaypalService.makePayment(data.price, data.name).then(onPaymentSuccess, onPaymentFail);
+      // when seller data is ready to be used
+      $scope.userInfo.$loaded(function(userData){
+        PaypalService.initPaymentEnv(userData.email).then(function(){
+          //console.log("initializing sandbox environment" + data.price + " " + data.name);
+          PaypalService.makePayment(data.price, data.name).then(onPaymentSuccess, onPaymentFail);
+        });
       });
     });
   }
