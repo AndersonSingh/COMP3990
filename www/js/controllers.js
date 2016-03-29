@@ -764,9 +764,10 @@ angular.module('starter.controllers',['ionic','ngCordova'])
         var pendingReviewsRef = ref.child('/users/'+buyerId+'/pendingReviews');
         pendingReviewsRef.set(userPendingReviews-1);
         userRatingRef.set(newRating);
+        //removing pending review.
+        var pendingReviewRefToRemove = ref.child('/pending-reviews/'+buyerId+'/'+sellerid);
+        pendingReviewRefToRemove.remove();
       }
-
-      //WE NEED TO REMOVE THE PENDING REVIEW AND DECREMENT THE PENDING REVIEW INTEGER.
       
       
   }
