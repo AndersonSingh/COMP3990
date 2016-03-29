@@ -126,6 +126,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   var ref = new Firebase("https://comp3990.firebaseio.com");
 
   $scope.profileData = null;
+  
 
   $scope.init = function(){
       var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
@@ -136,6 +137,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
         $scope.profileData = $firebaseObject(ref.child('/users/' + uid));
       }
   };
+  
 
 }])
 
@@ -565,7 +567,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     console.log("CREATING PENDING STUFF!");
     //We also need to post a pending review here!
      //add a pending review
-    ref.child('/pending-reviews/'+$scope.buyerId).push({relatedUser:$scope.sellerId, itemName:$scope.chosenProduct.name});
+    ref.child('/pending-reviews/'+$scope.buyerId +'/'+$scope.sellerId).set({buyer:false, itemName:$scope.chosenProduct.name});
     //increment number of pending reviews on user profile by 1
     $scope.userData = $firebaseObject(ref.child('/users/'+$scope.buyerId));
     $scope.userData.$loaded(function(data){
@@ -728,10 +730,12 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   }
 
   var userCurrentRating;
+  var userPendingReviews;
 
   $scope.userData = $firebaseObject(ref.child('/users/'+userIdRef));
   $scope.userData.$loaded(function(data){
     userCurrentRating = parseFloat(data.overallRating);
+    userPendingReviews = parseInt(data.pendingReviews);
   });
 
 
@@ -748,15 +752,51 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       }
       if(seller===true){
         userRef.child('/'+sellerId+'/').push({rating:$scope.userRating.rating, comment:$scope.userRating.comment});
+        var pendingReviewsRef = ref.child('/users/'+sellerId+'/pendingReviews');
+        pendingReviewsRef.set(userPendingReviews-1);
         userRatingRef.set(newRating);
+        //removing pending review.
+        var pendingReviewRefToRemove = ref.child('/pending-reviews/'+sellerId+'/'+buyerId);
+        pendingReviewRefToRemove.remove();
       }
       else{
         userRef.child('/'+buyerId+'/').push($scope.userRating);
+        var pendingReviewsRef = ref.child('/users/'+buyerId+'/pendingReviews');
+        pendingReviewsRef.set(userPendingReviews-1);
         userRatingRef.set(newRating);
       }
 
-      //WE NEED TO PREVENT ACCESS BT USER.
+      //WE NEED TO REMOVE THE PENDING REVIEW AND DECREMENT THE PENDING REVIEW INTEGER.
+      
+      
   }
+}])
+
+.controller('PendingReviewsCtrl',['$scope','$firebaseObject','$state', function($scope,$firebaseObject,$state){
+    // create a reference to firebase database
+    var ref = new Firebase("https://comp3990.firebaseio.com/");
+    var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
+    $scope.uid = localData['uid'];
+    $scope.allPendingReviews = $firebaseObject(ref.child('/pending-reviews/'+$scope.uid));
+    $scope.allPendingReviews.$loaded(function(data){
+        console.log(data);
+    });
+    
+    $scope.uidCheck=function(key){
+        return (key===$scope.uid);
+    }
+    
+    $scope.goToRatings=function(key,value){
+        console.log("KEY IS"+key);
+        if(value.buyer===true){
+             console.log("This is the seller!");
+             $state.go('rateuser2',{'buyerId':key, 'sellerId' : $scope.uid});
+        }
+        else{
+            console.log("This is the buyer!");
+             $state.go('rateuser2',{'buyerId':$scope.uid, 'sellerId' : key});
+        }
+    }
 }])
 
 
@@ -798,7 +838,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     console.log("CREATING PENDING STUFF!");
     //We also need to post a pending review here!
     //add a pending review
-    firebaseRef.child('/pending-reviews/'+$scope.sellerId).push({relatedUser:$scope.buyerId, itemName:$scope.chosenProduct.name});
+    firebaseRef.child('/pending-reviews/'+$scope.sellerId +'/'+$scope.buyerId).set({buyer:true, itemName:$scope.chosenProduct.name});
     //increment number of pending reviews on user profile by 1
     $scope.userData = $firebaseObject(firebaseRef.child('/users/'+$scope.sellerId));
     $scope.userData.$loaded(function(data){

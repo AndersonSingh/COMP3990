@@ -187,6 +187,12 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
  controller: 'UserRatingCtrl2'
 })
 
+.state('view-pending-reviews', {
+ url: '/view-pending-reviews',
+ templateUrl: 'templates/view-pending-reviews.html',
+ controller: 'PendingReviewsCtrl'
+})
+
   $urlRouterProvider.otherwise('sign-in');
 
 });

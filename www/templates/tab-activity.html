@@ -19,6 +19,12 @@
       </div>
       
     </div>
+    
+    <div ng-if="profileData.pendingReviews > 0">
+        <button class="button button-block button-stable" ui-sref="view-pending-reviews">
+                Resolve Pending Reviews
+        </button>
+    </div>
 
   <ion-content>
 </ion-view>
