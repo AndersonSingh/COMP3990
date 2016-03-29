@@ -7,6 +7,29 @@
         <span id="profile-description">
         </span>
       </div>
+      
+      <div class="item item-divider">
+                    Profile Summary
+      </div>
+      <div>
+          <label class="item item-input item-stacked-label">
+                    <span class="input-label">Number of Pending Reviews</span>
+                    <p>{{profileData.pendingReviews}}</p>
+          </label>
+          
+          <label class="item item-input item-stacked-label">
+                    <span class="input-label">Your Rating</span>
+                    <rating ng-model="profileData.overallRating" max=5 readonly="1">
+                    </rating>
+          </label>
+      </div>
+      
+    </div>
+    
+    <div ng-if="profileData.pendingReviews > 0">
+        <button class="button button-block button-stable" ui-sref="view-pending-reviews">
+                Resolve Pending Reviews
+        </button>
     </div>
 
   <ion-content>

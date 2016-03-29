@@ -1,0 +1,12 @@
+<ion-view view-title="Pending Reviews">
+    <ion-content>
+        
+        <div class="ion-list" ng-repeat= "(key,value) in allPendingReviews">
+                <a class="item item-avatar" href="#" ng-click="goToRatings(key,value);">
+                    <img src="">
+                    <p> Review for: {{value.itemName}}</p>
+                </a>
+        </div>
+        
+    </ion-content>
+</ion-view>
