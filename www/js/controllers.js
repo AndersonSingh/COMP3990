@@ -234,6 +234,10 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
 }])
 
+.controller('ProfilePicCtrl', ['$scope', '$state', '$cordovaCamera', function($scope, $state, $cordovaCamera){
+
+}])
+
 .controller('HomeCtrl',['$scope', '$firebaseArray', function($scope, $firebaseArray){
     var ref = new Firebase("https://comp3990.firebaseio.com");
     $scope.allProducts = $firebaseArray(ref.child('/products'));

@@ -169,6 +169,12 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
    controller: 'EmailCtrl'
  })
 
+ .state('settings-profile-pic', {
+  url: '/settings-profile-pic-pic',
+  templateUrl: 'templates/settings-profile-pic.html',
+  controller: 'ProfilePicCtrl'
+})
+
  .state('seller-interested-people', {
   url: '/seller-interested-people?prodId',
   templateUrl: 'templates/seller-interested-people.html',
