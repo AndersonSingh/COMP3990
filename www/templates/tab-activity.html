@@ -9,12 +9,18 @@
       </div>
       
       <div class="item item-divider">
-                    Basic Profile Information
+                    Profile Summary
       </div>
       <div>
           <label class="item item-input item-stacked-label">
                     <span class="input-label">Number of Pending Reviews</span>
                     <p>{{profileData.pendingReviews}}</p>
+          </label>
+          
+          <label class="item item-input item-stacked-label">
+                    <span class="input-label">Your Rating</span>
+                    <rating ng-model="profileData.overallRating" max=5 readonly="1">
+                    </rating>
           </label>
       </div>
       
