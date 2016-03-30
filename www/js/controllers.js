@@ -745,7 +745,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
   //Perform post of review to firebase
   $scope.postRating=function(){
-      var userRef = ref.child('/users/'+userIdRef+'/ratings');
+      var ratingRef = ref.child('/ratings/');
       var userRatingRef = ref.child('/users/'+userIdRef+'/overallRating');
       var newRating=0.00;
       if(parseFloat(userCurrentRating)===0){
@@ -755,7 +755,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
           newRating = (parseFloat(userCurrentRating) + parseFloat($scope.userRating.rating))/2;
       }
       if(seller===true){
-        userRef.child('/'+sellerId+'/').push({rating:$scope.userRating.rating, comment:$scope.userRating.comment});
+        ratingRef.child(sellerId+'/'+buyerId+'/').push({rating:$scope.userRating.rating, comment:$scope.userRating.comment});
         var pendingReviewsRef = ref.child('/users/'+sellerId+'/pendingReviews');
         pendingReviewsRef.set(userPendingReviews-1);
         userRatingRef.set(newRating);
@@ -764,7 +764,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
         pendingReviewRefToRemove.remove();
       }
       else{
-        userRef.child('/'+buyerId+'/').push($scope.userRating);
+        ratingRef.child(buyerId+'/'+sellerId+'/').push($scope.userRating);
         var pendingReviewsRef = ref.child('/users/'+buyerId+'/pendingReviews');
         pendingReviewsRef.set(userPendingReviews-1);
         userRatingRef.set(newRating);
