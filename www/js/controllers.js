@@ -564,6 +564,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     console.log(result);
     //perform ops to delete product etc
     //redirect to home page
+    $scope.generatePendingReview();
     $state.go('menu-buying');
   }
 
@@ -581,7 +582,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     console.log("CREATING PENDING STUFF!");
     //We also need to post a pending review here!
      //add a pending review
-    ref.child('/pending-reviews/'+$scope.buyerId +'/'+$scope.sellerId).set({buyer:false, itemName:$scope.chosenProduct.name});
+    ref.child('/pending-reviews/'+$scope.buyerId +'/'+$scope.sellerId).set({buyer:false, itemName:$scope.productInfo.name});
     //increment number of pending reviews on user profile by 1
     $scope.userData = $firebaseObject(ref.child('/users/'+$scope.buyerId));
     $scope.userData.$loaded(function(data){
