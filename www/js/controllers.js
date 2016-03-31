@@ -319,7 +319,10 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
 
     $scope.interestedButton = function(){
-
+        if(userId===$scope.sellerId){
+             $scope.interestedButtonMessage="You cannot be interested in your own item.";
+        }
+        else{
         $scope.interestExists = $firebaseObject(ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId));
         $scope.interestExists.$loaded(function(data){
             if(data.$value!==null){
@@ -377,6 +380,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
                 });
             }
         });
+        }
     };
 
     /* information of the specific item is now lodaded ionto the page via scope */
@@ -401,10 +405,16 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
 .controller('CategoryListCtrl',['$scope','$firebaseObject', '$stateParams','AllProductsService', function($scope, $firebaseObject, $stateParams, AllProductsService){
      $scope.category=$stateParams.category;
-     $scope.allProducts = {};
-     $scope.loadProducts = function(){
-         AllProductsService.$bindTo($scope,"allProducts");
-     }
+    //  $scope.allProducts = {};
+    //  $scope.loadProducts = function(){
+    //      AllProductsService.$bindTo($scope,"allProducts");
+    //  }
+    var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
+    $scope.userId = localData['uid'];
+    
+    var ref = new Firebase("https://comp3990.firebaseio.com");
+    $scope.allProducts = $firebaseObject(ref.child('/products'));
+    
 }])
 
 .controller('SideMenuCtrl', ['$scope', '$ionicSideMenuDelegate', 'SideMenuStateService', '$state', function($scope, $ionicSideMenuDelegate, SideMenuStateService, $state){
