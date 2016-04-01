@@ -39,7 +39,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
           }
 
-          usersRef.set({'email' : email, 'name' : name, 'pushId' : userPushNotificationId, overallRating : 0}, function(error){
+          usersRef.set({'email' : email, 'name' : name, 'pushId' : userPushNotificationId, overallRating : 0, photoChanged : false}, function(error){
 
             if(error){
               console.log('INFO: ERROR SYNCING DATA TO FIREBASE. DEBUG: ', error);
@@ -126,7 +126,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   var ref = new Firebase("https://comp3990.firebaseio.com");
 
   $scope.profileData = null;
-  
+
 
   $scope.init = function(){
       var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
@@ -137,7 +137,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
         $scope.profileData = $firebaseObject(ref.child('/users/' + uid));
       }
   };
-  
+
 
 }])
 
@@ -225,10 +225,10 @@ angular.module('starter.controllers',['ionic','ngCordova'])
         console.log("Photo taken successfully");
         $scope.item.picture = imageData;
 
-    }, function(error) {
+      }, function(error) {
         // error occured
         console.log("Error: " + error);
-    });
+      });
 
     });
 
@@ -236,7 +236,72 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
 }])
 
-.controller('ProfilePicCtrl', ['$scope', '$state', '$cordovaCamera', function($scope, $state, $cordovaCamera){
+.controller('ProfilePicCtrl', ['$scope', '$state', '$firebaseObject', '$cordovaCamera', function($scope, $state, $firebaseObject, $cordovaCamera){
+
+  // create a reference to firebase database
+  var ref = new Firebase("https://comp3990.firebaseio.com");
+
+  // get user uid that is currently logged in
+  var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
+  var uid = localData['uid'];
+
+  /* get profile data from firbase. */
+  $scope.profileData = $firebaseObject(ref.child('/users/' + uid));
+
+  $scope.pictureTaken = false;
+  $scope.photo_choice = 1;
+
+  // this function will allow the user to take a photo with the device's camera
+  $scope.takePicture = function(){
+
+    ionic.Platform.ready(function(){
+      // will execute when device is ready, or immediately if the device is already ready.
+      console.log("device ready");
+      // specifiying camera options
+      var options = {
+        cameraDirection : 0,                                              // specify use rear camera
+        sourceType : 1,                                                   // specify take picture from camera
+        encodingType : 0,                                                 // specify the image is encoded as a jpeg
+        destinationType : 0,                                              // specify format of value returned is Base64 encoded string
+        pictureSourceType : $scope.photo_choice,                          // 0 indicates to use picture from album, 1 indicates to use camera
+        cameraDirection : 0,
+        quality : 75,
+        targetWidth : 250,
+        targetHeight : 250,
+        saveToPhotoAlbum : false
+      };
+
+      $cordovaCamera.getPicture(options).then(function(imageData) {
+        // imageData is the Base64 encoded string of the image
+        console.log("Photo taken successfully");
+        $scope.picture = imageData;
+        $scope.pictureTaken = true;
+
+      }, function(error) {
+        // error occured
+        console.log("Error: " + error);
+      });
+
+    });
+  };
+
+  $scope.savePicture = function(){
+    $scope.profileData.$loaded.then(function (data){
+      data.profileImageURL = $scope.picture;
+
+      $scope.profileData.$save()
+        .then(function(ref){
+          console.log("Profile picture changed");
+        }, function(error){
+          console.log("Failed to change profile pictue " + error);
+        });
+      });
+
+      var obj = {photoChanged : true};
+
+      //update firebase with new attribute for this user
+      ref.update(obj);
+  };
 
 }])
 
@@ -411,10 +476,10 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     //  }
     var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
     $scope.userId = localData['uid'];
-    
+
     var ref = new Firebase("https://comp3990.firebaseio.com");
     $scope.allProducts = $firebaseObject(ref.child('/products'));
-    
+
 }])
 
 .controller('SideMenuCtrl', ['$scope', '$ionicSideMenuDelegate', 'SideMenuStateService', '$state', function($scope, $ionicSideMenuDelegate, SideMenuStateService, $state){
@@ -516,7 +581,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   $scope.buyerId = $stateParams.buyerId;
   $scope.productId = $stateParams.productId;
   $scope.perspective = $stateParams.perspective;
-  
+
   /* firebase reference*/
   var ref = new Firebase("https://comp3990.firebaseio.com");
   $scope.interestsRef = $firebaseObject(ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/statusInformation' ));
@@ -573,11 +638,11 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
   $scope.processCash = function(){
   }
-  
+
   $scope.generatePendingReview = function (){
       //upon completing a transaction, a pending review of the buyer will need to be done
     //this will need to be reflected in the viewing of a user's account.
-    
+
     console.log("CREATING PENDING STUFF!");
     //We also need to post a pending review here!
      //add a pending review
@@ -782,8 +847,8 @@ angular.module('starter.controllers',['ionic','ngCordova'])
         var pendingReviewRefToRemove = ref.child('/pending-reviews/'+buyerId+'/'+sellerid);
         pendingReviewRefToRemove.remove();
       }
-      
-      
+
+
   }
 }])
 
@@ -796,11 +861,11 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     $scope.allPendingReviews.$loaded(function(data){
         console.log(data);
     });
-    
+
     $scope.uidCheck=function(key){
         return (key===$scope.uid);
     }
-    
+
     $scope.goToRatings=function(key,value){
         console.log("KEY IS"+key);
         if(value.buyer===true){
@@ -849,7 +914,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     console.log("transaction complete");
     //upon completing a transaction, a pending review of the buyer will need to be done
     //this will need to be reflected in the viewing of a user's account.
-    
+
     console.log("CREATING PENDING STUFF!");
     //We also need to post a pending review here!
     //add a pending review
