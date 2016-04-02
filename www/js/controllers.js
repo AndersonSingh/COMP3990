@@ -213,7 +213,6 @@ angular.module('starter.controllers',['ionic','ngCordova'])
         sourceType : 1,                                                   // specify take picture from camera
         encodingType : 0,                                                 // specify the image is encoded as a jpeg
         destinationType : 0,                                              // specify format of value returned is Base64 encoded string
-        cameraDirection : 0,
         quality : 75,
         targetWidth : 250,
         targetHeight : 250,
@@ -264,10 +263,9 @@ angular.module('starter.controllers',['ionic','ngCordova'])
         encodingType : 0,                                                 // specify the image is encoded as a jpeg
         destinationType : 0,                                              // specify format of value returned is Base64 encoded string
         pictureSourceType : $scope.photo_choice,                          // 0 indicates to use picture from album, 1 indicates to use camera
-        cameraDirection : 0,
         quality : 75,
-        targetWidth : 250,
-        targetHeight : 250,
+        targetWidth : 128,
+        targetHeight : 128,
         saveToPhotoAlbum : false
       };
 
