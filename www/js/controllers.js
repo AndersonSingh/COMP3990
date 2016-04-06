@@ -126,7 +126,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   var ref = new Firebase("https://comp3990.firebaseio.com");
 
   $scope.profileData = null;
-  
+
 
   $scope.init = function(){
       var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
@@ -137,7 +137,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
         $scope.profileData = $firebaseObject(ref.child('/users/' + uid));
       }
   };
-  
+
 
 }])
 
@@ -291,6 +291,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     $scope.rating = {};
     $scope.userRating={rating: 0, comment:''};
 
+    //NOT SURE IF THESE VAIRABLES ARE USED WITHIN THE CONTROLLER.
     var userId= $stateParams.userId;
     var productId= $stateParams.productId;
 
@@ -319,7 +320,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
 
     $scope.interestedButton = function(){
-        if(userId===$scope.sellerId){
+        if($scope.buyerId===$scope.sellerId){
              $scope.interestedButtonMessage="You cannot be interested in your own item.";
         }
         else{
@@ -411,10 +412,10 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     //  }
     var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
     $scope.userId = localData['uid'];
-    
+
     var ref = new Firebase("https://comp3990.firebaseio.com");
     $scope.allProducts = $firebaseObject(ref.child('/products'));
-    
+
 }])
 
 .controller('SideMenuCtrl', ['$scope', '$ionicSideMenuDelegate', 'SideMenuStateService', '$state', function($scope, $ionicSideMenuDelegate, SideMenuStateService, $state){
@@ -516,7 +517,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   $scope.buyerId = $stateParams.buyerId;
   $scope.productId = $stateParams.productId;
   $scope.perspective = $stateParams.perspective;
-  
+
   /* firebase reference*/
   var ref = new Firebase("https://comp3990.firebaseio.com");
   $scope.interestsRef = $firebaseObject(ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/statusInformation' ));
@@ -574,11 +575,11 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
   $scope.processCash = function(){
   }
-  
+
   $scope.generatePendingReview = function (){
       //upon completing a transaction, a pending review of the buyer will need to be done
     //this will need to be reflected in the viewing of a user's account.
-    
+
     console.log("CREATING PENDING STUFF!");
     //We also need to post a pending review here!
      //add a pending review
@@ -783,8 +784,8 @@ angular.module('starter.controllers',['ionic','ngCordova'])
         var pendingReviewRefToRemove = ref.child('/pending-reviews/'+buyerId+'/'+sellerid);
         pendingReviewRefToRemove.remove();
       }
-      
-      
+
+
   }
 }])
 
@@ -797,11 +798,11 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     $scope.allPendingReviews.$loaded(function(data){
         console.log(data);
     });
-    
+
     $scope.uidCheck=function(key){
         return (key===$scope.uid);
     }
-    
+
     $scope.goToRatings=function(key,value){
         console.log("KEY IS"+key);
         if(value.buyer===true){
@@ -850,7 +851,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     console.log("transaction complete");
     //upon completing a transaction, a pending review of the buyer will need to be done
     //this will need to be reflected in the viewing of a user's account.
-    
+
     console.log("CREATING PENDING STUFF!");
     //We also need to post a pending review here!
     //add a pending review
