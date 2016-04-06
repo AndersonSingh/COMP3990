@@ -328,8 +328,113 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
 
 .controller('ItemDetailCtrl', ['$scope', '$stateParams' ,'$firebaseObject', '$http', '$ionicModal',function($scope, $stateParams, $firebaseObject, $http, $ionicModal){
-    /* firebase reference*/
-    var ref = new Firebase("https://comp3990.firebaseio.com");
+  /* firebase reference*/
+  var ref = new Firebase("https://comp3990.firebaseio.com");
+
+    $scope.setupGraph = function(){
+      /* graph setup */
+      $scope.labels = ['Unique Views', 'Interests'];
+      $scope.series = ['Total'];
+      $scope.data = [[0,0]];
+
+      $scope.$watch('productUniqueViews.totalUniqueViews', function handleChange(newValue, oldValue){
+          $scope.data[0][0] = newValue;
+        });
+
+      $scope.$watch('productInterests.totalInterests', function handleChange(newValue, oldValue){
+            $scope.data[0][1] = newValue;
+      });
+    };
+
+
+    $scope.init = function(){
+
+      /* get the sellerId from stateParms */
+      $scope.sellerId= $stateParams.userId;
+      $scope.productId = $stateParams.productId;
+      /*
+        the seller will see additional info such as analytics which will not be seen by buyers.
+        If the seller is viewing, we would display this additional information.
+      */
+      var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
+
+      if(localData !== null){
+        $scope.loggedInUserId = localData['uid'];
+
+        if($scope.loggedInUserId === $scope.sellerId){
+          $scope.isSeller = true;
+        }
+        else{
+          $scope.isSeller = false;
+        }
+      }
+
+      //call on the logUserView to add data to analytics.
+      $scope.logUserView();
+
+    };
+
+    $scope.logUserInterest = function(){
+
+      if($scope.isSeller === false){
+        var logInterestRef = ref.child('/analytics/products-interest/' + $scope.sellerId + '/' + $scope.productId);
+        $scope.productInterests = $firebaseObject(logInterestRef);
+
+        $scope.productInterests.$loaded(function(data){
+          if(data[$scope.loggedInUserId] == null){
+            /* user is interested in the item. */
+            data[$scope.loggedInUserId] = true;
+
+            if(data.totalInterests == null){
+              data.totalInterests = 1;
+            }
+            else{
+              data.totalInterests = data.totalInterests + 1;
+            }
+            data.$save();
+          }
+        });
+        console.log("This interest will be added to analytics");
+      }
+      else{
+        console.log("The seller cannot be interested in the item.");
+      }
+    };
+
+    /* this function adds a unique view to the analytics section */
+    $scope.logUserView = function(){
+
+      if($scope.isSeller === false){
+        var logViewRef = ref.child('/analytics/products-unique-views/' + $scope.sellerId + '/' + $scope.productId);
+
+        $scope.productUniqueViews = $firebaseObject(logViewRef);
+
+        $scope.productUniqueViews.$loaded(function(data){
+          if(data[$scope.loggedInUserId] == null){
+              /* since this is the first time the user is viewing the item, add their id to the views. */
+              data[$scope.loggedInUserId] = true;
+
+              /* update the unique view counter. */
+              /* if the views are not set from before, this is the first viewer. */
+              if(data.totalUniqueViews == null){
+                data.totalUniqueViews = 1;
+              }
+              else{
+                /* already set, so increment by 1.*/
+                data.totalUniqueViews = data.totalUniqueViews + 1;
+              }
+              data.$save();
+          }
+        });
+
+
+        console.log("This view counts toward analytics if it is unique.");
+      }
+      else{
+        console.log("The seller is viewing the item, this view does not count towards analytics.");
+      }
+
+    };
 
     $ionicModal.fromTemplateUrl('templates/modal-view.html', {
     scope: $scope,
@@ -387,6 +492,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
              $scope.interestedButtonMessage="You cannot be interested in your own item.";
         }
         else{
+          $scope.logUserInterest();
         $scope.interestExists = $firebaseObject(ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId));
         $scope.interestExists.$loaded(function(data){
             if(data.$value!==null){

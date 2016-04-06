@@ -6,7 +6,7 @@
 
 userPushNotificationId = null;
 
-angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.services','angular-toArrayFilter','ionic.rating'])
+angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.services','angular-toArrayFilter','ionic.rating', 'chart.js'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
