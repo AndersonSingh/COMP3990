@@ -193,6 +193,12 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
  controller: 'UserRatingCtrl2'
 })
 
+.state('user-view-reviews', {
+ url: '/user-view-reviews?sellerId',
+ templateUrl: 'templates/user-view-reviews.html',
+ controller: 'UserViewReviewsCtrl'
+})
+
 .state('view-pending-reviews', {
  url: '/view-pending-reviews',
  templateUrl: 'templates/view-pending-reviews.html',

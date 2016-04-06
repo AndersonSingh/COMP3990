@@ -1,0 +1,48 @@
+<ion-view view-title="View User Reviews">
+  <ion-content>
+        <div class="list card"">
+            <div class="list">
+
+                <div class="item item-divider">
+                    Seller Information
+                </div>
+                <label class="item item-input item-stacked-label">
+                    <span class="input-label">Seller's Name</span>
+                    <p>{{sellerInfo.name}}</p>
+                </label>
+                
+                <label class="item item-input item-stacked-label">
+                    <span class="input-label">Seller's Rating</span>
+                    <rating ng-model="sellerInfo.overallRating" max=5 readonly="1">
+                    </rating>
+                </label>
+                
+                <label class="item item-input item-stacked-label">
+                    <span class="input-label">Number of Pending Reviews</span>
+                    <p>{{sellerInfo.pendingReviews}}</p>
+                </label>
+                
+                <div class="item item-divider">
+                    Seller Reviews
+                </div>
+                <div ng-repeat="reviews in sellerReviews">
+                    <div ng-repeat="review in reviews"
+                        <label class="item item-input item-stacked-label">
+                            <span class="input-label">User Name</span>
+                            <p>Fred.</p>
+                            
+                            <span class="input-label">Rating</span>
+                            <rating ng-model="review.rating" max=5 readonly="1">
+                            </rating>
+                            
+                            <span class="input-label">Comment</span>
+                            <p>{{review.comment}}</p>
+                        </label>
+                        <br>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+  </ion-content>
+</ion-view>
