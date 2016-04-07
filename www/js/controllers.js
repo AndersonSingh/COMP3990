@@ -258,10 +258,9 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       // specifiying camera options
       var options = {
         cameraDirection : 0,                                              // specify use rear camera
-        sourceType : 1,                                                   // specify take picture from camera
+        sourceType : 1,                                 // 0 indicates to use picture from album, 1 indicates to use camera
         encodingType : 0,                                                 // specify the image is encoded as a jpeg
         destinationType : 0,                                              // specify format of value returned is Base64 encoded string
-        pictureSourceType : $scope.photo_choice,                          // 0 indicates to use picture from album, 1 indicates to use camera
         quality : 75,
         targetWidth : 128,
         targetHeight : 128,
@@ -679,7 +678,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   $scope.appUsers = $firebaseObject(ref.child('/users'));
 }])
 
-.controller('BuyerInterestedItemOverviewCtrl', ['$scope', '$state', '$stateParams', '$q', '$firebaseObject', 'PaypalService', function($scope, $state, $stateParams, $q, $firebaseObject, PaypalService){
+.controller('BuyerInterestedItemOverviewCtrl', ['$scope', '$state', '$q', '$stateParams', '$firebaseObject', 'PaypalService', function($scope, $state, $q, $stateParams, $firebaseObject, PaypalService){
    //Set both sets of information to be displayed to false
    $scope.allowedToBuyPositive=false;
    $scope.allowedToBuyNegative=false;
@@ -730,7 +729,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       // when seller data is ready to be used
       $scope.userInfo.$loaded(function(userData){
         PaypalService.initPaymentEnv(userData.email).then(function(){
-          //console.log("initializing sandbox environment" + data.price + " " + data.name);
+          console.log("initializing sandbox environment" + data.price + " " + data.name);
           PaypalService.makePayment(data.price, data.name).then(onPaymentSuccess, onPaymentFail);
         });
       });
@@ -1156,7 +1155,11 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
     var completeObject = {'completionStatus' : false};
 
-    firebaseRef.child('interests/' + $scope.sellerId + '/' + $scope.productId + '/statusInformation').update(completeObject);
+    var str = 'interests/' + $scope.sellerId + '/' + $scope.productId + '/statusInformation';
+
+    var updateRef = firebaseRef.child(str);
+    console.log(str);
+    updateRef.update(completeObject);
   }
 
   $scope.completeTransaction = function(){
