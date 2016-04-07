@@ -903,40 +903,52 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   $scope.userType="";
   $scope.userData={};
   var userIdRef;
-
+  var userCurrentRating;
+  var userPendingReviews;
+  
+  //If the user on the device is the seller, we need to post a review about the buyer and vice versa.
   if(uid===buyerId){
+      //we are doing a review for a seller
       $scope.userType="Seller";
       userIdRef=sellerId;
+      var newRef = $firebaseObject(ref.child('/users/'+buyerId));
+      //get pending reviews for the buyer(person that is doing the reviewing)
+      newRef.$loaded(function(data){
+          userPendingReviews = parseInt(data.pendingReviews);
+      });
   }
   else if(uid===sellerId){
+      //we are doing a review for a buyer.
       $scope.userType="Buyer";
       userIdRef=buyerId;
       seller=true;
-  }
-
-  var userCurrentRating;
-  var userPendingReviews;
-
-  $scope.userData = $firebaseObject(ref.child('/users/'+userIdRef));
-  $scope.userData.$loaded(function(data){
-    userCurrentRating = parseFloat(data.overallRating);
-    // userPendingReviews = parseInt(data.pendingReviews);
-    console.log("USERID"+userIdRef);
-  });
-  
-  //NEED TO OBTAIN THE NUM pending reviews for the actual user.
-  if(seller===true){
       var newRef = $firebaseObject(ref.child('/users/'+sellerId));
+      //get pending reviews for the seller(person that is doing the reviewing)
       newRef.$loaded(function(data){
           userPendingReviews = parseInt(data.pendingReviews);
       });
   }
-  else{
-      var newRef = $firebaseObject(ref.child('/users/'+buyerId));
-      newRef.$loaded(function(data){
-          userPendingReviews = parseInt(data.pendingReviews);
-      });
-  }
+
+    //pull the overall rating of the user that is to be commented on.
+    $scope.userData = $firebaseObject(ref.child('/users/'+userIdRef));
+    $scope.userData.$loaded(function(data){
+        userCurrentRating = parseFloat(data.overallRating);
+    });
+  
+  //THIS CODE CAN BE DELETED.
+  //NEED TO OBTAIN THE NUM pending reviews for the actual user.
+//   if(seller===true){
+//       var newRef = $firebaseObject(ref.child('/users/'+sellerId));
+//       newRef.$loaded(function(data){
+//           userPendingReviews = parseInt(data.pendingReviews);
+//       });
+//   }
+//   else{
+//       var newRef = $firebaseObject(ref.child('/users/'+buyerId));
+//       newRef.$loaded(function(data){
+//           userPendingReviews = parseInt(data.pendingReviews);
+//       });
+//   }
   
 
   //Perform post of review to firebase
@@ -969,8 +981,6 @@ angular.module('starter.controllers',['ionic','ngCordova'])
         var pendingReviewRefToRemove = ref.child('/pending-reviews/'+buyerId+'/'+sellerid);
         pendingReviewRefToRemove.remove();
       }
-
-
   }
 }])
 
