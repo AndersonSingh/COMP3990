@@ -2,7 +2,7 @@
   <ion-content>
         <div ng-repeat="(key, value) in allInterested">
             <div class="ion-list" ng-repeat="(key2, value2) in allUserProducts" ng-if="key == key2">
-                <a class="item item-thumbnail-left" href="#" ui-sref="seller-interested-people({prodId: key2})">
+                <a class="item item-thumbnail-left" href="#" ui-sref="tabs.seller-interested-people({prodId: key2})">
                 <img data-ng-src="data:image/jpeg;base64,{{value2.picture}}" alt="no picture">
                     <h2> {{value2.name}}</h2>
                     <h2> Price: {{value2.price | currency}} </h2>

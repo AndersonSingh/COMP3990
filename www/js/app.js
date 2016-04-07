@@ -109,16 +109,30 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
     controller:'ViewItemCtrl'
   })
 
+  .state('tabs.item-details', {
+    url: '/item-details?userId&productId',
+    views: {
+         'shop-tab': {
+            templateUrl: 'templates/item-details.html',
+            controller:'ItemDetailCtrl'
+         }
+     }
+  })
+  
   .state('item-details', {
     url: '/item-details?userId&productId',
     templateUrl: 'templates/item-details.html',
     controller:'ItemDetailCtrl'
   })
 
-  .state('list-items-category', {
+  .state('tabs.list-items-category', {
     url: '/list-items-category?category',
-    templateUrl: 'templates/list-items-category.html',
-    controller:'CategoryListCtrl'
+    views: {
+         'shop-tab': {
+         templateUrl: 'templates/list-items-category.html',
+         controller:'CategoryListCtrl'
+         }
+     }
   })
 
   .state('new-item-interested', {
@@ -141,6 +155,16 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
     controller: 'BuyerInterestedItemOverviewCtrl'
   })
 
+  .state('tabs.messenger', {
+    url: '/messenger?sellerId&buyerId&productId&perspective',
+    views: {
+         'sell-tab': {
+         templateUrl: 'templates/messenger.html',
+         controller: 'MessengerCtrl'
+         }
+     }
+  })
+  
   .state('messenger', {
     url: '/messenger?sellerId&buyerId&productId&perspective',
     templateUrl: 'templates/messenger.html',
@@ -175,34 +199,46 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
   controller: 'ProfilePicCtrl'
 })
 
- .state('seller-interested-people', {
+ .state('tabs.seller-interested-people', {
   url: '/seller-interested-people?prodId',
-  templateUrl: 'templates/seller-interested-people.html',
-  controller: 'InterestedSellerCtrl'
+  views: {
+         'sell-tab': {
+         templateUrl: 'templates/seller-interested-people.html',
+         controller: 'InterestedSellerCtrl'
+         }
+     }
 })
 
-.state('seller-interested-overview', {
+ .state('tabs.seller-interested-overview', {
  url: '/seller-interested-overview?buyerId&sellerId&perspective&productId',
- templateUrl: 'templates/seller-interested-overview.html',
- controller: 'InterestedOverviewCtrl'
+ views: {
+         'sell-tab': {
+          templateUrl: 'templates/seller-interested-overview.html',
+          controller: 'InterestedOverviewCtrl'
+         }
+     }
 })
 
-.state('rateuser2', {
+ .state('rateuser2', {
  url: '/rateuser2?buyerId&sellerId',
  templateUrl: 'templates/rate-user2.html',
  controller: 'UserRatingCtrl2'
 })
 
-.state('user-view-reviews', {
+ .state('user-view-reviews', {
  url: '/user-view-reviews?sellerId',
  templateUrl: 'templates/user-view-reviews.html',
  controller: 'UserViewReviewsCtrl'
 })
 
-.state('view-pending-reviews', {
+ .state('tabs.view-pending-reviews', {
  url: '/view-pending-reviews',
- templateUrl: 'templates/view-pending-reviews.html',
- controller: 'PendingReviewsCtrl'
+ views: {
+         'activity-tab': {
+         templateUrl: 'templates/view-pending-reviews.html',
+         controller: 'PendingReviewsCtrl'
+         }
+     }
 })
 
   $urlRouterProvider.otherwise('sign-in');
