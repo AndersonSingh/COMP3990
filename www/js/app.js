@@ -169,7 +169,6 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
     url: '/messenger?sellerId&buyerId&productId&perspective',
     templateUrl: 'templates/messenger.html',
     controller: 'MessengerCtrl'
-
   })
 
   .state('menu-selling', {
