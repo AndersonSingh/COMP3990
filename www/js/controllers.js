@@ -39,7 +39,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
           }
 
-          usersRef.set({'email' : email, 'name' : name, 'pushId' : userPushNotificationId, overallRating : 0, photoChanged : false}, function(error){
+          usersRef.set({'email' : email, 'name' : name, 'pushId' : userPushNotificationId, 'overallRating' : 0, 'photoChanged' : false, 'pendingReviews':0}, function(error){
 
             if(error){
               console.log('INFO: ERROR SYNCING DATA TO FIREBASE. DEBUG: ', error);
@@ -930,12 +930,28 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   $scope.userData = $firebaseObject(ref.child('/users/'+userIdRef));
   $scope.userData.$loaded(function(data){
     userCurrentRating = parseFloat(data.overallRating);
-    userPendingReviews = parseInt(data.pendingReviews);
+    // userPendingReviews = parseInt(data.pendingReviews);
+    console.log("USERID"+userIdRef);
   });
-
+  
+  //NEED TO OBTAIN THE NUM pending reviews for the actual user.
+  if(seller===true){
+      var newRef = $firebaseObject(ref.child('/users/'+sellerId));
+      newRef.$loaded(function(data){
+          userPendingReviews = parseInt(data.pendingReviews);
+      });
+  }
+  else{
+      var newRef = $firebaseObject(ref.child('/users/'+buyerId));
+      newRef.$loaded(function(data){
+          userPendingReviews = parseInt(data.pendingReviews);
+      });
+  }
+  
 
   //Perform post of review to firebase
   $scope.postRating=function(){
+      console.log("PENDING----"+userPendingReviews);
       var ratingRef = ref.child('/ratings/');
       var userRatingRef = ref.child('/users/'+userIdRef+'/overallRating');
       var newRating=0.00;
@@ -946,7 +962,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
           newRating = (parseFloat(userCurrentRating) + parseFloat($scope.userRating.rating))/2;
       }
       if(seller===true){
-        ratingRef.child(sellerId+'/'+buyerId+'/').push({rating:$scope.userRating.rating, comment:$scope.userRating.comment});
+        ratingRef.child(buyerId+'/'+sellerId+'/').push($scope.userRating);
         var pendingReviewsRef = ref.child('/users/'+sellerId+'/pendingReviews');
         pendingReviewsRef.set(userPendingReviews-1);
         userRatingRef.set(newRating);
@@ -955,7 +971,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
         pendingReviewRefToRemove.remove();
       }
       else{
-        ratingRef.child(buyerId+'/'+sellerId+'/').push($scope.userRating);
+        ratingRef.child(sellerId+'/'+buyerId+'/').push($scope.userRating);
         var pendingReviewsRef = ref.child('/users/'+buyerId+'/pendingReviews');
         pendingReviewsRef.set(userPendingReviews-1);
         userRatingRef.set(newRating);
@@ -993,6 +1009,15 @@ angular.module('starter.controllers',['ionic','ngCordova'])
              $state.go('rateuser2',{'buyerId':$scope.uid, 'sellerId' : key});
         }
     }
+}])
+
+
+
+.controller('UserViewReviewsCtrl',['$scope','$firebaseObject','$stateParams', function($scope,$firebaseObject,$stateParams){
+     $scope.sellerId= $stateParams.sellerId;
+     var ref = new Firebase("https://comp3990.firebaseio.com/");
+     $scope.sellerInfo = $firebaseObject(ref.child('/users/'+$scope.sellerId));
+     $scope.sellerReviews = $firebaseObject(ref.child('/ratings/'+$scope.sellerId));
 }])
 
 
