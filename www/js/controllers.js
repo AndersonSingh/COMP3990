@@ -952,7 +952,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
           newRating = (parseFloat(userCurrentRating) + parseFloat($scope.userRating.rating))/2;
       }
       if(seller===true){
-        ratingRef.child(sellerId+'/'+buyerId+'/').push($scope.userRating);
+        ratingRef.child(buyerId+'/'+sellerId+'/').push($scope.userRating);
         var pendingReviewsRef = ref.child('/users/'+sellerId+'/pendingReviews');
         pendingReviewsRef.set(userPendingReviews-1);
         userRatingRef.set(newRating);
@@ -961,7 +961,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
         pendingReviewRefToRemove.remove();
       }
       else{
-        ratingRef.child(buyerId+'/'+sellerId+'/').push($scope.userRating);
+        ratingRef.child(sellerId+'/'+buyerId+'/').push($scope.userRating);
         var pendingReviewsRef = ref.child('/users/'+buyerId+'/pendingReviews');
         pendingReviewsRef.set(userPendingReviews-1);
         userRatingRef.set(newRating);
