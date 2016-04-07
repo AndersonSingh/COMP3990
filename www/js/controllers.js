@@ -770,7 +770,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     $scope.generatePendingReview();
 
     //redirect to home page
-    $state.go('menu-buying');
+    $state.go('tabs.tab-activity');
   }
 
   $scope.generatePendingReview = function (){
@@ -1164,7 +1164,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     attemptDeleteInterests();
 
     // redirect seller
-    $state.go('menu-selling');
+    $state.go('tabs.tab-activity');
   }
 
   function updateProduct(){
