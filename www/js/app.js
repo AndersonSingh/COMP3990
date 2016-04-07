@@ -225,10 +225,24 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
  controller: 'UserRatingCtrl2'
 })
 
- .state('user-view-reviews', {
+.state('tabs.rateuser2', {
+ url: '/rateuser2?buyerId&sellerId',
+ views: {
+         'activity-tab': {
+          templateUrl: 'templates/rate-user2.html',
+          controller: 'UserRatingCtrl2'
+         }
+     }
+})
+
+ .state('tabs.user-view-reviews', {
  url: '/user-view-reviews?sellerId',
- templateUrl: 'templates/user-view-reviews.html',
- controller: 'UserViewReviewsCtrl'
+ views: {
+         'shop-tab': {
+         templateUrl: 'templates/user-view-reviews.html',
+         controller: 'UserViewReviewsCtrl'
+         }
+     }
 })
 
  .state('tabs.view-pending-reviews', {
