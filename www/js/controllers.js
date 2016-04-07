@@ -1142,14 +1142,6 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
     updateProduct();
     updateInterestedProduct();
-
-    var completeObject = {'completionStatus' : false};
-
-    var str = 'interests/' + $scope.sellerId + '/' + $scope.productId + '/statusInformation';
-
-    var updateRef = firebaseRef.child(str);
-    console.log(str);
-    updateRef.update(completeObject);
   }
 
   $scope.completeTransaction = function(){
@@ -1198,6 +1190,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       .then(function(data){
         data.status = "unavailable";
         data.selectedBuyer = $scope.buyerId;
+        data.completionStatus = false;
 
         $scope.interestedItem.$save()
           .then(function(firebaseRef){
