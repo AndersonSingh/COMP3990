@@ -832,13 +832,13 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       else{
         // check whether both seller and buyer have agreed that transaction is completed before deleting
         $scope.interestsRef.$loaded().then(function(data){
-          if(data.completionStatus === true){
+          if(data.sellerAgreed === true){
             // seller has already agreed that the transaction is completed, therefore we delete the interests
             refInterests.remove();
           }
           else{
             // seller has yet to agree that transaction is complete so we update this field to reflect that the buyer has agreed
-            data.completionStatus=true;
+            data.buyerAgreed=true;
             $scope.interestsRef.$save()
               .then(function(ref){
                 console.log("updated completion status to 'true'");
@@ -1191,8 +1191,9 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       .then(function(data){
         data.status = "unavailable";
         data.selectedBuyer = $scope.buyerId;
-        data.completionStatus = false;
-
+        data.buyerAgreed = false;
+        data.sellerAgreed = false;
+        
         $scope.interestedItem.$save()
           .then(function(firebaseRef){
             console.log("updated interested product status");
@@ -1211,15 +1212,15 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     console.log("ATTEMPT DELETE.");
     // check whether both seller and buyer have agreed that transaction is completed before deleting
     $scope.interestsRef.$loaded().then(function(data){
-      if(data.completionStatus === true){
-          console.log("REMOVIGN.");
+      if(data.buyerAgreed === true){
+          console.log("REMOVING.");
         // buyer has already agreed that the transaction is completed, therefore we delete the interests
         refInterests.remove();
       }
       else{
         // buyer has yet to agree that transaction is complete so we update this field to reflect that the seller has agreed
         
-        data.completionStatus=true;
+        data.sellerAgreed=true;
         $scope.interestsRef.$save()
           .then(function(firebaseRef){
             console.log("updated completion status to 'true'");

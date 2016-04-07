@@ -24,10 +24,10 @@
     </button>
 
     <ion-list>
-      <ion-checkbox ng-show="interestsRef.status === 'unavailable' && buyProposal.paymentMethod === 'Cash'" ng-model="cash_agree_status" ng-true-value="true" ng-false-value="false">I agree that cash transaction is completed </ion-checkbox>
+      <ion-checkbox ng-show="interestsRef.status === 'unavailable' && buyProposal.paymentMethod === 'Cash' && interestsRef.sellerAgreed === false" ng-model="cash_agree_status" ng-true-value="true" ng-false-value="false">I agree that cash transaction is completed </ion-checkbox>
     </ion-list>
 
-    <button ng-show="cash_agree_status === true" class="button button-block button-stable" ng-click="completeTransaction();">
+    <button ng-show="cash_agree_status === true && interestsRef.sellerAgreed === false" class="button button-block button-stable" ng-click="completeTransaction();">
       Cash Transaction Complete
     </button>
 

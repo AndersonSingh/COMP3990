@@ -11,7 +11,7 @@
 
         <div ng-repeat="(key,value) in allProducts">
             <div ng-if="key != userId">
-                <div class="ion-list" ng-repeat="item in value | toArray | filter:{'category':category} | filter:{'name':query} ">
+                <div class="ion-list" ng-repeat="item in value | toArray | filter:{'category':category} | filter:{'name':query} | filter:{'status':available} ">
                     <a class="item item-thumbnail-left" href="#" ui-sref="tabs.item-details({userId:key ,productId:item.$key})">
                     <img data-ng-src="data:image/jpeg;base64,{{item.picture}}" alt="no picture">
                         <h2> {{item.name}}</h2>
