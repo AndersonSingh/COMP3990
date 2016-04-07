@@ -337,13 +337,10 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       $scope.series = ['Total'];
       $scope.data = [[0,0]];
 
-      $scope.$watch('productUniqueViews.totalUniqueViews', function handleChange(newValue, oldValue){
-          $scope.data[0][0] = newValue;
-        });
 
-      $scope.$watch('productInterests.totalInterests', function handleChange(newValue, oldValue){
+    /*  $scope.$watch('productInterests.totalInterests', function handleChange(newValue, oldValue){
             $scope.data[0][1] = newValue;
-      });
+      });*/
     };
 
 
@@ -371,46 +368,60 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
       //call on the logUserView to add data to analytics.
       $scope.logUserView();
-
+      $scope.loadProductInterests();
     };
 
+    $scope.loadProductInterests = function(){
+      var logInterestRef = ref.child('/analytics/products-interest/' + $scope.sellerId + '/' + $scope.productId);
+      $scope.productInterests = $firebaseObject(logInterestRef);
+      $scope.productInterests.$loaded(function(data){
+        $scope.$watch('productInterests.totalInterests', function handleChange(newValue, oldValue){
+                $scope.data[0][1] = newValue;
+          });
+      });
+
+    };
     $scope.logUserInterest = function(){
 
       if($scope.isSeller === false){
-        var logInterestRef = ref.child('/analytics/products-interest/' + $scope.sellerId + '/' + $scope.productId);
-        $scope.productInterests = $firebaseObject(logInterestRef);
 
-        $scope.productInterests.$loaded(function(data){
-          if(data[$scope.loggedInUserId] == null){
+          if($scope.productInterests[$scope.loggedInUserId] == null){
             /* user is interested in the item. */
-            data[$scope.loggedInUserId] = true;
+            $scope.productInterests[$scope.loggedInUserId] = true;
 
-            if(data.totalInterests == null){
-              data.totalInterests = 1;
+            if($scope.productInterests.totalInterests == null){
+              $scope.productInterests.totalInterests = 1;
             }
             else{
-              data.totalInterests = data.totalInterests + 1;
+              $scope.productInterests.totalInterests = $scope.productInterests.totalInterests + 1;
             }
-            data.$save();
+            $scope.productInterests.$save();
           }
-        });
-        console.log("This interest will be added to analytics");
-      }
-      else{
-        console.log("The seller cannot be interested in the item.");
-      }
+
+          console.log("This interest will be added to analytics");
+        }
+        else{
+          console.log("The seller cannot be interested in the item.");
+        }
+
     };
 
     /* this function adds a unique view to the analytics section */
     $scope.logUserView = function(){
 
-      if($scope.isSeller === false){
-        var logViewRef = ref.child('/analytics/products-unique-views/' + $scope.sellerId + '/' + $scope.productId);
+      var logViewRef = ref.child('/analytics/products-unique-views/' + $scope.sellerId + '/' + $scope.productId);
 
-        $scope.productUniqueViews = $firebaseObject(logViewRef);
+      $scope.productUniqueViews = $firebaseObject(logViewRef);
 
-        $scope.productUniqueViews.$loaded(function(data){
-          if(data[$scope.loggedInUserId] == null){
+      $scope.productUniqueViews.$loaded(function(data){
+
+        $scope.$watch('productUniqueViews.totalUniqueViews', function handleChange(newValue, oldValue){
+                $scope.data[0][0] = newValue;
+          });
+
+          if($scope.isSeller === false){
+
+            if(data[$scope.loggedInUserId] == null){
               /* since this is the first time the user is viewing the item, add their id to the views. */
               data[$scope.loggedInUserId] = true;
 
@@ -422,17 +433,16 @@ angular.module('starter.controllers',['ionic','ngCordova'])
               else{
                 /* already set, so increment by 1.*/
                 data.totalUniqueViews = data.totalUniqueViews + 1;
-              }
-              data.$save();
-          }
-        });
+                }
+                data.$save();
+            }
 
-
-        console.log("This view counts toward analytics if it is unique.");
-      }
-      else{
-        console.log("The seller is viewing the item, this view does not count towards analytics.");
-      }
+            console.log("This view counts toward analytics if it is unique.");
+        }
+        else{
+          console.log("The seller is viewing the item, this view does not count towards analytics.");
+        }
+      });
 
     };
 
