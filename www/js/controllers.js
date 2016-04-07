@@ -282,19 +282,9 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   };
 
   $scope.savePicture = function(){
-    $scope.profileData.$loaded().then(function (data){
-      data.profileImageURL = $scope.picture;
-
-      $scope.profileData.$save()
-        .then(function(ref){
-          console.log("Profile picture changed");
-        }, function(error){
-          console.log("Failed to change profile pictue " + error);
-        });
-      });
-
-      //update firebase with new attribute for this user
-      ref.child('users/' + uid + '/' + 'photoChanged').set(true);
+    //update firebase with new attributes for this user
+    ref.child('users/' + uid + '/' + 'photoChanged').set(true);
+    ref.child('users/' + uid + '/' + 'profileImageURL').set($scope.picture);
   };
 
 }])
