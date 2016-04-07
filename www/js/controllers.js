@@ -821,7 +821,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
   function onNotfiySuccess(){
     // delete interests
-    var refInterests = new Firebase("https://comp3990.firebaseio.com/interests/" + $scope.sellerid + "/" + $scope.productId);
+    var refInterests = new Firebase("https://comp3990.firebaseio.com/interests/" + $scope.sellerId + "/" + $scope.productId);
 
     $scope.buyProposal.$loaded().then(function(data){
       if(data.paymentMethod === 'Paypal'){
@@ -838,6 +838,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
           }
           else{
             // seller has yet to agree that transaction is complete so we update this field to reflect that the buyer has agreed
+            data.completionStatus=true;
             $scope.interestsRef.$save()
               .then(function(ref){
                 console.log("updated completion status to 'true'");
@@ -1206,16 +1207,19 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
   function attemptDeleteInterests(){
     // delete interests
-    var refInterests = new Firebase("https://comp3990.firebaseio.com/interests/" + $scope.sellerid + "/" + $scope.productId);
-
+    var refInterests = new Firebase("https://comp3990.firebaseio.com/interests/" + $scope.sellerId + "/" + $scope.productId);
+    console.log("ATTEMPT DELETE.");
     // check whether both seller and buyer have agreed that transaction is completed before deleting
     $scope.interestsRef.$loaded().then(function(data){
       if(data.completionStatus === true){
+          console.log("REMOVIGN.");
         // buyer has already agreed that the transaction is completed, therefore we delete the interests
         refInterests.remove();
       }
       else{
         // buyer has yet to agree that transaction is complete so we update this field to reflect that the seller has agreed
+        
+        data.completionStatus=true;
         $scope.interestsRef.$save()
           .then(function(firebaseRef){
             console.log("updated completion status to 'true'");
