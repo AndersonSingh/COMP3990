@@ -1012,7 +1012,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   var userIdRef;
   var userCurrentRating;
   var userPendingReviews;
-  
+
   //If the user on the device is the seller, we need to post a review about the buyer and vice versa.
   if(uid===buyerId){
       //we are doing a review for a seller
@@ -1041,7 +1041,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     $scope.userData.$loaded(function(data){
         userCurrentRating = parseFloat(data.overallRating);
     });
-  
+
   //THIS CODE CAN BE DELETED.
   //NEED TO OBTAIN THE NUM pending reviews for the actual user.
 //   if(seller===true){
@@ -1148,7 +1148,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   $scope.buyer = $firebaseObject(firebaseRef.child('users').child($scope.buyerId));
 
   // download state information on the interests for this item
-  $scope.interestsRef = $firebaseObject(ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/statusInformation' ));
+  $scope.interestsRef = $firebaseObject(firebaseRef.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/statusInformation' ));
 
   $scope.buyerChosen = function(){
     console.log("User " + $scope.buyerId + "chosen as buyer");
@@ -1156,7 +1156,9 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     updateProduct();
     updateInterestedProduct();
 
-    firebaseRef.child('interests/' + $scope.sellerId + '/' + $scope.productId + '/statusInformation').set({"completionStatus" : false});
+    var completeObject = {'completionStatus' : false};
+
+    firebaseRef.child('interests/' + $scope.sellerId + '/' + $scope.productId + '/statusInformation').update(completeObject);
   }
 
   $scope.completeTransaction = function(){
