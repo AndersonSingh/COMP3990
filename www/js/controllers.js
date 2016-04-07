@@ -39,7 +39,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
           }
 
-          usersRef.set({'email' : email, 'name' : name, 'pushId' : userPushNotificationId, overallRating : 0, photoChanged : false}, function(error){
+          usersRef.set({'email' : email, 'name' : name, 'pushId' : userPushNotificationId, 'overallRating' : 0, 'photoChanged' : false, 'pendingReviews':0}, function(error){
 
             if(error){
               console.log('INFO: ERROR SYNCING DATA TO FIREBASE. DEBUG: ', error);
@@ -327,8 +327,113 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
 
 .controller('ItemDetailCtrl', ['$scope', '$stateParams' ,'$firebaseObject', '$http', '$ionicModal',function($scope, $stateParams, $firebaseObject, $http, $ionicModal){
-    /* firebase reference*/
-    var ref = new Firebase("https://comp3990.firebaseio.com");
+  /* firebase reference*/
+  var ref = new Firebase("https://comp3990.firebaseio.com");
+
+    $scope.setupGraph = function(){
+      /* graph setup */
+      $scope.labels = ['Unique Views', 'Interests'];
+      $scope.series = ['Total'];
+      $scope.data = [[0,0]];
+
+      $scope.$watch('productUniqueViews.totalUniqueViews', function handleChange(newValue, oldValue){
+          $scope.data[0][0] = newValue;
+        });
+
+      $scope.$watch('productInterests.totalInterests', function handleChange(newValue, oldValue){
+            $scope.data[0][1] = newValue;
+      });
+    };
+
+
+    $scope.init = function(){
+
+      /* get the sellerId from stateParms */
+      $scope.sellerId= $stateParams.userId;
+      $scope.productId = $stateParams.productId;
+      /*
+        the seller will see additional info such as analytics which will not be seen by buyers.
+        If the seller is viewing, we would display this additional information.
+      */
+      var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
+
+      if(localData !== null){
+        $scope.loggedInUserId = localData['uid'];
+
+        if($scope.loggedInUserId === $scope.sellerId){
+          $scope.isSeller = true;
+        }
+        else{
+          $scope.isSeller = false;
+        }
+      }
+
+      //call on the logUserView to add data to analytics.
+      $scope.logUserView();
+
+    };
+
+    $scope.logUserInterest = function(){
+
+      if($scope.isSeller === false){
+        var logInterestRef = ref.child('/analytics/products-interest/' + $scope.sellerId + '/' + $scope.productId);
+        $scope.productInterests = $firebaseObject(logInterestRef);
+
+        $scope.productInterests.$loaded(function(data){
+          if(data[$scope.loggedInUserId] == null){
+            /* user is interested in the item. */
+            data[$scope.loggedInUserId] = true;
+
+            if(data.totalInterests == null){
+              data.totalInterests = 1;
+            }
+            else{
+              data.totalInterests = data.totalInterests + 1;
+            }
+            data.$save();
+          }
+        });
+        console.log("This interest will be added to analytics");
+      }
+      else{
+        console.log("The seller cannot be interested in the item.");
+      }
+    };
+
+    /* this function adds a unique view to the analytics section */
+    $scope.logUserView = function(){
+
+      if($scope.isSeller === false){
+        var logViewRef = ref.child('/analytics/products-unique-views/' + $scope.sellerId + '/' + $scope.productId);
+
+        $scope.productUniqueViews = $firebaseObject(logViewRef);
+
+        $scope.productUniqueViews.$loaded(function(data){
+          if(data[$scope.loggedInUserId] == null){
+              /* since this is the first time the user is viewing the item, add their id to the views. */
+              data[$scope.loggedInUserId] = true;
+
+              /* update the unique view counter. */
+              /* if the views are not set from before, this is the first viewer. */
+              if(data.totalUniqueViews == null){
+                data.totalUniqueViews = 1;
+              }
+              else{
+                /* already set, so increment by 1.*/
+                data.totalUniqueViews = data.totalUniqueViews + 1;
+              }
+              data.$save();
+          }
+        });
+
+
+        console.log("This view counts toward analytics if it is unique.");
+      }
+      else{
+        console.log("The seller is viewing the item, this view does not count towards analytics.");
+      }
+
+    };
 
     $ionicModal.fromTemplateUrl('templates/modal-view.html', {
     scope: $scope,
@@ -353,6 +458,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     $scope.rating = {};
     $scope.userRating={rating: 0, comment:''};
 
+    //NOT SURE IF THESE VAIRABLES ARE USED WITHIN THE CONTROLLER.
     var userId= $stateParams.userId;
     var productId= $stateParams.productId;
 
@@ -385,6 +491,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
              $scope.interestedButtonMessage="You cannot be interested in your own item.";
         }
         else{
+          $scope.logUserInterest();
         $scope.interestExists = $firebaseObject(ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId));
         $scope.interestExists.$loaded(function(data){
             if(data.$value!==null){
@@ -910,12 +1017,28 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   $scope.userData = $firebaseObject(ref.child('/users/'+userIdRef));
   $scope.userData.$loaded(function(data){
     userCurrentRating = parseFloat(data.overallRating);
-    userPendingReviews = parseInt(data.pendingReviews);
+    // userPendingReviews = parseInt(data.pendingReviews);
+    console.log("USERID"+userIdRef);
   });
+
+  //NEED TO OBTAIN THE NUM pending reviews for the actual user.
+  if(seller===true){
+      var newRef = $firebaseObject(ref.child('/users/'+sellerId));
+      newRef.$loaded(function(data){
+          userPendingReviews = parseInt(data.pendingReviews);
+      });
+  }
+  else{
+      var newRef = $firebaseObject(ref.child('/users/'+buyerId));
+      newRef.$loaded(function(data){
+          userPendingReviews = parseInt(data.pendingReviews);
+      });
+  }
 
 
   //Perform post of review to firebase
   $scope.postRating=function(){
+      console.log("PENDING----"+userPendingReviews);
       var ratingRef = ref.child('/ratings/');
       var userRatingRef = ref.child('/users/'+userIdRef+'/overallRating');
       var newRating=0.00;
@@ -926,7 +1049,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
           newRating = (parseFloat(userCurrentRating) + parseFloat($scope.userRating.rating))/2;
       }
       if(seller===true){
-        ratingRef.child(sellerId+'/'+buyerId+'/').push({rating:$scope.userRating.rating, comment:$scope.userRating.comment});
+        ratingRef.child(buyerId+'/'+sellerId+'/').push($scope.userRating);
         var pendingReviewsRef = ref.child('/users/'+sellerId+'/pendingReviews');
         pendingReviewsRef.set(userPendingReviews-1);
         userRatingRef.set(newRating);
@@ -935,7 +1058,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
         pendingReviewRefToRemove.remove();
       }
       else{
-        ratingRef.child(buyerId+'/'+sellerId+'/').push($scope.userRating);
+        ratingRef.child(sellerId+'/'+buyerId+'/').push($scope.userRating);
         var pendingReviewsRef = ref.child('/users/'+buyerId+'/pendingReviews');
         pendingReviewsRef.set(userPendingReviews-1);
         userRatingRef.set(newRating);
@@ -973,6 +1096,13 @@ angular.module('starter.controllers',['ionic','ngCordova'])
              $state.go('rateuser2',{'buyerId':$scope.uid, 'sellerId' : key});
         }
     }
+}])
+
+.controller('UserViewReviewsCtrl',['$scope','$firebaseObject','$stateParams', function($scope,$firebaseObject,$stateParams){
+     $scope.sellerId= $stateParams.sellerId;
+     var ref = new Firebase("https://comp3990.firebaseio.com/");
+     $scope.sellerInfo = $firebaseObject(ref.child('/users/'+$scope.sellerId));
+     $scope.sellerReviews = $firebaseObject(ref.child('/ratings/'+$scope.sellerId));
 }])
 
 

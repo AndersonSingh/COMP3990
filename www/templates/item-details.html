@@ -1,36 +1,40 @@
 <ion-view view-title="Item Details">
-    <ion-content>
+    <ion-content ng-init="init();setupGraph();">
 
         <div class="list card" ng-model="itemDetails">
             <div class="list">
 
-                <div class="item item-divider">
+                <div class="item item-divider" ng-hide="isSeller">
                     Message
                 </div>
 
-                <label class="item item-input">
+                <label class="item item-input" ng-hide="isSeller">
                     <input ng-model="message.text" type="text" placeholder="Introduce yourself and suggest a meeting place on campus.">
                 </label>
 
 
-                <div class="item item-divider">
+                <div class="item item-divider" ng-hide="isSeller">
                     Brief Seller Information
                 </div>
-                <label class="item item-input item-stacked-label">
+                <label class="item item-input item-stacked-label" ng-hide="isSeller">
                     <span class="input-label">Seller's Name</span>
                     <p>{{sellerInfo.name}}</p>
                 </label>
-                
-                <label class="item item-input item-stacked-label">
+
+                <label class="item item-input item-stacked-label" ng-hide="isSeller">
                     <span class="input-label">Seller's Rating</span>
                     <rating ng-model="sellerInfo.overallRating" max=5 readonly="1">
                     </rating>
                 </label>
-                
-                <label class="item item-input item-stacked-label">
+
+                <label class="item item-input item-stacked-label" ng-hide="isSeller">
                     <span class="input-label">Number of Pending Reviews</span>
                     <p>{{sellerInfo.pendingReviews}}</p>
                 </label>
+                
+                <button class="button button-block button-positive" ui-sref="user-view-reviews({'sellerId':sellerId})">
+                       View {{sellerInfo.name}}'s Reviews
+                </button>
                 
                 <div class="item item-divider">
                     Payment Method
@@ -45,7 +49,7 @@
 
 
                 <div class="item item-divider">
-                    Purchase Review
+                    Review
                 </div>
 
                 <label class="item item-input item-stacked-label">
@@ -83,6 +87,14 @@
                     </a>
                 </label>
 
+                <div class="item item-divider" ng-show="isSeller">
+                  Analytics
+                </div>
+                <div class="item" ng-show="isSeller">
+                  <canvas id="bar" class="chart chart-bar"
+                    chart-data="data" chart-labels="labels" chart-series="series"
+                  </canvas>
+                </div>
                 <div class="padding">
                     <div class="button button-block button-balanced" ng-click="interestedButton();">
                     {{interestedButtonMessage}}

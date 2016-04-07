@@ -6,7 +6,7 @@
 
 userPushNotificationId = null;
 
-angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.services','angular-toArrayFilter','ionic.rating'])
+angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.services','angular-toArrayFilter','ionic.rating', 'chart.js'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -191,6 +191,12 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
  url: '/rateuser2?buyerId&sellerId',
  templateUrl: 'templates/rate-user2.html',
  controller: 'UserRatingCtrl2'
+})
+
+.state('user-view-reviews', {
+ url: '/user-view-reviews?sellerId',
+ templateUrl: 'templates/user-view-reviews.html',
+ controller: 'UserViewReviewsCtrl'
 })
 
 .state('view-pending-reviews', {
