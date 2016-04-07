@@ -13,12 +13,8 @@
         <ion-checkbox ng-model="agree_status" ng-show="allowedToBuyPositive && buyProposal.paymentMethod === 'Cash'" ng-true-value="true" ng-false-value="false">I agree that transaction is completed </ion-checkbox>
       </ion-list>
 
-      <button ng-show="agree_status === true" class="button button-block button-stable" ng-click="generatePendingReview();">
-        Transaction Complete
-      </button>
-      
-      <button ng-show="allowedToBuyPositive && buyProposal.paymentMethod !== 'Paypal'" class="button button-block button-stable" ng-click="processCash();">
-        Make Cash Payment
+      <button ng-show="agree_status === true" class="button button-block button-stable" ng-click="cashComplete();">
+        Cash Transaction Complete
       </button>
 
       <button ng-show="allowedToBuyPositive && buyProposal.paymentMethod === 'Paypal'" class="button button-block button-stable" ng-click="processPaypal();">
