@@ -283,7 +283,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   };
 
   $scope.savePicture = function(){
-    $scope.profileData.$loaded.then(function (data){
+    $scope.profileData.$loaded().then(function (data){
       data.profileImageURL = $scope.picture;
 
       $scope.profileData.$save()
@@ -294,10 +294,8 @@ angular.module('starter.controllers',['ionic','ngCordova'])
         });
       });
 
-      var obj = {photoChanged : true};
-
       //update firebase with new attribute for this user
-      ref.update(obj);
+      ref.child('users/' + uid + '/' + 'photoChanged').set(true);
   };
 
 }])
