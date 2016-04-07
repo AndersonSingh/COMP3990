@@ -127,7 +127,6 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
   $scope.profileData = null;
 
-
   $scope.init = function(){
       var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
 
@@ -382,7 +381,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
 
     $scope.interestedButton = function(){
-        if(userId===$scope.sellerId){
+        if($scope.buyerId===$scope.sellerId){
              $scope.interestedButtonMessage="You cannot be interested in your own item.";
         }
         else{
@@ -565,7 +564,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   $scope.appUsers = $firebaseObject(ref.child('/users'));
 }])
 
-.controller('BuyerInterestedItemOverviewCtrl', ['$scope', '$state', '$stateParams', '$firebaseObject', 'PaypalService', function($scope, $state, $stateParams, $firebaseObject, PaypalService){
+.controller('BuyerInterestedItemOverviewCtrl', ['$scope', '$state', '$stateParams', '$q', '$firebaseObject', 'PaypalService', function($scope, $state, $stateParams, $q, $firebaseObject, PaypalService){
    //Set both sets of information to be displayed to false
    $scope.allowedToBuyPositive=false;
    $scope.allowedToBuyNegative=false;
@@ -625,7 +624,22 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
   function onPaymentSuccess(result){
     console.log(result);
-    //perform ops to delete product etc
+
+    // change product status to reflect that has been sold
+    updateProductStatus();
+
+    // send out push notification to all other interested buyers of this item
+    //notifyOtherInterestedBuyers.then(onNotfiySuccess, onNotifyFail);
+    onNotfiySuccess();            // remove after push notifications working
+
+    // add record to history
+    var buyerHistoryRef = ref.child('history/' + $scope.buyerId + '/' + $scope.sellerId + '/' + $scope.productId);
+    var currDate = (new Date()).toString();
+    var record = {"date" : currDate};
+    // push data to firebase
+    buyerHistoryRef.set(record);
+
+    $scope.generatePendingReview();
     //redirect to home page
     $state.go('menu-buying');
   }
@@ -634,7 +648,25 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     console.log(error);
   }
 
-  $scope.processCash = function(){
+  $scope.cashComplete = function(){
+    // change product status to reflect that has been sold
+    updateProductStatus();
+
+    // send out push notification to all other interested buyers of this item
+    //notifyOtherInterestedBuyers.then(onNotfiySuccess, onNotifyFail);
+    onNotfiySuccess();            // remove after push notifications working
+
+    // add record to history
+    var buyerHistoryRef = ref.child('history/' + $scope.buyerId + '/' + $scope.sellerId + '/' + $scope.productId);
+    var currDate = (new Date()).toString();
+    var record = {"date" : currDate};
+    // push data to firebase
+    buyerHistoryRef.set(record);
+
+    $scope.generatePendingReview();
+
+    //redirect to home page
+    $state.go('menu-buying');
   }
 
   $scope.generatePendingReview = function (){
@@ -644,13 +676,79 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     console.log("CREATING PENDING STUFF!");
     //We also need to post a pending review here!
      //add a pending review
-    ref.child('/pending-reviews/'+$scope.buyerId +'/'+$scope.sellerId).set({buyer:false, itemName:$scope.chosenProduct.name});
+    ref.child('/pending-reviews/'+$scope.buyerId +'/'+$scope.sellerId).set({buyer:false, itemName:$scope.productInfo.name});
     //increment number of pending reviews on user profile by 1
     $scope.userData = $firebaseObject(ref.child('/users/'+$scope.buyerId));
     $scope.userData.$loaded(function(data){
         var numPendingReviews = data.pendingReviews+1;
         ref.child('/users/'+$scope.buyerId+'/pendingReviews').set(numPendingReviews);
     });
+  }
+
+  function updateProductStatus(){
+
+    $scope.productInfo.$loaded()
+      .then(function(data){
+        data.status = "sold";
+
+        $scope.productInfo.$save()
+          .then(function(ref){
+            console.log("updated product status to sold");
+          }, function(error){
+            console.log("Failed to update product status " + error);
+          });
+      })
+      .catch(function(error){
+        console.log("Error:" + error);
+      });
+  }
+
+  var notifyDefer;
+
+  function notifyOtherInterestedBuyers(){
+    notifyDefer = $q.defer();
+
+    // make call to notify
+    // resolve notifyDefer if successful
+    // reject notifyDefer if not
+
+    return notifyDefer.promise();
+  }
+
+  function onNotfiySuccess(){
+    // delete interests
+    var refInterests = new Firebase("https://comp3990.firebaseio.com/interests/" + $scope.sellerid + "/" + $scope.productId);
+
+    $scope.buyProposal.$loaded().then(function(data){
+      if(data.paymentMethod === 'Paypal'){
+          // it is safe to remove interests immediately
+          refInterests.remove();
+      }
+      // method is cash
+      else{
+        // check whether both seller and buyer have agreed that transaction is completed before deleting
+        $scope.interestsRef.$loaded().then(function(data){
+          if(data.completionStatus === true){
+            // seller has already agreed that the transaction is completed, therefore we delete the interests
+            refInterests.remove();
+          }
+          else{
+            // seller has yet to agree that transaction is complete so we update this field to reflect that the buyer has agreed
+            $scope.interestsRef.$save()
+              .then(function(ref){
+                console.log("updated completion status to 'true'");
+              }, function(error){
+                console.log("Failed to update completion status " + error);
+            });
+          }
+        });
+      }
+    });
+
+  }
+
+  function onNotifyFail(){
+
   }
 }])
 
@@ -878,7 +976,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 }])
 
 
-.controller('InterestedOverviewCtrl', ['$scope', '$stateParams', '$firebaseObject', function($scope, $stateParams, $firebaseObject){
+.controller('InterestedOverviewCtrl', ['$scope', '$state', '$stateParams', '$firebaseObject', function($scope, $state, $stateParams, $firebaseObject){
 
   $scope.buyerId = $stateParams.buyerId;
   $scope.sellerId = $stateParams.sellerId;
@@ -900,12 +998,16 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   // download info on buyer
   $scope.buyer = $firebaseObject(firebaseRef.child('users').child($scope.buyerId));
 
+  // download state information on the interests for this item
+  $scope.interestsRef = $firebaseObject(ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/statusInformation' ));
+
   $scope.buyerChosen = function(){
     console.log("User " + $scope.buyerId + "chosen as buyer");
 
     updateProduct();
-
     updateInterestedProduct();
+
+    firebaseRef.child('interests/' + $scope.sellerId + '/' + $scope.productId + '/statusInformation').set({"completionStatus" : false});
   }
 
   $scope.completeTransaction = function(){
@@ -923,6 +1025,11 @@ angular.module('starter.controllers',['ionic','ngCordova'])
         var numPendingReviews = data.pendingReviews+1;
         firebaseRef.child('/users/'+$scope.sellerId+'/pendingReviews').set(numPendingReviews);
     });
+
+    attemptDeleteInterests();
+
+    // redirect seller
+    $state.go('menu-selling');
   }
 
   function updateProduct(){
@@ -960,6 +1067,28 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       .catch(function(error){
         console.log("Error:" + error);
       });
+  }
+
+  function attemptDeleteInterests(){
+    // delete interests
+    var refInterests = new Firebase("https://comp3990.firebaseio.com/interests/" + $scope.sellerid + "/" + $scope.productId);
+
+    // check whether both seller and buyer have agreed that transaction is completed before deleting
+    $scope.interestsRef.$loaded().then(function(data){
+      if(data.completionStatus === true){
+        // buyer has already agreed that the transaction is completed, therefore we delete the interests
+        refInterests.remove();
+      }
+      else{
+        // buyer has yet to agree that transaction is complete so we update this field to reflect that the seller has agreed
+        $scope.interestsRef.$save()
+          .then(function(firebaseRef){
+            console.log("updated completion status to 'true'");
+          }, function(error){
+            console.log("Failed to update completion status " + error);
+        });
+      }
+    });
   }
 
 }])
