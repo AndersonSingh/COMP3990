@@ -285,23 +285,36 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       console.log("device ready");
       // specifiying camera options
 
-      if($scope.photo_choice === 1){
+      var options = {};
 
+      // camera chosen as source
+      if($scope.photo_choice === 1){
+        options = {
+          cameraDirection : 0,                                              // specify use rear camera
+          sourceType : 1,                                 // 0 indicates to use picture from album, 1 indicates to use camera
+          encodingType : 0,                                                 // specify the image is encoded as a jpeg
+          destinationType : 0,                                              // specify format of value returned is Base64 encoded string
+          quality : 75,                                                     // quality of the saved image, can range from 0-100
+          targetWidth : 128,                                                // width to scale image (pixels)
+          targetHeight : 128,                                               // height to scale image (pixels)
+          saveToPhotoAlbum : false
+        };
       }
-      var options = {
-        cameraDirection : 0,                                              // specify use rear camera
-        sourceType : 1,                                 // 0 indicates to use picture from album, 1 indicates to use camera
-        encodingType : 0,                                                 // specify the image is encoded as a jpeg
-        destinationType : 0,                                              // specify format of value returned is Base64 encoded string
-        quality : 75,
-        targetWidth : 128,
-        targetHeight : 128,
-        saveToPhotoAlbum : false
-      };
+
+      // photo library chosen as source
+      else{
+        options = {
+          sourceType : $scope.photo_choice,                                 // 0 indicates to use picture from album, 1 indicates to use camera
+          mediaType: 0,
+          destinationType : 0                                              // specify format of value returned is Base64 encoded string
+        };
+      }
+
 
       $cordovaCamera.getPicture(options).then(function(imageData) {
         // imageData is the Base64 encoded string of the image
         console.log("Photo taken successfully");
+        console.log("imageData");
         $scope.picture = imageData;
         $scope.pictureTaken = true;
 
