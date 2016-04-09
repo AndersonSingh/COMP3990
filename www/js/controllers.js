@@ -1036,7 +1036,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
   //Set up rating for rating object on UI side
    $scope.rating = {};
-   $scope.userRating={rating: 0, comment:''};
+   $scope.userRating={rating: 0, comment:'',userName:''};
 
   //Obtain buyer and seller ID's
   var buyerId = $stateParams.buyerId;
@@ -1081,6 +1081,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     $scope.userData = $firebaseObject(ref.child('/users/'+userIdRef));
     $scope.userData.$loaded(function(data){
         userCurrentRating = parseFloat(data.overallRating);
+        $scope.userRating.userName=data.name;
     });
 
   //THIS CODE CAN BE DELETED.
