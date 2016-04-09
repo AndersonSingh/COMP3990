@@ -1070,7 +1070,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
   //Set up rating for rating object on UI side
    $scope.rating = {};
-   $scope.userRating={rating: 0, comment:'',userName:''};
+   $scope.userRating={rating: 0, comment:'',userName:'', startedAt: Firebase.ServerValue.TIMESTAMP};
 
   //Obtain buyer and seller ID's
   var buyerId = $stateParams.buyerId;
