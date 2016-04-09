@@ -1299,3 +1299,20 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   // download all products in database belonging to this user
   $scope.userProducts = $firebaseObject(firebaseRef.child('products' + '/' + uid));
 }])
+
+.controller('BuyerPurchasedItemsCtrl', ['$scope', '$firebaseObject', function($scope, $firebaseObject){
+  // create a reference to firebase database
+  var firebaseRef = new Firebase("https://comp3990.firebaseio.com/");
+
+  // get user uid that is currently logged in
+  var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
+  var uid = localData['uid'];
+
+  $scope.userId = uid;
+
+  // download buyer history belonging to this user
+  $scope.buyingHistory = $firebaseObject(firebaseRef.child('history' + '/' + $scope.userId));
+
+  // download all products to cross reference product ids
+  $scope.allProducts = $firebaseObject(firebaseRef.child('products'));
+}])

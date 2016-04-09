@@ -155,6 +155,12 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
 
   })
 
+  .state('buyer-items-purchased', {
+    url: '/buyer-items-purchased',
+    templateUrl: 'templates/buyer-items-purchased.html',
+    controller: 'BuyerPurchasedItemsCtrl'
+  })
+
   .state('buyer-item-interested-overview', {
     url: '/buyer-item-interested-overview?sellerId&buyerId&productId&perspective',
     templateUrl: 'templates/buyer-item-interested-overview.html',
