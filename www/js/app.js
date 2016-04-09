@@ -318,5 +318,5 @@ function errorHandler (error) {
 }
 
 function successHandler (result) {
-    alert('result = ' + result);
+
 }

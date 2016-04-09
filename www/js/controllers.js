@@ -981,14 +981,14 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
     var userDataRef = ref.child('/users/' + uid);
 
-    userDataRef.once(function(data){
-      console.log(data);
-      $scope.username = data.name;
+    userDataRef.once("value", function(data){
+      $scope.username = data.val().name
     });
 
     /* this block of code figures out the next user in the chat, so we can send push notifications. */
     if(uid == $scope.sellerId){
       $scope.otherUser = $scope.buyerId;
+
     }
     else{
       $scope.otherUser = $scope.sellerId;
@@ -1025,8 +1025,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     /* get my name to include in the push notification */
 
     /* send the other user a notification */
-    console.log("other user next.");
-    console.log($scope.otherUser);
+
     var pushId = $scope.users[$scope.otherUser].pushId;
     $http.get("http://mas-health.com/gcm.php?id=" + pushId + "&title=Campus Deals&message=You Received a New Message From " + $scope.username);
   }
@@ -1089,7 +1088,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
   //Set up rating for rating object on UI side
    $scope.rating = {};
-   $scope.userRating={rating: 0, comment:'',userName:''};
+   $scope.userRating={rating: 0, comment:'',userName:'', startedAt: Firebase.ServerValue.TIMESTAMP};
 
   //Obtain buyer and seller ID's
   var buyerId = $stateParams.buyerId;
