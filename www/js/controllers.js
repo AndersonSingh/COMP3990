@@ -275,7 +275,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   $scope.profileData = $firebaseObject(ref.child('/users/' + uid));
 
   $scope.pictureTaken = false;
-  $scope.photo_choice = 1;
+  $scope.photo_choice = 0;
 
   // this function will allow the user to take a photo with the device's camera
   $scope.takePicture = function(){
@@ -288,23 +288,27 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       var options = {};
 
       // camera chosen as source
-      if($scope.photo_choice === 1){
+     console.log($scope.photo_choice);
+      if($scope.photo_choice == 1){
+        console.log("camera chosen");
         options = {
           cameraDirection : 0,                                              // specify use rear camera
-          sourceType : 1,                                 // 0 indicates to use picture from album, 1 indicates to use camera
+          sourceType : 1,                                                    // 0 indicates to use picture from album, 1 indicates to use camera
           encodingType : 0,                                                 // specify the image is encoded as a jpeg
           destinationType : 0,                                              // specify format of value returned is Base64 encoded string
           quality : 75,                                                     // quality of the saved image, can range from 0-100
           targetWidth : 128,                                                // width to scale image (pixels)
           targetHeight : 128,                                               // height to scale image (pixels)
-          saveToPhotoAlbum : false
+          saveToPhotoAlbum : false,
+          correctOrientation : true
         };
       }
 
       // photo library chosen as source
       else{
+        console.log("album chosen");
         options = {
-          sourceType : $scope.photo_choice,                                 // 0 indicates to use picture from album, 1 indicates to use camera
+          sourceType : 0,                                 
           mediaType: 0,
           destinationType : 0                                              // specify format of value returned is Base64 encoded string
         };
@@ -314,7 +318,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       $cordovaCamera.getPicture(options).then(function(imageData) {
         // imageData is the Base64 encoded string of the image
         console.log("Photo taken successfully");
-        console.log("imageData");
+        console.log(imageData);
         $scope.picture = imageData;
         $scope.pictureTaken = true;
 
