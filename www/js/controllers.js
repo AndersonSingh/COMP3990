@@ -853,7 +853,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     });
 
     // generate pending review for seller
-    ref.child('/pending-reviews/'+$scope.sellerId +'/'+$scope.buyerId).set({buyer:false, itemName:$scope.productInfo.name, itemPicture:$scope.productInfo.picture});
+    ref.child('/pending-reviews/'+$scope.sellerId +'/'+$scope.buyerId).set({buyer:true, itemName:$scope.productInfo.name, itemPicture:$scope.productInfo.picture});
     //increment number of pending reviews on user profile by 1
     $scope.userData = $firebaseObject(ref.child('/users/'+$scope.sellerId));
     $scope.userData.$loaded(function(data){
