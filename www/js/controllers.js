@@ -821,7 +821,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     $scope.generatePendingReview();
 
     //redirect to home page
-    $state.go('menu-buying');
+    $state.go('tabs.tab-activity');
   }
 
   $scope.generatePendingReview = function (){
@@ -883,13 +883,13 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       else{
         // check whether both seller and buyer have agreed that transaction is completed before deleting
         $scope.interestsRef.$loaded().then(function(data){
-          if(data.completionStatus === true){
+          if(data.sellerAgreed === true){
             // seller has already agreed that the transaction is completed, therefore we delete the interests
             refInterests.remove();
           }
           else{
             // seller has yet to agree that transaction is complete so we update this field to reflect that the buyer has agreed
-            data.completionStatus=true;
+            data.buyerAgreed=true;
             $scope.interestsRef.$save()
               .then(function(ref){
                 console.log("updated completion status to 'true'");
@@ -1045,7 +1045,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
   //Set up rating for rating object on UI side
    $scope.rating = {};
-   $scope.userRating={rating: 0, comment:''};
+   $scope.userRating={rating: 0, comment:'',userName:''};
 
   //Obtain buyer and seller ID's
   var buyerId = $stateParams.buyerId;
@@ -1090,6 +1090,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     $scope.userData = $firebaseObject(ref.child('/users/'+userIdRef));
     $scope.userData.$loaded(function(data){
         userCurrentRating = parseFloat(data.overallRating);
+        $scope.userRating.userName=data.name;
     });
 
   //THIS CODE CAN BE DELETED.
@@ -1185,7 +1186,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   // create a reference to firebase database
   var firebaseRef = new Firebase("https://comp3990.firebaseio.com/");
 
-  // download the information of buy proposal for this buyer
+  // download the information on buy proposal for this buyer
   $scope.buyProposal = $firebaseObject(firebaseRef.child('interests').child($scope.sellerId).child($scope.productId).child($scope.buyerId));
 
   // download the particular product from products data
@@ -1226,7 +1227,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     attemptDeleteInterests();
 
     // redirect seller
-    $state.go('menu-selling');
+    $state.go('tabs.tab-activity');
   }
 
   function updateProduct(){
@@ -1253,7 +1254,8 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       .then(function(data){
         data.status = "unavailable";
         data.selectedBuyer = $scope.buyerId;
-        data.completionStatus = false;
+        data.buyerAgreed = false;
+        data.sellerAgreed = false;
 
         $scope.interestedItem.$save()
           .then(function(firebaseRef){
@@ -1273,14 +1275,14 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     console.log("ATTEMPT DELETE.");
     // check whether both seller and buyer have agreed that transaction is completed before deleting
     $scope.interestsRef.$loaded().then(function(data){
-      if(data.completionStatus === true){
-          console.log("REMOVIGN.");
+      if(data.buyerAgreed === true){
+          console.log("REMOVING.");
         // buyer has already agreed that the transaction is completed, therefore we delete the interests
         refInterests.remove();
       }
       else{
         // buyer has yet to agree that transaction is complete so we update this field to reflect that the seller has agreed
-
+        data.sellerAgreed=true;
         data.completionStatus=true;
         $scope.interestsRef.$save()
           .then(function(firebaseRef){
@@ -1292,4 +1294,34 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     });
   }
 
+}])
+
+.controller('SellerSoldItemsCtrl', ['$scope', '$firebaseObject', function($scope, $firebaseObject){
+
+  // create a reference to firebase database
+  var firebaseRef = new Firebase("https://comp3990.firebaseio.com/");
+
+  // get user uid that is currently logged in
+  var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
+  var uid = localData['uid'];
+
+  // download all products in database belonging to this user
+  $scope.userProducts = $firebaseObject(firebaseRef.child('products' + '/' + uid));
+}])
+
+.controller('BuyerPurchasedItemsCtrl', ['$scope', '$firebaseObject', function($scope, $firebaseObject){
+  // create a reference to firebase database
+  var firebaseRef = new Firebase("https://comp3990.firebaseio.com/");
+
+  // get user uid that is currently logged in
+  var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
+  var uid = localData['uid'];
+
+  $scope.userId = uid;
+
+  // download buyer history belonging to this user
+  $scope.buyingHistory = $firebaseObject(firebaseRef.child('history' + '/' + $scope.userId));
+
+  // download all products to cross reference product ids
+  $scope.allProducts = $firebaseObject(firebaseRef.child('products'));
 }])

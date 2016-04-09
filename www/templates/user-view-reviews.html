@@ -27,6 +27,23 @@
                 </div>
                 <div ng-repeat="reviews in sellerReviews">
                     <div ng-repeat="review in reviews"
+                    
+                    
+                        <a class="item item-avatar" href="#">
+                            <!--
+                            <img ng-if="profileData.photoChanged === false" id="profile-image" ng-src="{{sellerInfo.profileImageURL}}">
+                            <img ng-if="profileData.photoChanged === true" id="profile-image" data-ng-src="data:image/jpeg;base64,{{sellerInfo.profileImageURL}}">
+                            -->
+                            <h2>User Name: {{review.userName}}</h2>
+                            <p>Rating: 
+                                <rating ng-model="review.rating" max=5 readonly="1">
+                                </rating>
+                            </p>
+                            <p>Comment: {{review.comment}}</p>
+                        </a>
+                        
+                        <!--
+                        
                         <label class="item item-input item-stacked-label">
                             <span class="input-label">User Name</span>
                             <p>Fred.</p>
@@ -38,6 +55,9 @@
                             <span class="input-label">Comment</span>
                             <p>{{review.comment}}</p>
                         </label>
+                        
+                        -->
+                        
                         <br>
                     </div>
                 </div>

@@ -10,19 +10,15 @@
       </div>
 
       <ion-list>
-        <ion-checkbox ng-model="agree_status" ng-show="allowedToBuyPositive && buyProposal.paymentMethod === 'Cash'" ng-true-value="true" ng-false-value="false">I agree that transaction is completed </ion-checkbox>
+        <ion-checkbox ng-model="agree_status" ng-show="interestsRef.status === 'unavailable' && interestsRef.selectedBuyer===buyerId && buyProposal.paymentMethod === 'Cash' && interestsRef.buyerAgreed ===false" ng-true-value="true" ng-false-value="false">I agree that transaction is completed </ion-checkbox>
       </ion-list>
 
       <button ng-show="agree_status === true" class="button button-block button-stable" ng-click="cashComplete();">
         Cash Transaction Complete
       </button>
 
-      <button ng-show="allowedToBuyPositive && buyProposal.paymentMethod === 'Paypal'" class="button button-block button-stable" ng-click="processPaypal();">
+      <button ng-show="interestsRef.status === 'unavailable' && interestsRef.selectedBuyer===buyerId && buyProposal.paymentMethod === 'Paypal'" class="button button-block button-stable" ng-click="processPaypal();">
         Make PayPal Payment
-      </button>
-
-      <button ng-show="agree_status === true" class="button button-block button-stable" ui-sref="rateuser2({'buyerId':buyerId, 'sellerId' : sellerId})">
-        Review User
       </button>
 
     </div>
