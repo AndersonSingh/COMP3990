@@ -39,12 +39,13 @@
                 <div class="item item-divider">
                     Payment Method
                 </div>
+                
                 <ion-list>
-                    <ion-checkbox ng-repeat="item in paymentList"
+                    <ion-radio ng-repeat="item in paymentList"
                       ng-model="item.checked"
                       ng-checked="item.checked">
                      {{ item.text }}
-                     </ion-checkbox>
+                     </ion-radio>
                 </ion-list>
 
 
