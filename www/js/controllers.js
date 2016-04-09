@@ -288,7 +288,6 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       var options = {};
 
       // camera chosen as source
-     console.log($scope.photo_choice);
       if($scope.photo_choice == 1){
         console.log("camera chosen");
         options = {
@@ -308,7 +307,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       else{
         console.log("album chosen");
         options = {
-          sourceType : 0,                                 
+          sourceType : 0,
           mediaType: 0,
           destinationType : 0                                              // specify format of value returned is Base64 encoded string
         };
@@ -1140,7 +1139,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
         userCurrentRating = parseFloat(data.overallRating);
         $scope.userRating.userName=data.name;
     });
-    
+
   $scope.postRating=function(){
       console.log("PENDING----"+userPendingReviews);
       var ratingRef = ref.child('/ratings/');
