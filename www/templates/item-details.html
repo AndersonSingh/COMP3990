@@ -41,10 +41,10 @@
                 </div>
                 
                 <div class="list">
-                    <ion-radio ng-repeat="item in paymentList"
-                      ng-model="item.checked"
-                      ng-checked="item.checked">
-                     {{ item.text }}
+                    <ion-radio ng-repeat="(key,value) in product.payments"
+                      ng-show="value===true"
+                      ng-click="checkPaymentItem(key);">
+                     {{key}}
                      </ion-radio>
                 </div>
 

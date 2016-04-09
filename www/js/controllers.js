@@ -364,6 +364,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 .controller('ItemDetailCtrl', ['$scope', '$stateParams' ,'$firebaseObject', '$http', '$ionicModal', '$state', '$ionicPopup',function($scope, $stateParams, $firebaseObject, $http, $ionicModal, $state, $ionicPopup){
   /* firebase reference*/
   var ref = new Firebase("https://comp3990.firebaseio.com");
+  var selectedPaymentMethod;
 
     $scope.setupGraph = function(){
       /* graph setup */
@@ -575,19 +576,21 @@ angular.module('starter.controllers',['ionic','ngCordova'])
                 transactionRef.child('/messages').push($scope.message);
 
                 // find out which payment method was selected
-                var x;
-                var method;
+                // var x;
+                $scope.method;
 
-                for(x in $scope.paymentList){
-                  if($scope.paymentList[x].checked === true){
-                    method = $scope.paymentList[x].text;
-                  }
-                }
+                // for(x in $scope.paymentList){
+                //     console.log($scope.paymentList[x]);
+                //   if($scope.paymentList[x].checked === true){
+                //     method = $scope.paymentList[x].text;
+                //   }
+                // }
 
-                var paymentObj = {paymentMethod : method};
+                var paymentObj = {paymentMethod : selectedPaymentMethod};
 
                 transactionRef.update(paymentObj);
-
+                console.log($scope.buyerId);
+                console.log($scope.users[$scope.buyerId]);
                 var pushId = $scope.users[$scope.sellerId].pushId;
                 var username = $scope.users[$scope.buyerId]['name'];
                 console.log("Attempting push notification on interest.");
@@ -625,19 +628,23 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
     /* information of the specific item is now lodaded ionto the page via scope */
     $scope.product = $firebaseObject(ref.child('/products/'+$scope.sellerId+'/'+$scope.productId+''));
-    $scope.product.$loaded(function(data){
-       $scope.itemDetails = data;
-       $scope.paymentList = [];
-       if(Boolean($scope.itemDetails.payments.paypal)===true){
-           $scope.paymentList.push( { text: "Paypal", checked:false });
-       }
-       if(Boolean($scope.itemDetails.payments.cash)===true){
-           $scope.paymentList.push( { text: "Cash", checked:false });
-       }
-       if(Boolean($scope.itemDetails.payments.bitcoin)===true){
-           $scope.paymentList.push( { text: "Bitcoin", checked:false });
-       }
-    });
+    // $scope.product.$loaded(function(data){
+    //    $scope.itemDetails = data;
+    //    $scope.paymentList = [];
+    //    if(Boolean($scope.itemDetails.payments.paypal)===true){
+    //        $scope.paymentList.push( { text: "Paypal", checked:false });
+    //    }
+    //    if(Boolean($scope.itemDetails.payments.cash)===true){
+    //        $scope.paymentList.push( { text: "Cash", checked:false });
+    //    }
+    //    if(Boolean($scope.itemDetails.payments.bitcoin)===true){
+    //        $scope.paymentList.push( { text: "Bitcoin", checked:false });
+    //    }
+    // });
+    
+    $scope.checkPaymentItem=function(key){
+        selectedPaymentMethod= key.charAt(0).toUpperCase() + key.slice(1);;
+    }
 
 
 }])

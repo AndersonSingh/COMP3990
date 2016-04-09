@@ -11,13 +11,15 @@
       <div class="list">
         <span ng-repeat="(key,value) in allProducts">
             <span ng-if="key != userId">
-                <span ng-repeat="item in value | toArray | filter:{'category':category} | filter:{'name':query} | filter:{'status':available} ">
+                <span ng-repeat="item in value | toArray | filter:{'category':category} | filter:{'name':query}" ng-show="item.status==='available'">
                     <a class="item item-thumbnail-left" ui-sref="tabs.item-details({userId:key ,productId:item.$key})">
                         <img data-ng-src="data:image/jpeg;base64,{{item.picture}}" alt="no picture">
                         <h2> {{item.name}}</h2>
                         <h2> Price: {{item.price | currency}} </h2>
                         <h2> Interested Users: {{item.interested}} </h2>
                     </a>
+                    
+                    {{item | json}}
                 </span>
             </span>
         </span>
