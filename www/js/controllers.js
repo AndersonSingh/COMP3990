@@ -128,6 +128,12 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   $scope.profileData = null;
 
   $scope.init = function(){
+
+    $scope.labels = ["Revenue", "Total Views For All Products", "Total Interests For All Products"];
+    $scope.data = [0,0,0];
+    $scope.type = 'PolarArea';
+    $scope.totalInterests = 0;
+
       var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
 
       if(localData !== null){
@@ -135,6 +141,30 @@ angular.module('starter.controllers',['ionic','ngCordova'])
         /* get profile data from firbase. */
         $scope.profileData = $firebaseObject(ref.child('/users/' + uid));
       }
+
+      $scope.revenue = $firebaseObject(ref.child('/analytics/revenue/' + uid));
+
+     $scope.productInterests = $firebaseObject(ref.child('/analytics/products-interest/' + uid));
+
+      $scope.productInterests.$loaded(function(data){
+
+
+               for(var product in data){
+                  if(product.charAt(0) !== '$' && product !== 'forEach'){
+                    $scope.totalInterests += product.totalInterests;
+                  }
+              }
+
+              $scope.$watch('productInterests', function handleChange(newValue, oldValue){
+                console.log(newValue);
+              });
+      });
+
+      $scope.revenue.$loaded(function(data){
+        $scope.$watch('revenue.totalRevenue', function handleChange(newValue, oldValue){
+                $scope.data[0] = newValue;
+          });
+      });
   };
 
 
