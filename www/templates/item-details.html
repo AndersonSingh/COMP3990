@@ -1,4 +1,4 @@
-<ion-view view-title="Item Details">
+<ion-view view-title="Item Details" cache-view="false">
     <ion-content ng-init="init();setupGraph();">
 
         <div class="list card" ng-model="itemDetails">
@@ -31,11 +31,11 @@
                     <span class="input-label">Number of Pending Reviews</span>
                     <p>{{sellerInfo.pendingReviews}}</p>
                 </label>
-                
+
                 <button class="button button-block button-positive" ui-sref="tabs.user-view-reviews({'sellerId':sellerId})">
                        View {{sellerInfo.name}}'s Reviews
                 </button>
-                
+
                 <div class="item item-divider">
                     Payment Method
                 </div>
