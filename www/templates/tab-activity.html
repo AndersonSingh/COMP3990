@@ -23,7 +23,13 @@
                     <rating ng-model="profileData.overallRating" max=5 readonly="1">
                     </rating>
           </label>
+
       </div>
+      <div class="item">
+        <canvas id="base" class="chart-base" chart-type="type"
+          chart-data="data" chart-labels="labels" chart-legend="false">
+        </canvas>
+    </item>
 
     </div>
 

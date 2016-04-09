@@ -128,6 +128,12 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   $scope.profileData = null;
 
   $scope.init = function(){
+
+    $scope.labels = ["Revenue", "Total Views For All Products", "Total Interests For All Products"];
+    $scope.data = [0,0,0];
+    $scope.type = 'PolarArea';
+    $scope.totalInterests = 0;
+
       var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
 
       if(localData !== null){
@@ -135,6 +141,29 @@ angular.module('starter.controllers',['ionic','ngCordova'])
         /* get profile data from firbase. */
         $scope.profileData = $firebaseObject(ref.child('/users/' + uid));
       }
+
+      $scope.revenue = $firebaseObject(ref.child('/analytics/revenue/' + uid));
+
+      $scope.revenue.$loaded(function(data){
+        $scope.$watch('revenue.totalRevenue', function handleChange(newValue, oldValue){
+                $scope.data[0] = newValue;
+          });
+      });
+
+      $scope.globalViews = $firebaseObject(ref.child('/analytics/products-unique-views/' + uid + '/globalViews'));
+      $scope.globalViews.$loaded(function(data){
+        $scope.$watch('globalViews.$value', function handleChange(newValue, oldValue){
+                $scope.data[1] = newValue;
+          });
+      });
+
+      $scope.globalInterests = $firebaseObject(ref.child('/analytics/products-interest/' + uid + '/globalInterests'));
+      $scope.globalInterests.$loaded(function(data){
+        $scope.$watch('globalInterests.$value', function handleChange(newValue, oldValue){
+          console.log(data.$value);
+                $scope.data[2] = newValue;
+          });
+      });
   };
 
 
@@ -322,11 +351,6 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       $scope.labels = ['Unique Views', 'Interests'];
       $scope.series = ['Total'];
       $scope.data = [[0,0]];
-
-
-    /*  $scope.$watch('productInterests.totalInterests', function handleChange(newValue, oldValue){
-            $scope.data[0][1] = newValue;
-      });*/
     };
 
 
@@ -368,7 +392,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
     };
     $scope.logUserInterest = function(){
-
+      var logGlobalInterestsRef = ref.child('/analytics/products-interest/' + $scope.sellerId + '/globalInterests');
       if($scope.isSeller === false){
 
           if($scope.productInterests[$scope.loggedInUserId] == null){
@@ -382,6 +406,19 @@ angular.module('starter.controllers',['ionic','ngCordova'])
               $scope.productInterests.totalInterests = $scope.productInterests.totalInterests + 1;
             }
             $scope.productInterests.$save();
+
+            $scope.globalInterests = $firebaseObject(logGlobalInterestsRef);
+
+            $scope.globalInterests.$loaded(function(data){
+              if(data.$value == null){
+                data.$value = 1;
+              }
+              else{
+                data.$value = data.$value + 1;
+              }
+
+              data.$save();
+            });
           }
 
           console.log("This interest will be added to analytics");
@@ -396,6 +433,8 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     $scope.logUserView = function(){
 
       var logViewRef = ref.child('/analytics/products-unique-views/' + $scope.sellerId + '/' + $scope.productId);
+
+      var logGlobalViewsRef = ref.child('/analytics/products-unique-views/' + $scope.sellerId + '/globalViews');
 
       $scope.productUniqueViews = $firebaseObject(logViewRef);
 
@@ -419,8 +458,22 @@ angular.module('starter.controllers',['ionic','ngCordova'])
               else{
                 /* already set, so increment by 1.*/
                 data.totalUniqueViews = data.totalUniqueViews + 1;
-                }
+
+              }
                 data.$save();
+
+                $scope.globalViews = $firebaseObject(logGlobalViewsRef);
+                $scope.globalViews.$loaded(function(data){
+
+                  if(data.$value == null){
+                    data.$value = 1;
+                  }
+                  else{
+                    data.$value = data.$value + 1;
+                  }
+
+                  data.$save();
+                });
             }
 
             console.log("This view counts toward analytics if it is unique.");
@@ -1219,8 +1272,8 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       }
       else{
         // buyer has yet to agree that transaction is complete so we update this field to reflect that the seller has agreed
-        
         data.sellerAgreed=true;
+        data.completionStatus=true;
         $scope.interestsRef.$save()
           .then(function(firebaseRef){
             console.log("updated completion status to 'true'");
