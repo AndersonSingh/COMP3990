@@ -284,6 +284,10 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       // will execute when device is ready, or immediately if the device is already ready.
       console.log("device ready");
       // specifiying camera options
+
+      if($scope.photo_choice === 1){
+
+      }
       var options = {
         cameraDirection : 0,                                              // specify use rear camera
         sourceType : 1,                                 // 0 indicates to use picture from album, 1 indicates to use camera
