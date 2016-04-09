@@ -243,7 +243,8 @@ angular.module('starter.controllers',['ionic','ngCordova'])
         quality : 75,
         targetWidth : 250,
         targetHeight : 250,
-        saveToPhotoAlbum : false
+        saveToPhotoAlbum : false,
+        correctOrientation : true
       };
 
       $cordovaCamera.getPicture(options).then(function(imageData) {

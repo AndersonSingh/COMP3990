@@ -3,7 +3,8 @@
 
     <div class="ion-list" ng-hide="chosenProduct.status === 'available'">
         <a class="item item-avatar" href="#" >
-        <img data-ng-src="" alt="profile pic">
+          <img ng-if="buyer.photoChanged === false" ng-src="{{buyer.profileImageURL}}">
+          <img ng-if="buyer.photoChanged === true" data-ng-src="data:image/jpeg;base64,{{buyer.profileImageURL}}">
             <h2> Chosen Buyer </h2>
             <h2> Name: {{buyer.name}} </h2>
             <h2> Email: {{buyer.email}} </h2>
