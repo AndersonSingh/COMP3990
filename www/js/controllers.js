@@ -160,7 +160,6 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       $scope.globalInterests = $firebaseObject(ref.child('/analytics/products-interest/' + uid + '/globalInterests'));
       $scope.globalInterests.$loaded(function(data){
         $scope.$watch('globalInterests.$value', function handleChange(newValue, oldValue){
-          console.log(data.$value);
                 $scope.data[2] = newValue;
           });
       });
@@ -570,9 +569,9 @@ angular.module('starter.controllers',['ionic','ngCordova'])
                 transactionRef.update(paymentObj);
 
                 var pushId = $scope.users[$scope.sellerId].pushId;
-
+                var username = $scope.users[$scope.buyerId]['name'];
                 console.log(pushId);
-                $http.get("http://mas-health.com/gcm.php?id=" + pushId + "&title=UWI Buy/Sell&message=A user is interested in an item you have for sale.");
+                $http.get("http://mas-health.com/gcm.php?id=" + pushId + "&title=Campus Deals&message=" + username +  " is interested in an item you have for sale.");
 
                 //Check and push state information if it does not exist.
                 $scope.stateInfo = $firebaseObject(ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/statusInformation/'));
@@ -688,11 +687,10 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
   /* this function runs when user clicks on the interested button */
   $scope.interestedButton = function(){
-    console.log("running");
-    var pushId = $scope.users[$scope.sellerId].pushId;
-    console.log("TEST TEST" + pushId);
 
-    $http.get("http://mas-health.com/gcm.php?id=" + pushId + "&title=UWI Buy/Sell&message=You Received a New Message From a User.");
+    var pushId = $scope.users[$scope.sellerId].pushId;
+
+    $http.get("http://mas-health.com/gcm.php?id=" + pushId + "&title=Campus Deals&message=You Received a New Message From a User.");
     /* create a product interest on firebase. */
     var transactionRef = ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/' + $scope.buyerId);
 
@@ -942,6 +940,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   /* uid reference. */
   var uid = null;
 
+
   /* get the data sent over by stateParams. */
   $scope.sellerId = $stateParams.sellerId;
   $scope.buyerId = $stateParams.buyerId;
@@ -950,6 +949,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   $scope.otherUser = null;
   $scope.me = null;
   $scope.chatText = null;
+  $scope.username = null;
 
   $scope.init = function(){
 
@@ -961,6 +961,13 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     /* get the logged in user. */
     var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
     uid = localData['uid'];
+
+    var userDataRef = ref.child('/users/' + uid);
+
+    userDataRef.once(function(data){
+      console.log(data);
+      $scope.username = data.name;
+    });
 
     /* this block of code figures out the next user in the chat, so we can send push notifications. */
     if(uid == $scope.sellerId){
@@ -998,9 +1005,11 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     /* clear chatText */
     $scope.chatText = "";
 
+    /* get my name to include in the push notification */
+
     /* send the other user a notification */
     var pushId = $scope.users[$scope.otherUser].pushId;
-    $http.get("http://mas-health.com/gcm.php?id=" + pushId + "&title=UWI Buy/Sell&message=You Received a New Message From a User.");
+    $http.get("http://mas-health.com/gcm.php?id=" + pushId + "&title=Campus Deals&message=You Received a New Message From " + $scope.username);
   }
 
 }])
