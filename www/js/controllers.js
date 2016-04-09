@@ -345,7 +345,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 }])
 
 
-.controller('ItemDetailCtrl', ['$scope', '$stateParams' ,'$firebaseObject', '$http', '$ionicModal',function($scope, $stateParams, $firebaseObject, $http, $ionicModal){
+.controller('ItemDetailCtrl', ['$scope', '$stateParams' ,'$firebaseObject', '$http', '$ionicModal', '$state', '$ionicPopup',function($scope, $stateParams, $firebaseObject, $http, $ionicModal, $state, $ionicPopup){
   /* firebase reference*/
   var ref = new Firebase("https://comp3990.firebaseio.com");
 
@@ -545,8 +545,8 @@ angular.module('starter.controllers',['ionic','ngCordova'])
         }
         else{
           $scope.logUserInterest();
-        $scope.interestExists = $firebaseObject(ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId));
-        $scope.interestExists.$loaded(function(data){
+          $scope.interestExists = $firebaseObject(ref.child('/interests/' + $scope.sellerId + '/' + $scope.productId));
+          $scope.interestExists.$loaded(function(data){
             if(data.$value!==null){
                 console.log("You are already interested in this item!");
                 $scope.interestedButtonMessage="You are already interested in this item";
@@ -600,6 +600,8 @@ angular.module('starter.controllers',['ionic','ngCordova'])
                         });
                     }
                 });
+                 // redirect user to category page.
+                 $state.go('tabs.tab-shop');
             }
         });
         }
@@ -619,7 +621,6 @@ angular.module('starter.controllers',['ionic','ngCordova'])
        if(Boolean($scope.itemDetails.payments.bitcoin)===true){
            $scope.paymentList.push( { text: "Bitcoin", checked:false });
        }
-
     });
 
 
@@ -1122,23 +1123,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
         userCurrentRating = parseFloat(data.overallRating);
         $scope.userRating.userName=data.name;
     });
-
-  //THIS CODE CAN BE DELETED.
-  //NEED TO OBTAIN THE NUM pending reviews for the actual user.
-//   if(seller===true){
-//       var newRef = $firebaseObject(ref.child('/users/'+sellerId));
-//       newRef.$loaded(function(data){
-//           userPendingReviews = parseInt(data.pendingReviews);
-//       });
-//   }
-//   else{
-//       var newRef = $firebaseObject(ref.child('/users/'+buyerId));
-//       newRef.$loaded(function(data){
-//           userPendingReviews = parseInt(data.pendingReviews);
-//       });
-//   }
-
-  //Perform post of review to firebase
+    
   $scope.postRating=function(){
       console.log("PENDING----"+userPendingReviews);
       var ratingRef = ref.child('/ratings/');
