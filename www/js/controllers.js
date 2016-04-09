@@ -284,6 +284,10 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       // will execute when device is ready, or immediately if the device is already ready.
       console.log("device ready");
       // specifiying camera options
+
+      if($scope.photo_choice === 1){
+
+      }
       var options = {
         cameraDirection : 0,                                              // specify use rear camera
         sourceType : 1,                                 // 0 indicates to use picture from album, 1 indicates to use camera
@@ -964,14 +968,14 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
     var userDataRef = ref.child('/users/' + uid);
 
-    userDataRef.once(function(data){
-      console.log(data);
-      $scope.username = data.name;
+    userDataRef.once("value", function(data){
+      $scope.username = data.val().name
     });
 
     /* this block of code figures out the next user in the chat, so we can send push notifications. */
     if(uid == $scope.sellerId){
       $scope.otherUser = $scope.buyerId;
+
     }
     else{
       $scope.otherUser = $scope.sellerId;
@@ -1008,6 +1012,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     /* get my name to include in the push notification */
 
     /* send the other user a notification */
+
     var pushId = $scope.users[$scope.otherUser].pushId;
     $http.get("http://mas-health.com/gcm.php?id=" + pushId + "&title=Campus Deals&message=You Received a New Message From " + $scope.username);
   }
