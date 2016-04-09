@@ -857,7 +857,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     });
 
     // generate pending review for seller
-    ref.child('/pending-reviews/'+$scope.sellerId +'/'+$scope.buyerId).set({buyer:false, itemName:$scope.productInfo.name, itemPicture:$scope.productInfo.picture});
+    ref.child('/pending-reviews/'+$scope.sellerId +'/'+$scope.buyerId).set({buyer:true, itemName:$scope.productInfo.name, itemPicture:$scope.productInfo.picture});
     //increment number of pending reviews on user profile by 1
     $scope.userData = $firebaseObject(ref.child('/users/'+$scope.sellerId));
     $scope.userData.$loaded(function(data){
@@ -1012,6 +1012,8 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     /* get my name to include in the push notification */
 
     /* send the other user a notification */
+    console.log("other user next.");
+    console.log($scope.otherUser);
     var pushId = $scope.users[$scope.otherUser].pushId;
     $http.get("http://mas-health.com/gcm.php?id=" + pushId + "&title=Campus Deals&message=You Received a New Message From " + $scope.username);
   }

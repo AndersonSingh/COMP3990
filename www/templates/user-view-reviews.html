@@ -34,6 +34,7 @@
                             <img ng-if="profileData.photoChanged === false" id="profile-image" ng-src="{{sellerInfo.profileImageURL}}">
                             <img ng-if="profileData.photoChanged === true" id="profile-image" data-ng-src="data:image/jpeg;base64,{{sellerInfo.profileImageURL}}">
                             -->
+                            
                             <h2>User Name: {{review.userName}}</h2>
                             <p>Rating: 
                                 <rating ng-model="review.rating" max=5 readonly="1">
