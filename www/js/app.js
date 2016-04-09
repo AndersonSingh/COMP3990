@@ -90,6 +90,12 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
      controller: 'SellerCtrl'
    })
 
+   .state('seller-view-sold-items', {
+     url: '/seller-view-sold-items',
+     templateUrl: 'templates/seller-view-sold-items.html',
+     controller: 'SellerSoldItemsCtrl'
+   })
+
   .state('sign-in', {
     url: '/sign-in',
     templateUrl: 'templates/sign-in.html',
@@ -118,7 +124,7 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
          }
      }
   })
-  
+
   .state('item-details', {
     url: '/item-details?userId&productId',
     templateUrl: 'templates/item-details.html',
@@ -164,7 +170,7 @@ angular.module('starter', ['ionic', 'firebase','starter.controllers', 'starter.s
          }
      }
   })
-  
+
   .state('messenger', {
     url: '/messenger?sellerId&buyerId&productId&perspective',
     templateUrl: 'templates/messenger.html',

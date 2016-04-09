@@ -1177,7 +1177,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   // create a reference to firebase database
   var firebaseRef = new Firebase("https://comp3990.firebaseio.com/");
 
-  // download the information of buy proposal for this buyer
+  // download the information on buy proposal for this buyer
   $scope.buyProposal = $firebaseObject(firebaseRef.child('interests').child($scope.sellerId).child($scope.productId).child($scope.buyerId));
 
   // download the particular product from products data
@@ -1247,7 +1247,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
         data.selectedBuyer = $scope.buyerId;
         data.buyerAgreed = false;
         data.sellerAgreed = false;
-        
+
         $scope.interestedItem.$save()
           .then(function(firebaseRef){
             console.log("updated interested product status");
@@ -1285,4 +1285,17 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     });
   }
 
+}])
+
+.controller('SellerSoldItemsCtrl', ['$scope', '$firebaseObject', function($scope, $firebaseObject){
+
+  // create a reference to firebase database
+  var firebaseRef = new Firebase("https://comp3990.firebaseio.com/");
+
+  // get user uid that is currently logged in
+  var localData = JSON.parse(localStorage.getItem('firebase:session::comp3990'));
+  var uid = localData['uid'];
+
+  // download all products in database belonging to this user
+  $scope.userProducts = $firebaseObject(firebaseRef.child('products' + '/' + uid));
 }])

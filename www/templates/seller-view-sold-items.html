@@ -1,0 +1,16 @@
+<ion-view view-title="My Sold Items">
+  <ion-content>
+
+    <div ng-repeat="(key, value) in userProducts">
+      <div class="ion-list" ng-if=" value.status === 'sold'">
+        <a class="item item-thumbnail-left" href="#">
+          <img data-ng-src="data:image/jpeg;base64,{{value.picture}}" alt="No picture">
+          <h2> Name: {{value.name}} </h2>
+          <h2> Price: {{value.price}} </h2>
+          <h2> Description: {{value.description}} </h2>
+        </a>
+      </div>
+    </div>
+
+  </ion-content>
+</ion-view>
