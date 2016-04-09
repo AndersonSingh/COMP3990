@@ -1008,6 +1008,8 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     /* get my name to include in the push notification */
 
     /* send the other user a notification */
+    console.log("other user next.");
+    console.log($scope.otherUser);
     var pushId = $scope.users[$scope.otherUser].pushId;
     $http.get("http://mas-health.com/gcm.php?id=" + pushId + "&title=Campus Deals&message=You Received a New Message From " + $scope.username);
   }
