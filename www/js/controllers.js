@@ -334,6 +334,9 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     //update firebase with new attributes for this user
     ref.child('users/' + uid + '/' + 'photoChanged').set(true);
     ref.child('users/' + uid + '/' + 'profileImageURL').set($scope.picture);
+
+    // redirect to profile page
+    $state.go('tabs.tab-activity');
   };
 
 }])
@@ -619,7 +622,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
     /* information of the specific item is now lodaded ionto the page via scope */
     $scope.itemDetails = $firebaseObject(ref.child('/products/'+$scope.sellerId+'/'+$scope.productId+''));
-    
+
     $scope.checkPaymentItem=function(key){
         selectedPaymentMethod = key.charAt(0).toUpperCase() + key.slice(1);;
     }
