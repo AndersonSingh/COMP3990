@@ -753,6 +753,11 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   // download all info on the seller
   $scope.userInfo = $firebaseObject(ref.child('users').child($scope.sellerId));
 
+  // download revenue analytics on the seller
+  $scope.sellerRevenue = $firebaseObject(ref.child('analytics/' + 'revenue/' + $scope.sellerId));
+
+  var productPrice=0.0;
+
   $scope.interestsRef.$loaded(function(data){
       //item is unavailable and id matches
       if(data.status === "unavailable" && data.selectedBuyer===$scope.buyerId){
@@ -773,6 +778,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
     // when the product info is ready to be used
     $scope.productInfo.$loaded(function(data){
+      productPrice = data.price;
       // when seller data is ready to be used
       $scope.userInfo.$loaded(function(userData){
         PaypalService.initPaymentEnv(userData.email).then(function(){
@@ -788,6 +794,12 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
     // change product status to reflect that has been sold
     updateProductStatus();
+
+    // update revenue in analytics
+    $scope.sellerRevenue.$loaded(function(data){
+      var currentRevenue = data.totalRevenue;
+      ref.child('analytics/' + 'revenue/' + $scope.sellerId + '/' + 'totalRevenue').set(currentRevenue + productPrice);
+    });
 
     attemptDeleteInterests();
 
@@ -898,6 +910,12 @@ angular.module('starter.controllers',['ionic','ngCordova'])
           if(data.sellerAgreed === true){
             // seller has already agreed that the transaction is completed, therefore we delete the interests
             refInterests.remove();
+
+            // also update revenue in analytics
+            $scope.sellerRevenue.$loaded(function(data){
+              var currentRevenue = data.totalRevenue;
+              ref.child('analytics/' + 'revenue/' + $scope.sellerId + '/' + 'totalRevenue').set(currentRevenue + productPrice);
+            });
           }
           else{
             // seller has yet to agree that transaction is complete so we update this field to reflect that the buyer has agreed
@@ -1195,6 +1213,11 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   // download state information on the interests for this item
   $scope.interestsRef = $firebaseObject(firebaseRef.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/statusInformation' ));
 
+  // download revenue analytics on the seller
+  $scope.sellerRevenue = $firebaseObject(ref.child('analytics/' + 'revenue/' + $scope.sellerId));
+
+  var productPrice=0.0;
+
   $scope.buyerChosen = function(){
     console.log("User " + $scope.buyerId + "chosen as buyer");
 
@@ -1230,6 +1253,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     $scope.chosenProduct.$loaded()
       .then(function(data){
         data.status = "unavailable";
+        productPrice = data.price;
 
         $scope.chosenProduct.$save()
           .then(function(firebaseRef){
@@ -1274,16 +1298,21 @@ angular.module('starter.controllers',['ionic','ngCordova'])
           console.log("REMOVING.");
         // buyer has already agreed that the transaction is completed, therefore we delete the interests
         refInterests.remove();
+
+        // update revenue in analytics
+        $scope.sellerRevenue.$loaded(function(data){
+          var currentRevenue = data.totalRevenue;
+          ref.child('analytics/' + 'revenue/' + $scope.sellerId + '/' + 'totalRevenue').set(currentRevenue + productPrice);
+        });
       }
       else{
         // buyer has yet to agree that transaction is complete so we update this field to reflect that the seller has agreed
         data.sellerAgreed=true;
-        data.completionStatus=true;
         $scope.interestsRef.$save()
           .then(function(firebaseRef){
-            console.log("updated completion status to 'true'");
+            console.log("updated seller agreed status to 'true'");
           }, function(error){
-            console.log("Failed to update completion status " + error);
+            console.log("Failed to update seller agreed status " + error);
         });
       }
     });
