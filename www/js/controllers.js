@@ -725,7 +725,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   $scope.appUsers = $firebaseObject(ref.child('/users'));
 }])
 
-.controller('BuyerInterestedItemOverviewCtrl', ['$scope', '$state', '$q', '$stateParams', '$firebaseObject', 'PaypalService', function($scope, $state, $q, $stateParams, $firebaseObject, PaypalService){
+.controller('BuyerInterestedItemOverviewCtrl', ['$scope', '$state', '$stateParams', '$firebaseObject', 'PaypalService', function($scope, $state, $stateParams, $firebaseObject, PaypalService){
    //Set both sets of information to be displayed to false
    $scope.allowedToBuyPositive=false;
    $scope.allowedToBuyNegative=false;
@@ -789,9 +789,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     // change product status to reflect that has been sold
     updateProductStatus();
 
-    // send out push notification to all other interested buyers of this item
-    //notifyOtherInterestedBuyers.then(onNotfiySuccess, onNotifyFail);
-    onNotfiySuccess();            // remove after push notifications working
+    attemptDeleteInterests();
 
     // add record to history
     var buyerHistoryRef = ref.child('history/' + $scope.buyerId + '/' + $scope.sellerId + '/' + $scope.productId);
@@ -813,9 +811,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     // change product status to reflect that has been sold
     updateProductStatus();
 
-    // send out push notification to all other interested buyers of this item
-    //notifyOtherInterestedBuyers.then(onNotfiySuccess, onNotifyFail);
-    onNotfiySuccess();            // remove after push notifications working
+    attemptDeleteInterests();
 
     // add record to history
     var buyerHistoryRef = ref.child('history/' + $scope.buyerId + '/' + $scope.sellerId + '/' + $scope.productId);
@@ -866,9 +862,6 @@ angular.module('starter.controllers',['ionic','ngCordova'])
         var numPendingReviews = data.pendingReviews+1;
         ref.child('/users/'+$scope.sellerId+'/pendingReviews').set(numPendingReviews);
     });
-
-
-
   }
 
   function updateProductStatus(){
@@ -889,19 +882,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       });
   }
 
-  var notifyDefer;
-
-  function notifyOtherInterestedBuyers(){
-    notifyDefer = $q.defer();
-
-    // make call to notify
-    // resolve notifyDefer if successful
-    // reject notifyDefer if not
-
-    return notifyDefer.promise();
-  }
-
-  function onNotfiySuccess(){
+  function attemptDeleteInterests(){
     // delete interests
     var refInterests = new Firebase("https://comp3990.firebaseio.com/interests/" + $scope.sellerId + "/" + $scope.productId);
 
@@ -923,9 +904,9 @@ angular.module('starter.controllers',['ionic','ngCordova'])
             data.buyerAgreed=true;
             $scope.interestsRef.$save()
               .then(function(ref){
-                console.log("updated completion status to 'true'");
+                console.log("updated buyer agreed status to 'true'");
               }, function(error){
-                console.log("Failed to update completion status " + error);
+                console.log("Failed to update buyer agreed status " + error);
             });
           }
         });
@@ -934,9 +915,6 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
   }
 
-  function onNotifyFail(){
-
-  }
 }])
 
 .controller('MessengerCtrl', ['$scope', '$stateParams', '$firebaseObject', '$ionicScrollDelegate', '$http', function($scope, $stateParams, $firebaseObject, $ionicScrollDelegate, $http){
