@@ -576,17 +576,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
                 transactionRef.child('/messages').push($scope.message);
 
-                // find out which payment method was selected
-                // var x;
-                $scope.method;
-
-                // for(x in $scope.paymentList){
-                //     console.log($scope.paymentList[x]);
-                //   if($scope.paymentList[x].checked === true){
-                //     method = $scope.paymentList[x].text;
-                //   }
-                // }
-
+                //find out which payment method was selected.
                 var paymentObj = {paymentMethod : selectedPaymentMethod};
 
                 transactionRef.update(paymentObj);
@@ -629,19 +619,6 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
     /* information of the specific item is now lodaded ionto the page via scope */
     $scope.product = $firebaseObject(ref.child('/products/'+$scope.sellerId+'/'+$scope.productId+''));
-    // $scope.product.$loaded(function(data){
-    //    $scope.itemDetails = data;
-    //    $scope.paymentList = [];
-    //    if(Boolean($scope.itemDetails.payments.paypal)===true){
-    //        $scope.paymentList.push( { text: "Paypal", checked:false });
-    //    }
-    //    if(Boolean($scope.itemDetails.payments.cash)===true){
-    //        $scope.paymentList.push( { text: "Cash", checked:false });
-    //    }
-    //    if(Boolean($scope.itemDetails.payments.bitcoin)===true){
-    //        $scope.paymentList.push( { text: "Bitcoin", checked:false });
-    //    }
-    // });
     
     $scope.checkPaymentItem=function(key){
         selectedPaymentMethod= key.charAt(0).toUpperCase() + key.slice(1);;
