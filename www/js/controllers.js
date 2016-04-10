@@ -618,10 +618,10 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     };
 
     /* information of the specific item is now lodaded ionto the page via scope */
-    $scope.product = $firebaseObject(ref.child('/products/'+$scope.sellerId+'/'+$scope.productId+''));
-
+    $scope.itemDetails = $firebaseObject(ref.child('/products/'+$scope.sellerId+'/'+$scope.productId+''));
+    
     $scope.checkPaymentItem=function(key){
-        selectedPaymentMethod= key.charAt(0).toUpperCase() + key.slice(1);
+        selectedPaymentMethod = key.charAt(0).toUpperCase() + key.slice(1);;
     }
 
 
