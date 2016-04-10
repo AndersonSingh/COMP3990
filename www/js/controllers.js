@@ -1217,7 +1217,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   $scope.interestsRef = $firebaseObject(firebaseRef.child('/interests/' + $scope.sellerId + '/' + $scope.productId + '/statusInformation' ));
 
   // download revenue analytics on the seller
-  $scope.sellerRevenue = $firebaseObject(ref.child('analytics/' + 'revenue/' + $scope.sellerId));
+  $scope.sellerRevenue = $firebaseObject(firebaseRef.child('analytics/' + 'revenue/' + $scope.sellerId));
 
   var productPrice=0.0;
 
