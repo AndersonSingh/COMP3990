@@ -26,19 +26,21 @@
 
       </div>
       <div class="item">
+          
         <canvas id="base" class="chart-base" chart-type="type"
           chart-data="data" chart-labels="labels" chart-legend="false">
         </canvas>
-    </item>
+      </div>
 
-    </div>
+    
 
     <div ng-if="profileData.pendingReviews > 0">
         <button class="button button-block button-energized" ui-sref="tabs.view-pending-reviews">
                 Resolve Pending Reviews
         </button>
     </div>
-
+    
+    </div>
 
   </ion-content>
 </ion-view>
