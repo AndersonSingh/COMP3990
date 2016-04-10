@@ -7,7 +7,7 @@
           <div ng-repeat="(key3, value3) in value">
             <div ng-repeat="(key4, value4) in value2" ng-if="key3 === key4">
               <a class="item item-thumbnail-left" href="#">
-                <img data-ng-src="data:image/jpeg;base64,{{value.picture}}" alt="No picture">
+                <img data-ng-src="data:image/jpeg;base64,{{value4.picture}}" alt="No picture">
                 <h2> Name: {{value4.name}} </h2>
                 <h2> Price: {{value4.price}} </h2>
                 <h2> Description: {{value4.description}} </h2>
