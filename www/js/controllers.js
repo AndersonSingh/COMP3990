@@ -1305,7 +1305,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
         // update revenue in analytics
         $scope.sellerRevenue.$loaded(function(data){
           var currentRevenue = data.totalRevenue;
-          ref.child('analytics/' + 'revenue/' + $scope.sellerId + '/' + 'totalRevenue').set(currentRevenue + productPrice);
+          firebaseRef.child('analytics/' + 'revenue/' + $scope.sellerId + '/' + 'totalRevenue').set(currentRevenue + productPrice);
         });
       }
       else{
