@@ -1095,7 +1095,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   var userPendingReviews;
 
   //If the user on the device is the seller, we need to post a review about the buyer and vice versa.
-  if(uid===buyerId){
+    if(uid===buyerId){
       //we are doing a review for a seller
       $scope.userType="Seller";
       userIdRef=sellerId;
@@ -1103,9 +1103,10 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       //get pending reviews for the buyer(person that is doing the reviewing)
       newRef.$loaded(function(data){
           userPendingReviews = parseInt(data.pendingReviews);
+          $scope.userRating.userName=data.name;
       });
-  }
-  else if(uid===sellerId){
+    }
+    else if(uid===sellerId){
       //we are doing a review for a buyer.
       $scope.userType="Buyer";
       userIdRef=buyerId;
@@ -1114,15 +1115,16 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       //get pending reviews for the seller(person that is doing the reviewing)
       newRef.$loaded(function(data){
           userPendingReviews = parseInt(data.pendingReviews);
+          $scope.userRating.userName=data.name;
       });
-  }
+    }
 
     //pull the overall rating of the user that is to be commented on.
     $scope.userData = $firebaseObject(ref.child('/users/'+userIdRef));
     $scope.userData.$loaded(function(data){
         userCurrentRating = parseFloat(data.overallRating);
-        $scope.userRating.userName=data.name;
     });
+    
 
   $scope.postRating=function(){
       console.log("PENDING----"+userPendingReviews);
