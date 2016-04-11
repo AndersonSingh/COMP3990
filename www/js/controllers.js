@@ -1100,7 +1100,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       $scope.userType="Seller";
       userIdRef=sellerId;
       var newRef = $firebaseObject(ref.child('/users/'+buyerId));
-      //get pending reviews for the buyer(person that is doing the reviewing)
+      //get pending reviews and name for the buyer(person that is doing the reviewing)
       newRef.$loaded(function(data){
           userPendingReviews = parseInt(data.pendingReviews);
           $scope.userRating.userName=data.name;
@@ -1112,7 +1112,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       userIdRef=buyerId;
       seller=true;
       var newRef = $firebaseObject(ref.child('/users/'+sellerId));
-      //get pending reviews for the seller(person that is doing the reviewing)
+      //get pending reviews and name for the seller(person that is doing the reviewing)
       newRef.$loaded(function(data){
           userPendingReviews = parseInt(data.pendingReviews);
           $scope.userRating.userName=data.name;
