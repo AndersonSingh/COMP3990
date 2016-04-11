@@ -1096,11 +1096,12 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   var userPendingReviews;
 
   //If the user on the device is the seller, we need to post a review about the buyer and vice versa.
+  var newRef;
     if(uid===buyerId){
       //we are doing a review for a seller
       $scope.userType="Seller";
       userIdRef=sellerId;
-      var newRef = $firebaseObject(ref.child('/users/'+buyerId));
+      newRef = $firebaseObject(ref.child('/users/'+buyerId));
       //get pending reviews and name for the buyer(person that is doing the reviewing)
       newRef.$loaded(function(data){
           userPendingReviews = parseInt(data.pendingReviews);
@@ -1112,7 +1113,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       $scope.userType="Buyer";
       userIdRef=buyerId;
       seller=true;
-      var newRef = $firebaseObject(ref.child('/users/'+sellerId));
+      newRef = $firebaseObject(ref.child('/users/'+sellerId));
       //get pending reviews and name for the seller(person that is doing the reviewing)
       newRef.$loaded(function(data){
           userPendingReviews = parseInt(data.pendingReviews);
@@ -1128,7 +1129,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     
 
   $scope.postRating=function(){
-      console.log("PENDING----"+userPendingReviews);
+      //console.log("PENDING----"+userPendingReviews);
       var ratingRef = ref.child('/ratings/');
       var userRatingRef = ref.child('/users/'+userIdRef+'/overallRating');
       var newRating=0.00;
@@ -1138,24 +1139,25 @@ angular.module('starter.controllers',['ionic','ngCordova'])
       else{
           newRating = (parseFloat(userCurrentRating) + parseFloat($scope.userRating.rating))/2;
       }
+      var pendingReviewsRef, pendingReviewRefToRemove;
       if(seller===true){
         $scope.userRating.date = (new Date()).toString();
         ratingRef.child(buyerId+'/'+sellerId+'/').push($scope.userRating);
-        var pendingReviewsRef = ref.child('/users/'+sellerId+'/pendingReviews');
+        pendingReviewsRef = ref.child('/users/'+sellerId+'/pendingReviews');
         pendingReviewsRef.set(userPendingReviews-1);
         userRatingRef.set(newRating);
         //removing pending review.
-        var pendingReviewRefToRemove = ref.child('/pending-reviews/'+sellerId+'/'+buyerId);
+        pendingReviewRefToRemove = ref.child('/pending-reviews/'+sellerId+'/'+buyerId);
         pendingReviewRefToRemove.remove();
       }
       else{
         $scope.userRating.date = (new Date()).toString();
         ratingRef.child(sellerId+'/'+buyerId+'/').push($scope.userRating);
-        var pendingReviewsRef = ref.child('/users/'+buyerId+'/pendingReviews');
+        pendingReviewsRef = ref.child('/users/'+buyerId+'/pendingReviews');
         pendingReviewsRef.set(userPendingReviews-1);
         userRatingRef.set(newRating);
         //removing pending review.
-        var pendingReviewRefToRemove = ref.child('/pending-reviews/'+buyerId+'/'+sellerid);
+        pendingReviewRefToRemove = ref.child('/pending-reviews/'+buyerId+'/'+sellerId);
         pendingReviewRefToRemove.remove();
       }
   }
