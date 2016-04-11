@@ -842,13 +842,14 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   }
 
   $scope.generatePendingReviewCash = function (){
-      //upon completing a transaction, a pending review of the buyer will need to be done
+    //upon completing a transaction, a pending review of the buyer will need to be done
     //this will need to be reflected in the viewing of a user's account.
 
     console.log("CREATING PENDING STUFF!");
     //We also need to post a pending review here!
      //add a pending review
-    ref.child('/pending-reviews/'+$scope.buyerId +'/'+$scope.sellerId).set({buyer:false, itemName:$scope.productInfo.name, itemPicture:$scope.productInfo.picture});
+    var purchaseDate = (new Date()).toString();
+    ref.child('/pending-reviews/'+$scope.buyerId +'/'+$scope.sellerId).set({buyer:false, itemName:$scope.productInfo.name, itemPicture:$scope.productInfo.picture, dateDueSince:purchaseDate});
     //increment number of pending reviews on user profile by 1
     $scope.userData = $firebaseObject(ref.child('/users/'+$scope.buyerId));
     $scope.userData.$loaded(function(data){
@@ -859,9 +860,9 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
   $scope.generatePendingReviewPaypal = function (){
     //upon completing a transaction, a pending review of the buyer will need to be done
-
-     //add a pending review for the buyer
-    ref.child('/pending-reviews/'+$scope.buyerId +'/'+$scope.sellerId).set({buyer:false, itemName:$scope.productInfo.name, itemPicture:$scope.productInfo.picture});
+    //add a pending review for the buyer
+    var purchaseDate = (new Date()).toString();
+    ref.child('/pending-reviews/'+$scope.buyerId +'/'+$scope.sellerId).set({buyer:false, itemName:$scope.productInfo.name, itemPicture:$scope.productInfo.picture, dateDueSince:purchaseDate});
     //increment number of pending reviews on user profile by 1
     $scope.userData = $firebaseObject(ref.child('/users/'+$scope.buyerId));
     $scope.userData.$loaded(function(data){
@@ -870,7 +871,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     });
 
     // generate pending review for seller
-    ref.child('/pending-reviews/'+$scope.sellerId +'/'+$scope.buyerId).set({buyer:true, itemName:$scope.productInfo.name, itemPicture:$scope.productInfo.picture});
+    ref.child('/pending-reviews/'+$scope.sellerId +'/'+$scope.buyerId).set({buyer:true, itemName:$scope.productInfo.name, itemPicture:$scope.productInfo.picture, dateDueSince:purchaseDate});
     //increment number of pending reviews on user profile by 1
     $scope.userData = $firebaseObject(ref.child('/users/'+$scope.sellerId));
     $scope.userData.$loaded(function(data){

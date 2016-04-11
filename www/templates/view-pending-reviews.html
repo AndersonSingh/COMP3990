@@ -4,7 +4,8 @@
         <div class="list" ng-repeat= "(key,value) in allPendingReviews">
                 <a class="item item-avatar" href="#" ng-click="goToRatings(key,value);">
                     <img data-ng-src="data:image/jpeg;base64,{{value.itemPicture}}" alt="No picture">
-                    <p> Review for: {{value.itemName}}</p>
+                    <h3> Review for: {{value.itemName}}</h3>
+                    <p> Due Since: {{value.dateDueSince}}</p>
                 </a>
         </div>
         
