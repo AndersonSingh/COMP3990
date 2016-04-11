@@ -32,6 +32,7 @@
                 <div ng-repeat="reviews in sellerReviews">
                     <div ng-repeat="review in reviews"
                         <a class="item">
+                            <h3>Date: {{review.date}}</h3>
                             <h2>User Name: {{review.userName}}</h2>
                             <p>Rating: 
                                 <rating ng-model="review.rating" max=5 readonly="1">

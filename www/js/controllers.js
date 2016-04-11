@@ -1076,7 +1076,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
   //Set up rating for rating object on UI side
    $scope.rating = {};
-   $scope.userRating={rating: 0, comment:'',userName:'', startedAt: Firebase.ServerValue.TIMESTAMP};
+   $scope.userRating={rating: 0, comment:'',userName:'', date:''};
 
   //Obtain buyer and seller ID's
   var buyerId = $stateParams.buyerId;
@@ -1136,6 +1136,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
           newRating = (parseFloat(userCurrentRating) + parseFloat($scope.userRating.rating))/2;
       }
       if(seller===true){
+        $scope.userRating.date = (new Date()).toString();
         ratingRef.child(buyerId+'/'+sellerId+'/').push($scope.userRating);
         var pendingReviewsRef = ref.child('/users/'+sellerId+'/pendingReviews');
         pendingReviewsRef.set(userPendingReviews-1);
@@ -1145,6 +1146,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
         pendingReviewRefToRemove.remove();
       }
       else{
+        $scope.userRating.date = (new Date()).toString();
         ratingRef.child(sellerId+'/'+buyerId+'/').push($scope.userRating);
         var pendingReviewsRef = ref.child('/users/'+buyerId+'/pendingReviews');
         pendingReviewsRef.set(userPendingReviews-1);
