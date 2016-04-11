@@ -2,7 +2,7 @@
     <ion-content>
         
         <div class="list" ng-repeat= "(key,value) in allPendingReviews">
-                <a class="item item-avatar" href="#" ng-click="goToRatings(key,value);">
+                <a class="item item-thumbnail-left" href="#" ng-click="goToRatings(key,value);">
                     <img data-ng-src="data:image/jpeg;base64,{{value.itemPicture}}" alt="No picture">
                     <h3> Review for: {{value.itemName}}</h3>
                     <p> Due Since: {{value.dateDueSince}}</p>
