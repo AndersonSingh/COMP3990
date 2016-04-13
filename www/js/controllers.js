@@ -58,7 +58,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
 }])
 
-.controller('SignInCtrl', ['$scope',  '$state', 'SideMenuStateService', function($scope, $state, SideMenuStateService){
+.controller('SignInCtrl', ['$scope',  '$state', 'SideMenuStateService','$firebaseObject', function($scope, $state, SideMenuStateService, $firebaseObject){
 
   /* this is a reference to the firebase url. */
   var ref = new Firebase('https://comp3990.firebaseio.com');
@@ -106,9 +106,14 @@ angular.module('starter.controllers',['ionic','ngCordova'])
           var uid = userData['uid']
           var provider = userData['provider'];
           var profileImageURL = userData[provider]['profileImageURL'];
-
-          /* make profile image available on firebase. */
-         ref.child('/users/' + uid ).update({'profileImageURL' : profileImageURL});
+          
+          var userData = $firebaseObject(ref.child('/users/'+uid));
+          userData.$loaded(function(data){
+              if(data.photoChanged===false){
+                  /* make profile image available on firebase. */
+                  ref.child('/users/' + uid ).update({'profileImageURL' : profileImageURL});
+              }
+          });
 
           /* IMPORTANT : redirect to valid state. */
           SideMenuStateService.setSignedIn(true);
