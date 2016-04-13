@@ -804,21 +804,21 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     updateProductStatus();
 
     // update revenue in analytics
-    $scope.sellerRevenue.$loaded(function(data){
-      console.log("HELLO");
-      // revenue info already exists for this seller
-      if(data.$value!==null){
-        // get current revenue
-        var currentRevenue = data.totalRevenue;
-        ref.child('/analytics/' + 'revenue/' + $scope.sellerId + '/' + 'totalRevenue').set(currentRevenue + productPrice);    
-      }
+    // $scope.sellerRevenue.$loaded(function(data){
+    //   console.log("HELLO");
+    //   // revenue info already exists for this seller
+    //   if(data.$value!==null){
+    //     // get current revenue
+    //     var currentRevenue = data.totalRevenue;
+    //     ref.child('/analytics/' + 'revenue/' + $scope.sellerId + '/' + 'totalRevenue').set(currentRevenue + productPrice);    
+    //   }
       
-      // revenue info for this seller is not yet available 
-      else{
+    //   // revenue info for this seller is not yet available 
+    //   else{
           
-        ref.child('/analytics/' + 'revenue/' + $scope.sellerId + '/' + 'totalRevenue').set(productPrice);
-      }
-    });
+    //     ref.child('/analytics/' + 'revenue/' + $scope.sellerId + '/' + 'totalRevenue').set(productPrice);
+    //   }
+    // });
 
     attemptDeleteInterests();
 
@@ -930,29 +930,23 @@ angular.module('starter.controllers',['ionic','ngCordova'])
           if(data.sellerAgreed === true){
             // seller has already agreed that the transaction is completed, therefore we delete the interests
             refInterests.remove();
-
-            // // also update revenue in analytics
+            
+            // // update revenue in analytics
             // $scope.sellerRevenue.$loaded(function(data){
-            //   var currentRevenue = data.totalRevenue;
-            //   ref.child('analytics/' + 'revenue/' + $scope.sellerId + '/' + 'totalRevenue').set(currentRevenue + productPrice);
-            // });
-            
-            // update revenue in analytics
-            $scope.sellerRevenue.$loaded(function(data){
-            console.log("HELLO");
-            // revenue info already exists for this seller
-            if(data.$value!==null){
-                // get current revenue
-                var currentRevenue = data.totalRevenue;
-                ref.child('/analytics/' + 'revenue/' + $scope.sellerId + '/' + 'totalRevenue').set(currentRevenue + productPrice);    
-            }
-            
-            // revenue info for this seller is not yet available 
-            else{
+            //     console.log("HELLO");
+            //     // revenue info already exists for this seller
+            //     if(data.$value!==null){
+            //         // get current revenue
+            //         var currentRevenue = data['totalRevenue'];
+            //         ref.child('/analytics/' + 'revenue/' + $scope.sellerId + '/' + 'totalRevenue').set(currentRevenue + productPrice);    
+            //     }
                 
-                ref.child('/analytics/' + 'revenue/' + $scope.sellerId + '/' + 'totalRevenue').set(productPrice);
-            }
-            });
+            //     // revenue info for this seller is not yet available 
+            //     else{
+                   
+            //         ref.child('/analytics/' + 'revenue/' + $scope.sellerId + '/' + 'totalRevenue').set(productPrice);
+            //     }
+            // });
           }
           else{
             // seller has yet to agree that transaction is complete so we update this field to reflect that the buyer has agreed
@@ -1277,7 +1271,10 @@ angular.module('starter.controllers',['ionic','ngCordova'])
     //We also need to post a pending review here!
 
     //add a pending review for a cash transaction
-    firebaseRef.child('/pending-reviews/'+$scope.sellerId +'/'+$scope.buyerId).set({buyer:true, itemName:$scope.chosenProduct.name});
+    var purchaseDate = (new Date()).toString();
+    firebaseRef.child('/pending-reviews/'+$scope.sellerId +'/'+$scope.buyerId).set({buyer:true, itemName:$scope.chosenProduct.name, itemPicture:$scope.chosenProduct.picture, dateDueSince:purchaseDate});
+    
+    
     //increment number of pending reviews on user profile by 1
     $scope.userData = $firebaseObject(firebaseRef.child('/users/'+$scope.sellerId));
     $scope.userData.$loaded(function(data){
@@ -1349,21 +1346,21 @@ angular.module('starter.controllers',['ionic','ngCordova'])
         // });
         
             // update revenue in analytics
-        $scope.sellerRevenue.$loaded(function(data){
-        console.log("HELLO");
-        // revenue info already exists for this seller
-        if(data.$value!==null){
-            // get current revenue
-            var currentRevenue = data.totalRevenue;
-            ref.child('/analytics/' + 'revenue/' + $scope.sellerId + '/' + 'totalRevenue').set(currentRevenue + productPrice);    
-        }
+        // $scope.sellerRevenue.$loaded(function(data){
+        // console.log("HELLO");
+        // // revenue info already exists for this seller
+        // if(data.$value!==null){
+        //     // get current revenue
+        //     var currentRevenue = data.totalRevenue;
+        //     ref.child('/analytics/' + 'revenue/' + $scope.sellerId + '/' + 'totalRevenue').set(currentRevenue + productPrice);    
+        // }
         
-        // revenue info for this seller is not yet available 
-        else{
+        // // revenue info for this seller is not yet available 
+        // else{
             
-            ref.child('/analytics/' + 'revenue/' + $scope.sellerId + '/' + 'totalRevenue').set(productPrice);
-        }
-        });
+        //     ref.child('/analytics/' + 'revenue/' + $scope.sellerId + '/' + 'totalRevenue').set(productPrice);
+        // }
+        // });
       }
       else{
         // buyer has yet to agree that transaction is complete so we update this field to reflect that the seller has agreed
