@@ -762,7 +762,7 @@ angular.module('starter.controllers',['ionic','ngCordova'])
   $scope.userInfo = $firebaseObject(ref.child('users').child($scope.sellerId));
 
   // download revenue analytics on the seller
-  $scope.sellerRevenue = $firebaseObject(ref.child('analytics/' + 'revenue/' + $scope.sellerId));
+  $scope.sellerRevenue = $firebaseObject(ref.child('/analytics/revenue/' + $scope.sellerId));
 
   var productPrice=0.0;
 
@@ -805,8 +805,19 @@ angular.module('starter.controllers',['ionic','ngCordova'])
 
     // update revenue in analytics
     $scope.sellerRevenue.$loaded(function(data){
-      var currentRevenue = data.totalRevenue;
-      ref.child('analytics/' + 'revenue/' + $scope.sellerId + '/' + 'totalRevenue').set(currentRevenue + productPrice);
+      console.log("HELLO");
+      // revenue info already exists for this seller
+      if(data.$value!==null){
+        // get current revenue
+        var currentRevenue = data.totalRevenue;
+        ref.child('/analytics/' + 'revenue/' + $scope.sellerId + '/' + 'totalRevenue').set(currentRevenue + productPrice);    
+      }
+      
+      // revenue info for this seller is not yet available 
+      else{
+          
+        ref.child('/analytics/' + 'revenue/' + $scope.sellerId + '/' + 'totalRevenue').set(productPrice);
+      }
     });
 
     attemptDeleteInterests();
@@ -920,10 +931,27 @@ angular.module('starter.controllers',['ionic','ngCordova'])
             // seller has already agreed that the transaction is completed, therefore we delete the interests
             refInterests.remove();
 
-            // also update revenue in analytics
+            // // also update revenue in analytics
+            // $scope.sellerRevenue.$loaded(function(data){
+            //   var currentRevenue = data.totalRevenue;
+            //   ref.child('analytics/' + 'revenue/' + $scope.sellerId + '/' + 'totalRevenue').set(currentRevenue + productPrice);
+            // });
+            
+            // update revenue in analytics
             $scope.sellerRevenue.$loaded(function(data){
-              var currentRevenue = data.totalRevenue;
-              ref.child('analytics/' + 'revenue/' + $scope.sellerId + '/' + 'totalRevenue').set(currentRevenue + productPrice);
+            console.log("HELLO");
+            // revenue info already exists for this seller
+            if(data.$value!==null){
+                // get current revenue
+                var currentRevenue = data.totalRevenue;
+                ref.child('/analytics/' + 'revenue/' + $scope.sellerId + '/' + 'totalRevenue').set(currentRevenue + productPrice);    
+            }
+            
+            // revenue info for this seller is not yet available 
+            else{
+                
+                ref.child('/analytics/' + 'revenue/' + $scope.sellerId + '/' + 'totalRevenue').set(productPrice);
+            }
             });
           }
           else{
@@ -1315,9 +1343,26 @@ angular.module('starter.controllers',['ionic','ngCordova'])
         refInterests.remove();
 
         // update revenue in analytics
+        // $scope.sellerRevenue.$loaded(function(data){
+        //   var currentRevenue = data.totalRevenue;
+        //   firebaseRef.child('analytics/' + 'revenue/' + $scope.sellerId + '/' + 'totalRevenue').set(currentRevenue + productPrice);
+        // });
+        
+            // update revenue in analytics
         $scope.sellerRevenue.$loaded(function(data){
-          var currentRevenue = data.totalRevenue;
-          firebaseRef.child('analytics/' + 'revenue/' + $scope.sellerId + '/' + 'totalRevenue').set(currentRevenue + productPrice);
+        console.log("HELLO");
+        // revenue info already exists for this seller
+        if(data.$value!==null){
+            // get current revenue
+            var currentRevenue = data.totalRevenue;
+            ref.child('/analytics/' + 'revenue/' + $scope.sellerId + '/' + 'totalRevenue').set(currentRevenue + productPrice);    
+        }
+        
+        // revenue info for this seller is not yet available 
+        else{
+            
+            ref.child('/analytics/' + 'revenue/' + $scope.sellerId + '/' + 'totalRevenue').set(productPrice);
+        }
         });
       }
       else{
