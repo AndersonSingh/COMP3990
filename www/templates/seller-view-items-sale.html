@@ -8,16 +8,18 @@
         </label>
       </div>
     </div>
-
-    <div class="list" ng-repeat="(key, value) in allProducts">
-        <div ng-if=" value.status === 'available' || value.status==='unavailable'">
-            <a class="item item-thumbnail-left" ui-sref="item-details({userId:userId, productId:key})" >
-                <img data-ng-src="data:image/jpeg;base64,{{value.picture}}">
-                <h2>{{value.name}}</h2>
-                <p>{{value.price | currency}}</p>
-                <p>This is a description</p>
-            </a>
+    
+    <div class="list">
+      <div ng-repeat="(key, value) in allProducts">
+        <div ng-if=" value.status === 'available' || value.status ==='unavailable'">
+          <a class="item item-thumbnail-left" ui-sref="item-details({userId:userId, productId:key})">
+            <img data-ng-src="data:image/jpeg;base64,{{value.picture}}" alt="No picture">
+            <h2> Name: {{value.name}} </h2>
+            <h2> Price: {{value.price | currency}} </h2>
+            <h2> Description: {{value.description}} </h2>
+          </a>
         </div>
+      </div>
     </div>
 
   </ion-content>
